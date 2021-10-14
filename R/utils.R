@@ -13,11 +13,12 @@ samplealongline <- function(dsm, modified_dsm=NULL, dem=NULL, viewpoint, samplec
   xc = viewpoint[1] + (0:steps) * (samplecoordinates[1]-viewpoint[1])/steps #x coordinates of samples along the viewline
   yc = viewpoint[2] + (0:steps) * (samplecoordinates[2]-viewpoint[2])/steps #y coordinates of samples along the viewline
   z_viewpoint = dsm[rts::cellFromXY(dsm,cbind(viewpoint[1],viewpoint[2]))] + 1.7*3 #the height of viewpoints based on dsm
-  z_viewpoint2 = dem[rts::cellFromXY(dem,cbind(viewpoint[1],viewpoint[2]))] + 1.7*3 #the height of viewpoints based on dem
+
   if(is.null(modified_dsm) == FALSE){# if input modified_dsm is detected, compare the height of viewpoint on dsm to the one on dem
     if(is.null(dem) == TRUE){# request dsm
       stop("dem is NULL")
     }
+    z_viewpoint2 = dem[rts::cellFromXY(dem,cbind(viewpoint[1],viewpoint[2]))] + 1.7*3 #the height of viewpoints based on dem
     z_viewpoint_delta <- z_viewpoint - z_viewpoint2
     if(z_viewpoint_delta >= 3){# if the height of viewpoint on dsm is higher than the one on dem, modified_dsm will be used for viewshed analysis
       dsm <- modified_dsm
