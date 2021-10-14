@@ -1,0 +1,2 @@
+context("Calculate viewshed")
+
