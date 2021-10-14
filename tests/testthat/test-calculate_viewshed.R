@@ -14,7 +14,7 @@ test_that("runs correctly", {
   test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
 
   #run function
-  test_function <- viewscape::calculate_viewshed(dsm = test_dsm,
+  test_function <- viewscape::calculate_viewshed(dsm = dsm,
                                                  viewpoint = test_viewpoint)
 
 
