@@ -1,0 +1,31 @@
+---
+title: "viewscape"
+author: "Nathan Fox"
+date: "2021-11-08"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{viewscape}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+This vignette provides a basic overview of the functions in R package `viewscape`.
+
+The basic view shed analysis can be accessed through calling the `calculate_viewshed`. The two needed objects to calculate the viewshed are a digital surface model (DSM) and a viewpoint.
+
+```{r eval=FALSE}
+  #Load in DSM
+  test_dsm <- raster::raster(system.file("test_data\\test_dsm.tif",
+                                         package ="viewscape"))
+
+  #Load in the viewpoint
+  test_viewpoint <- sf::read_sf(system.file("test_data\\test_viewpoint.shp",
+                                               package = "viewscape"))
+
+  #Transform viewpoint from shape file to coordinates 
+  test_viewpoint <- sf::st_coordinates(test_viewpoint)
+  test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
+
+  #Run function
+  test_function <- viewscape::calculate_viewshed(dsm = test_dsm,
+                                                 viewpoint = test_viewpoint)
+```

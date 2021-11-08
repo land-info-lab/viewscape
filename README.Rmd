@@ -1,0 +1,20 @@
+---
+title: "README"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# viewscape
+
+The goal of viewscape package is to provide an accessible method of carrying out viewshed analysis within the R environment. 
+
+
+
