@@ -10,7 +10,7 @@ vignette: >
 ---
 This vignette provides a basic overview of the functions in R package `viewscape`.
 
-The basic view shed analysis can be accessed through calling the `calculate_viewshed`. The two needed objects to calculate the viewshed are a digital surface model (DSM) and a viewpoint.
+The basic viewshed analysis can be accessed through calling the `calculate_viewshed`. The two needed objects to calculate the viewshed are a digital surface model (DSM) and a viewpoint.
 
 ```{r eval=FALSE}
   #Load in DSM
