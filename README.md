@@ -2,6 +2,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/billbillbilly/viewscape/workflows/R-CMD-check/badge.svg)](https://github.com/billbillbilly/viewscape/actions)
+[![Codecov test
+coverage](https://codecov.io/gh/billbillbilly/viewscape/branch/master/graph/badge.svg)](https://codecov.io/gh/billbillbilly/viewscape?branch=master)
 <!-- badges: end -->
 
 # viewscape

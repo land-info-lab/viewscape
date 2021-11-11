@@ -7,6 +7,8 @@ Author@R: c(person("Xiaohao", "Yang", role = c("aut", "cre"),
            person("Nathan", "Fox", role = c("aut")),
            person("Derek", "Van Berkel", role = c("aut")),
            person("Mark", "Lindquist", role = c("aut")))
+Author: Xiaohao Yang
+Maintainer: Xiaohao Yang <xiaohaoy@umich.edu>
 Description: Calculates the viewable area for given a point and a digital 
     elevation model.
 License: GPL-3
@@ -16,6 +18,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Language: en_GB
 Suggests: 
+    covr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
