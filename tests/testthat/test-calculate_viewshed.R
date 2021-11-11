@@ -26,4 +26,7 @@ test_that("runs correctly", {
 
   plot(test_sf, pch=16, col="blue", add=TRUE)
 
+  expect_type(test_sf, "list")
+
 })
+

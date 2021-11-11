@@ -1,0 +1,44 @@
+{
+  "@context": ["https://doi.org/10.5063/schema/codemeta-2.0", "http://schema.org"],
+  "@type": "SoftwareSourceCode",
+  "identifier": "viewscape",
+  "description": "Calculates the viewable area for given a point and a digital elevation model.",
+  "name": "viewscape: Calculate Viewshed Analysis",
+  "license": "https://spdx.org/licenses/GPL-3.0",
+  "version": "0.1.0",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 4.1.1 (2021-08-10)",
+  "author": {},
+  "contributor": {},
+  "copyrightHolder": {},
+  "funder": {},
+  "maintainer": [
+    {
+      "@type": "Organization",
+      "name": "NA"
+    }
+  ],
+  "softwareSuggestions": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "testthat",
+      "name": "testthat",
+      "version": ">= 3.0.0",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=testthat"
+    }
+  ],
+  "softwareRequirements": [],
+  "codeRepository": "https://github.com/billbillbilly/viewscape",
+  "readme": "https://github.com/billbillbilly/viewscape/blob/master/README.md",
+  "fileSize": "188.492KB"
+}
