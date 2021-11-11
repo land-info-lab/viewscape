@@ -4,7 +4,7 @@ output: github_document
 
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/billbillbilly/viewscape/workflows/R-CMD-check/badge.svg)](https://github.com/billbillbilly/viewscape/actions)
-  [![Codecov test coverage](https://codecov.io/gh/billbillbilly/viewscape/branch/master/graph/badge.svg)](https://codecov.io/gh/billbillbilly/viewscape?branch=master)
+  [![Codecov test coverage](https://codecov.io/github/billbillbilly/viewscape/branch/master/graph/badge.svg)](https://codecov.io/github/billbillbilly/viewscape?branch=master)
   <!-- badges: end -->
 
 ```{r setup, include=FALSE}
@@ -55,7 +55,7 @@ The basic viewshed analysis can be accessed through calling the `calculate_views
                                                  viewpoint = test_viewpoint)
 ```
 
-For further information on the rest of the functions available in this package please refer to the [package website](needs to be created). For more information and examples of the functions check out the [package vignette](needs to be created).
+For further information on the rest of the functions available in this package please refer to the [package website](https://billbillbilly.github.io/viewscape/). For more information and examples of the functions check out the [package vignette](needs to be created).
 
 ## Issues and bugs
 

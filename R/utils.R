@@ -1,3 +1,5 @@
+#' @noRd
+
 samplealongline <- function(dsm, modified_dsm=NULL, dem=NULL, viewpoint, samplecoordinates){
   #this fuction can sample elevations along the straight line from viewpoint to a certain coordinates on raster surface
   #and also sample elevations on this line corresponding to the locations of sampled elevations on raster

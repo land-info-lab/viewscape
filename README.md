@@ -3,7 +3,7 @@
 
 [![R-CMD-check](https://github.com/billbillbilly/viewscape/workflows/R-CMD-check/badge.svg)](https://github.com/billbillbilly/viewscape/actions)
 [![Codecov test
-coverage](https://codecov.io/gh/billbillbilly/viewscape/branch/master/graph/badge.svg)](https://codecov.io/gh/billbillbilly/viewscape?branch=master)
+coverage](https://codecov.io/github/billbillbilly/viewscape/branch/master/graph/badge.svg)](https://codecov.io/github/billbillbilly/viewscape?branch=master)
 <!-- badges: end -->
 
 # viewscape
@@ -50,8 +50,8 @@ are a digital surface model (DSM) and a viewpoint.
 
 For further information on the rest of the functions available in this
 package please refer to the [package
-website](needs%20to%20be%20created). For more information and examples
-of the functions check out the [package
+website](https://billbillbilly.github.io/viewscape/). For more
+information and examples of the functions check out the [package
 vignette](needs%20to%20be%20created).
 
 ## Issues and bugs
