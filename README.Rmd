@@ -2,6 +2,10 @@
 output: github_document
 ---
 
+<!-- badges: start -->
+  [![R-CMD-check](https://github.com/billbillbilly/viewscape/workflows/R-CMD-check/badge.svg)](https://github.com/billbillbilly/viewscape/actions)
+  <!-- badges: end -->
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
