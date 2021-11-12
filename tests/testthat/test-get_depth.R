@@ -3,12 +3,12 @@ context("Get_depth")
 test_that("runs correctly", {
 
   #load files
-  test_dsm <- raster::raster(system.file("test_data\\test_dsm.tif",
+  test_dsm <- raster::raster(system.file("test_data/test_dsm.tif",
                                          package ="viewscape"))
 
   #raster::plot(test_dsm)
 
-  test_viewpoint <- sf::read_sf(system.file("test_data\\test_viewpoint.shp",
+  test_viewpoint <- sf::read_sf(system.file("test_data/test_viewpoint.shp",
                                             package = "viewscape"))
 
   #plot(test_viewpoint, pch=16, col="red", add=TRUE)
@@ -23,8 +23,6 @@ test_that("runs correctly", {
 
   #plot(test_sf, pch=16, col="blue", add=TRUE)
 
-  expect_type(test_sf, "list")
-
   test_depth <- viewscape::get_depth(test_visiblepoint, test_viewpoint, 3)
-  print(test_depth)
+  expect_type(test_depth, "double")
 })
