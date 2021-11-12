@@ -12,20 +12,20 @@ samplealongline <- function(dsm, modified_dsm=NULL, dem=NULL, viewpoint, samplec
   steps = 1 + round(viewline/ min(raster::res(dsm))) #try to match the sampling size to the raster resolution
   xc = viewpoint[1] + (0:steps) * (samplecoordinates[1]-viewpoint[1])/steps #x coordinates of samples along the viewline
   yc = viewpoint[2] + (0:steps) * (samplecoordinates[2]-viewpoint[2])/steps #y coordinates of samples along the viewline
-  z_viewpoint = dsm[rts::cellFromXY(dsm,cbind(viewpoint[1],viewpoint[2]))] + 1.7*3 #the height of viewpoints based on dsm
+  z_viewpoint = dsm[raster::cellFromXY(dsm,cbind(viewpoint[1],viewpoint[2]))] + 1.7*3 #the height of viewpoints based on dsm
 
   if(is.null(modified_dsm) == FALSE){# if input modified_dsm is detected, compare the height of viewpoint on dsm to the one on dem
     if(is.null(dem) == TRUE){# request dsm
       stop("dem is NULL")
     }
-    z_viewpoint2 = dem[rts::cellFromXY(dem,cbind(viewpoint[1],viewpoint[2]))] + 1.7*3 #the height of viewpoints based on dem
+    z_viewpoint2 = dem[raster::cellFromXY(dem,cbind(viewpoint[1],viewpoint[2]))] + 1.7*3 #the height of viewpoints based on dem
     z_viewpoint_delta <- z_viewpoint - z_viewpoint2
     if(z_viewpoint_delta >= 3){# if the height of viewpoint on dsm is higher than the one on dem, modified_dsm will be used for viewshed analysis
       dsm <- modified_dsm
     }
   }
-  z_sample = dsm[rts::cellFromXY(dsm,cbind(samplecoordinates[1],samplecoordinates[2]))] #set elevation of sample
-  zc = dsm[rts::cellFromXY(dsm,cbind(xc,yc))] #extract elevation from dsm to the samples along the line based on corresponding coordinates
+  z_sample = dsm[raster::cellFromXY(dsm,cbind(samplecoordinates[1],samplecoordinates[2]))] #set elevation of sample
+  zc = dsm[raster::cellFromXY(dsm,cbind(xc,yc))] #extract elevation from dsm to the samples along the line based on corresponding coordinates
   # get elevation along the straight line at the same position of each step point
   if(z_viewpoint<z_sample){#when elevation of viewpoint is lower than sample
     zl <-  z_viewpoint + (0:steps)/steps*abs(z_viewpoint-z_sample)
