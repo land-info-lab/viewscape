@@ -33,8 +33,8 @@ get_horizontal <- function(dsm, dem, visiblepoints, type){
   if(raster::res(dsm)[1] != raster::res(dem)[1]){
     dem <- raster::resample(dem, dsm, method='ngb')
   }
-  dem_z <- dem[rts::cellFromXY(dem,cbind(visiblepoints$x,visiblepoints$y))]
-  dsm_z <- dsm[rts::cellFromXY(dsm,cbind(visiblepoints$x,visiblepoints$y))]
+  dem_z <- dem[raster::cellFromXY(dem,cbind(visiblepoints$x,visiblepoints$y))]
+  dsm_z <- dsm[raster::cellFromXY(dsm,cbind(visiblepoints$x,visiblepoints$y))]
   df <- data.frame(dem_z=dem_z, dsm_z=dsm_z)
   df$delta <- df$dem_z - df$dsm_z
   horizontal_z <- base::subset(df, df$delta<=0 , select = dem_z)
