@@ -19,6 +19,14 @@ RoxygenNote: 7.1.1
 Language: en_GB
 Suggests: 
     covr,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    raster,
+    sf,
+    rgdal,
+    qpdf,
+    rts
 Config/testthat/edition: 3
-VignetteBuilder: knitr
+VignetteBuilder: knitr,
+                 rmarkdown
