@@ -19,14 +19,14 @@
 #' @examples
 calculate_canopy <- function(data, canopy, nodata=NULL, dsm, visiblepoints){
   ##data is the input type of canopy raster.
-  #1=percentage raster (that represents the percentage of canopy area
-  #in each cell)
-  #2=binary raster (that only uses two values to represent whether canopy
+  #1=binary raster (that only uses two values to represent whether canopy
   #exists in each cell)
+  #2=percentage raster (that represents the percentage of canopy area
+  #in each cell)
 
   ##canopy is raster that only includes canopy distribution
   ##nodata is for indicateing the value of cells that don't have any canopy.
-  #This is only for data=2.
+  #This is only for data=1.
 
   ##dsm is the DSM that is used to calculate viewshed
   ##visiblepoints is the viewshed calulated by function 'calculate_viewshed'
