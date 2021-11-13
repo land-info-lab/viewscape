@@ -57,7 +57,7 @@ calculate_canopy <- function(data, canopy, nodata=NULL, dsm, visiblepoints){
   temp_raster <- raster::rasterize(canopy_df,
                                    temp_raster,
                                    "value", fun=function(x,...)sum(x))
-  extracted_canopy <- temp_raster[rts::cellFromXY(temp_raster,
+  extracted_canopy <- temp_raster[raster::cellFromXY(temp_raster,
                                                   cbind(visiblepoints$x,
                                                         visiblepoints$y))]
   extracted_canopy[is.na(extracted_canopy)] <- 0
