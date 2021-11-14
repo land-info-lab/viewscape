@@ -1,4 +1,4 @@
-context("Get_horizontal")
+context("Calculate_canopy")
 
 test_that("runs correctly", {
 
