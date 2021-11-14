@@ -28,7 +28,7 @@ calculate_landuse <- function(landuse, dsm, visiblepoints){
   if(raster::res(landuse)[1] != raster::res(dsm)[1]){
     landuse <- raster::resample(landuse, dsm, method='ngb')
   }
-  land_class <- landuse[rts::cellFromXY(landuse,
+  land_class <- landuse[raster::cellFromXY(landuse,
                                         cbind(visiblepoints$x,visiblepoints$y))]
   class_df <- data.frame(class=land_class, count=1)
   # remove NULL value and nodata(class 0 is nadata in the raster of land use)
