@@ -35,7 +35,7 @@ calculate_landuse <- function(landuse, dsm, visiblepoints){
   class_df <- base::subset(class_df,
                            is.na(class_df$class)==FALSE & class_df$class!=0,
                            select = c(class, count))
-  land_class <- count(class_df, class)
+  land_class <- dplyr::count(class_df, class)
   land_class$total<- sum(land_class$n)
   land_class$proportion <- land_class$n/land_class$total*100
   return(land_class)
