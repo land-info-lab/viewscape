@@ -13,7 +13,7 @@
 #' @param visiblepoints Dataframe. The viewshed calulated by
 #' function 'calculate_viewshed'.
 #'
-#' @return
+#' @return Numeric. The canopy area in the viewshed.
 #' @export
 #'
 #' @examples
@@ -61,6 +61,6 @@ calculate_canopy <- function(data, canopy, nodata=NULL, dsm, visiblepoints){
                                                   cbind(visiblepoints$x,
                                                         visiblepoints$y))]
   extracted_canopy[is.na(extracted_canopy)] <- 0
-  canopy_aera <- sum(extracted_canopy)
-  return(canopy_aera)
+  canopy_area <- sum(extracted_canopy)
+  return(canopy_area)
 }
