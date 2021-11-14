@@ -31,7 +31,7 @@ calculate_landcover <- function(landcover, dsm, visiblepoints,
   viewshed_extent <- raster::extent(temp_raster)
   #crop the landcover raster by the extent of the empty raster
   croped_landcover <- landcover %>% raster::crop(viewshed_extent)
-  #convert croped canopy to point matrix
+  #convert croped landcover to point matrix
   landcover_points <- raster::rasterToPoints(croped_landcover)
   #convert matrix to dataframe
   landcover_df <- data.frame(x=landcover_points[,1],
@@ -47,30 +47,41 @@ calculate_landcover <- function(landcover, dsm, visiblepoints,
                                                  cbind(visiblepoints$x,
                                                        visiblepoints$y))]
   extracted_df[is.na(extracted_df)] <- 0
-  vege_df <- base::subset(landcover_df, value == vegetation, select = x:value)
-  vege_df$value <- (raster::res(landcover)[1])^2
-  sp::coordinates(vege_df) <- ~x+y
-  vege_temp_raster <- raster::rasterize(vege_df,
-                                        temp_raster,
-                                        "value", fun=function(x,...)sum(x))
-  extracted_vege <- vege_temp_raster[raster::cellFromXY(vege_temp_raster,
-                                                     cbind(visiblepoints$x,
-                                                           visiblepoints$y))]
-  extracted_vege[is.na(extracted_vege)] <- 0
-  imper_df <- base::subset(landcover_df,
-                           value == imperviousness, select = x:value)
-  imper_df$value <- (raster::res(landcover)[1])^2
-  sp::coordinates(imper_df) <- ~x+y
-  imper_temp_raster <- raster::rasterize(imper_df,
-                                         temp_raster,
-                                         "value", fun=function(x,...)sum(x))
-  extracted_imper <- imper_temp_raster[raster::cellFromXY(imper_temp_raster,
-                                                       cbind(visiblepoints$x,
-                                                             visiblepoints$y))]
-  extracted_imper[is.na(extracted_imper)] <- 0
+  # calculate veggetation
+  if(is.null(test_landcover[landcover == vegetation])){
+    vege <- 0
+  }else{
+    vege_df <- base::subset(landcover_df, value == vegetation, select = x:value)
+    vege_df$value <- (raster::res(landcover)[1])^2
+    sp::coordinates(vege_df) <- ~x+y
+    vege_temp_raster <- raster::rasterize(vege_df,
+                                          temp_raster,
+                                          "value", fun=function(x,...)sum(x))
+    extracted_vege <- vege_temp_raster[raster::cellFromXY(vege_temp_raster,
+                                                          cbind(visiblepoints$x,
+                                                                visiblepoints$y))]
+    extracted_vege[is.na(extracted_vege)] <- 0
+    vege <- sum(extracted_vege) #area of vegetation
+  }
+  # calculate imperviousness
+  if(is.null(test_landcover[landcover == imperviousness])){
+    imper <- 0
+  }else{
+    imper_df <- base::subset(landcover_df,
+                             value == imperviousness, select = x:value)
+    imper_df$value <- (raster::res(landcover)[1])^2
+    sp::coordinates(imper_df) <- ~x+y
+    imper_temp_raster <- raster::rasterize(imper_df,
+                                           temp_raster,
+                                           "value", fun=function(x,...)sum(x))
+    extracted_imper <- imper_temp_raster[raster::cellFromXY(imper_temp_raster,
+                                                            cbind(visiblepoints$x,
+                                                                  visiblepoints$y))]
+    extracted_imper[is.na(extracted_imper)] <- 0
+    imper <- sum(extracted_imper) #area of imperviousness
+  }
+
   df_area <- sum(extracted_df) #total area
-  vege <- sum(extracted_vege) #area of vegetation
-  imper <- sum(extracted_imper) #area of imperviousness
   vege_perc <- vege/df_area*100 #percent of vegetation
   imper_perc <- imper/df_area*100 #percent of imperviousness
   return(c(vege,vege_perc,imper,imper_perc))
