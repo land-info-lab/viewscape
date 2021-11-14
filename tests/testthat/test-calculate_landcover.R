@@ -18,7 +18,7 @@ test_that("runs correctly", {
                                                      viewpoint = test_viewpoint)
 
   #run function
-  # in the sample data of landcover, value 2 is for vegetation and value 4 is for imperviousness
+  # in the sample data of land cover, value 2 is for vegetation and value 4 is for imperviousness
   test_landcover_area <- viewscape::calculate_landcover(landcover = test_landcover, dsm = test_dsm,
                                                         visiblepoints = test_visiblepoint,
                                                         vegetation = 2, imperviousness = 4)
