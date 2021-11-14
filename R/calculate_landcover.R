@@ -53,7 +53,7 @@ calculate_landcover <- function(landcover, dsm, visiblepoints,
   vege_temp_raster <- raster::rasterize(vege_df,
                                         temp_raster,
                                         "value", fun=function(x,...)sum(x))
-  extracted_vege <- vege_temp_raster[rts::cellFromXY(vege_temp_raster,
+  extracted_vege <- vege_temp_raster[raster::cellFromXY(vege_temp_raster,
                                                      cbind(visiblepoints$x,
                                                            visiblepoints$y))]
   extracted_vege[is.na(extracted_vege)] <- 0
@@ -64,7 +64,7 @@ calculate_landcover <- function(landcover, dsm, visiblepoints,
   imper_temp_raster <- raster::rasterize(imper_df,
                                          temp_raster,
                                          "value", fun=function(x,...)sum(x))
-  extracted_imper <- imper_temp_raster[rts::cellFromXY(imper_temp_raster,
+  extracted_imper <- imper_temp_raster[raster::cellFromXY(imper_temp_raster,
                                                        cbind(visiblepoints$x,
                                                              visiblepoints$y))]
   extracted_imper[is.na(extracted_imper)] <- 0
