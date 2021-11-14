@@ -1,5 +1,3 @@
-context("Get_horizontal")
-
 test_that("runs correctly", {
 
   #load files
