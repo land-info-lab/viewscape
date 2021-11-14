@@ -1,5 +1,3 @@
-context("Get_extent")
-
 test_that("runs correctly", {
 
   #load files
