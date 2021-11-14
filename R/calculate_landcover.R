@@ -43,7 +43,7 @@ calculate_landcover <- function(landcover, dsm, visiblepoints,
   df_temp_raster <- raster::rasterize(lc_df,
                                       temp_raster,
                                       "value", fun=function(x,...)sum(x))
-  extracted_df <- df_temp_raster[rts::cellFromXY(df_temp_raster,
+  extracted_df <- df_temp_raster[raster::cellFromXY(df_temp_raster,
                                                  cbind(visiblepoints$x,
                                                        visiblepoints$y))]
   extracted_df[is.na(extracted_df)] <- 0
