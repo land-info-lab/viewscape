@@ -71,13 +71,13 @@ The function of extent analysis can calculate the total area of viewshed and nee
   test_extent <- viewscape::get_extent(test_dsm, test_visiblepoint)
 ```
 
-The following function can calculate the area of ground surface or standard deviation of elevations within a viewshed. The function needs a DSM and a DEM/DTM to calculate the metrics. Additionally, the third input parameter is used to customize the output.
+The following function can calculate the area of ground surface and standard deviation of elevations within a viewshed. The function needs a DSM and a DEM/DTM to calculate the metrics. Additionally, the third input parameter is used to customize the output.
 
 ```{r eval=FALSE}
   # load DEM
   test_dem <- raster::raster(system.file("test_data/test_dem.tif",
                                          package ="viewscape"))
-  # calculate view depth within the viewshed
+  # calculate the area of ground surface and standard deviation of elevations
    test_horizontal <- viewscape::get_horizontal(test_dsm, test_dem, 
                                                 test_visiblepoint, 3)
 ```
