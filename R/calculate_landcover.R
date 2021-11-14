@@ -3,14 +3,14 @@
 #' @param landcover Raster. The raster of land cover.
 #' @param dsm Raster. The digital surface model(DSM) that is used for
 #' function 'calculate_viewshed' to calculate viewshed.
-#' @param visiblepoints Dataframe. The viewshed calulated by
+#' @param visiblepoints Dataframe. The viewshed calculated by
 #' function 'calculate_viewshed'.
 #' @param vegetation Numeric. The code of perviousness including trees or grass
 #' in the raster of land cover.
 #' @param imperviousness Numeric. The code of imperviousness including
-#' buildings, or parkings or paths/roads in the raster of land cover.
+#' buildings, or parking or paths/roads in the raster of land cover.
 #'
-#' @return Vector. Area (sq ft) of perviousness and imperviousness. Percentages
+#' @return Vector. Area of perviousness and imperviousness. Percentages
 #' of perviousness and imperviousness.
 #' @export
 #'
@@ -19,7 +19,7 @@ calculate_landcover <- function(landcover, dsm, visiblepoints,
                                 vegetation, imperviousness){
   ##landcover is raster of land cover
   ##dsm is the DSM that is used to calculate viewshed
-  ##visiblepoints is the viewshed calulated by function 'dsm2viewshed'
+  ##visiblepoints is the viewshed calculated by function 'calculate_viewshed'
   ##vegetation and imperviousness are codes of land cover type
   #in land cover raster
 
@@ -31,7 +31,7 @@ calculate_landcover <- function(landcover, dsm, visiblepoints,
   viewshed_extent <- raster::extent(temp_raster)
   #crop the landcover raster by the extent of the empty raster
   croped_landcover <- landcover %>% raster::crop(viewshed_extent)
-  #convert croped landcover to point matrix
+  #convert cropped landcover to point matrix
   landcover_points <- raster::rasterToPoints(croped_landcover)
   #convert matrix to dataframe
   landcover_df <- data.frame(x=landcover_points[,1],
