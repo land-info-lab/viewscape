@@ -14,7 +14,7 @@ test_that("runs correctly", {
 
   #run function
   test_function <- viewscape::calculate_viewshed(dsm = test_dsm,
-                                                 viewpoint = test_viewpoint)
+                                                 viewpoint = test_viewpoint, h = 1)
 
   expect_output(str(test_function), "data.frame")
 
