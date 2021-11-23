@@ -6,8 +6,9 @@
 #' @param dem the raster of terrain without any vertical object. If input of
 #' dsm is already digital elevation model, this argument can be ignored
 #' @param viewpoint a matrix including x,y coordinates
-#' @param h the height of viewpoint. the unit of input should be meter.
-#' @param sample_points a matrix of points that are converted from DSM.
+#' @param h1 the height of viewpoint. the unit of input should be meter.
+#' @param h2 is the height of sample points. the unit of input should be meter
+#' sample_points a matrix of points that are converted from DSM.
 #' This can be ignored. (it is defaulted as NULL)
 #' @param r the radius for viewshed analysis. (it is defaulted as NULL)
 #'
@@ -20,8 +21,9 @@ calculate_viewshed <- function(dsm,
                                under=NULL,
                                dem=NULL,
                                viewpoint,
-                               h = 1.7,
-                               sample_points=NULL,
+                               h1 = 1.7,
+                               h2 = 0,
+                               #sample_points=NULL,
                                r = NULL){
 
   # calculate viewshed based on a certain viewpoint
@@ -34,16 +36,19 @@ calculate_viewshed <- function(dsm,
   #is already digital elevation model, this arguement can be ignored
 
   ## viewpoint is a matrix including x,y coordinates
-  ## h is the height of viewpoint. the unit of input should be meter
+  ## h1 is the height of viewpoint. the unit of input should be meter
+  ## h2 is the height of sample points. the unit of input should be meter
   ## sample_points is a matrix of points that are converted from DSM. This can
   #be ignored. (it is defaulted as NULL)
 
   ## r is the radius for viewshed analysis. (it is defaulted as NULL)
 
   if(is.null(r) == TRUE){
-    if(is.null(sample_points) == TRUE){
-      sample_points <- raster::rasterToPoints(dsm) #convert raster to matrix
-    }
+    # sample_points is a matrix of points that are converted from DSM
+    sample_points <- raster::rasterToPoints(dsm)
+    #if(is.null(sample_points) == TRUE){
+      #sample_points <- raster::rasterToPoints(dsm) #convert raster to matrix
+    #}
 
   }else{
     # create an extent to crop input raster
@@ -60,9 +65,11 @@ calculate_viewshed <- function(dsm,
       under <- raster::crop(under, raster::extent(subarea))
     }
 
-    if(is.null(sample_points) == TRUE|is.null(sample_points) == FALSE){
-      sample_points <- raster::rasterToPoints(subdsm) #convert raster to matrix
-    }
+    # sample_points is a matrix of points that are converted from DSM
+    sample_points <- raster::rasterToPoints(subdsm) #convert raster to matrix
+    #if(is.null(sample_points) == TRUE|is.null(sample_points) == FALSE){
+      #sample_points <- raster::rasterToPoints(subdsm) #convert raster to matrix
+    #}
 
   }
 
@@ -78,7 +85,8 @@ calculate_viewshed <- function(dsm,
                               modified_dsm = under,
                               dem = dem,
                               viewpoint,
-                              h,
+                              h1,
+                              h2,
                               samplecoordinates) #check visibility
 
     if(is.null(visibles) == FALSE){# if the position of sample can be seen
