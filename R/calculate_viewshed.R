@@ -6,7 +6,7 @@
 #' @param dem the raster of terrain without any vertical object. If input of
 #' dsm is already digital elevation model, this argument can be ignored
 #' @param viewpoint a matrix including x,y coordinates
-#' @param offset_veiwpoint the height offset at the viewpoint. the unit of input should be meter.
+#' @param offset_viewpoint the height offset at the viewpoint. the unit of input should be meter.
 #' @param offset_samples the height offset at all sample points. the unit of input should be meter
 #' sample_points a matrix of points that are converted from DSM.
 #' This can be ignored. (it is defaulted as NULL)
@@ -21,7 +21,7 @@ calculate_viewshed <- function(dsm,
                                under=NULL,
                                dem=NULL,
                                viewpoint,
-                               offset_veiwpoint = 1.7,
+                               offset_viewpoint = 1.7,
                                offset_samples = 0,
                                #sample_points=NULL,
                                r = NULL){
@@ -36,8 +36,8 @@ calculate_viewshed <- function(dsm,
   #is already digital elevation model, this arguement can be ignored
 
   ## viewpoint is a matrix including x,y coordinates
-  ## h1 is the height of viewpoint. the unit of input should be meter
-  ## h2 is the height of sample points. the unit of input should be meter
+  ## offset_viewpoint is the height of viewpoint. the unit of input should be meter
+  ## offset_samples is the height of sample points. the unit of input should be meter
   ## sample_points is a matrix of points that are converted from DSM. This can
   #be ignored. (it is defaulted as NULL)
 
@@ -85,8 +85,8 @@ calculate_viewshed <- function(dsm,
                               modified_dsm = under,
                               dem = dem,
                               viewpoint,
-                              h1,
-                              h2,
+                              offset_viewpoint,
+                              offset_samples,
                               samplecoordinates) #check visibility
 
     if(is.null(visibles) == FALSE){# if the position of sample can be seen

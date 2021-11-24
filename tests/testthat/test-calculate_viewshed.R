@@ -1,10 +1,10 @@
 test_that("runs correctly", {
 
   #load files
-  test_dsm <- raster::raster(system.file("test_data/test_dsm.tif",
+  test_dsm <- raster::raster(system.file("tests\\testthat\\test_dsm.tif",
                                          package ="viewscape"))
 
-  test_viewpoint <- sf::read_sf(system.file("test_data/test_viewpoint.shp",
+  test_viewpoint <- sf::read_sf(system.file("tests\\testthat\\test_viewpoint.shp",
                                                package = "viewscape"))
 
 

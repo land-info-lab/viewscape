@@ -1,5 +1,3 @@
-context("Get_depth")
-
 test_that("runs correctly", {
 
   #load files

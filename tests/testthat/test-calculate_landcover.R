@@ -1,10 +1,18 @@
 test_that("runs correctly", {
 
   #load files
+
+  defaultW <- getOption("warn") #suppress read raster warning
+
+  options(warn = -1)
+
   test_dsm <- raster::raster(system.file("test_data/test_dsm.tif",
                                          package ="viewscape"))
+
   test_landcover <- raster::raster(system.file("test_data/test_landcover.tif",
                                             package ="viewscape"))
+
+  options(warn = defaultW) #turn warnings back on
 
   test_viewpoint <- sf::read_sf(system.file("test_data/test_viewpoint.shp",
                                             package = "viewscape"))
