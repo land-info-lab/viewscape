@@ -6,8 +6,8 @@
 #' @param dem the raster of terrain without any vertical object. If input of
 #' dsm is already digital elevation model, this argument can be ignored
 #' @param viewpoint a matrix including x,y coordinates
-#' @param h1 the height of viewpoint. the unit of input should be meter.
-#' @param h2 is the height of sample points. the unit of input should be meter
+#' @param offset_veiwpoint the height offset at the viewpoint. the unit of input should be meter.
+#' @param offset_samples the height offset at all sample points. the unit of input should be meter
 #' sample_points a matrix of points that are converted from DSM.
 #' This can be ignored. (it is defaulted as NULL)
 #' @param r the radius for viewshed analysis. (it is defaulted as NULL)
@@ -21,8 +21,8 @@ calculate_viewshed <- function(dsm,
                                under=NULL,
                                dem=NULL,
                                viewpoint,
-                               h1 = 1.7,
-                               h2 = 0,
+                               offset_veiwpoint = 1.7,
+                               offset_samples = 0,
                                #sample_points=NULL,
                                r = NULL){
 
