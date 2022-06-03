@@ -23,7 +23,7 @@ pacakge can currently be downloaded via github.
 ``` r
 library(devtools)
 
-install_github("billbillbilly/viewscape")
+install_github("land-info-lab/viewscape")
 ```
 
 The basic viewshed analysis can be accessed through calling the
