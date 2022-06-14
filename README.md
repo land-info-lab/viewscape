@@ -1,9 +1,9 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/billbillbilly/viewscape/workflows/R-CMD-check/badge.svg)](https://github.com/billbillbilly/viewscape/actions)
+[![R-CMD-check](https://github.com/land-info-lab/viewscape/workflows/R-CMD-check/badge.svg)](https://github.com/land-info-lab/viewscape/actions)
 [![Codecov test
-coverage](https://codecov.io/github/billbillbilly/viewscape/branch/master/graph/badge.svg)](https://codecov.io/github/billbillbilly/viewscape?branch=master)
+coverage](https://codecov.io/github/land-info-lab/viewscape/branch/master/graph/badge.svg)](https://codecov.io/github/land-info-lab/viewscape?branch=master)
 <!-- badges: end -->
 
 # viewscape
@@ -23,7 +23,7 @@ pacakge can currently be downloaded via github.
 ``` r
 library(devtools)
 
-install_github("billbillbilly/viewscape")
+install_github("land-info-lab/viewscape")
 ```
 
 The basic viewshed analysis can be accessed through calling the
