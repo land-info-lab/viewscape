@@ -42,7 +42,7 @@ calculate_viewshed <- function(dsm,
   #be ignored. (it is defaulted as NULL)
 
   ## r is the radius for viewshed analysis. (it is defaulted as NULL)
-
+  start_time <- Sys.time()
   if(is.null(r) == TRUE){
     # sample_points is a matrix of points that are converted from DSM
     sample_points <- raster::rasterToPoints(dsm)
@@ -88,7 +88,12 @@ calculate_viewshed <- function(dsm,
                               offset_viewpoint,
                               offset_samples,
                               samplecoordinates) #check visibility
-
+    end[i] <- Sys.time() #end time
+    time <- Sys.time() - start_time
+    cat("\r", paste("Completed Progress: ", i, "/",
+                    nrow(sample_points), " (",
+                    i/nrow(sample_points)*100, "%)",
+                    " Execution time:", time)) #check progress
     if(is.null(visibles) == FALSE){# if the position of sample can be seen
       #add this position into the matrix
       visiblepoints <- rbind(visiblepoints, visibles)
@@ -105,6 +110,9 @@ calculate_viewshed <- function(dsm,
 
   # remove the column of elevation for conversion of spatial point
   visible_coordinates <- visiblepoints[-c(3)]
+  end_time <- Sys.time()
+  time_taken <- end_time - start_time
+  print(time_taken)
   return(visible_coordinates)
 
 }
