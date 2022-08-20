@@ -72,7 +72,7 @@ visiblesample <- function(dsm, modified_dsm, dem, viewpoint, offset_viewpoint, o
   }
 }
 
-calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoint, offset_viewpoint=1.7, offset_samples=0, sample_points=NULL, r = NULL){
+deprecated_calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoint, offset_viewpoint=1.7, offset_samples=0, sample_points=NULL, r = NULL){
   # calculate viewshed based on a certain viewpoint
 
   # dsm is raster layer of digital surface model/digital elevation model
@@ -131,7 +131,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoint, offset_view
   return(visible_coordinates)
 }
 
-paral_calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoints, offset_viewpoint=1.7, offset_samples=0, sample_points=NULL, r = NULL,
+calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoints, offset_viewpoint=1.7, offset_samples=0, sample_points=NULL, r = NULL,
                                      multiviewpoints = FALSE){
   # calculate viewshed based on a certain viewpoint
 
