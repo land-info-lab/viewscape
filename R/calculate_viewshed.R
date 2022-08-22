@@ -17,6 +17,14 @@
 #' @return Dataframe or list. The output dataframe includes x anf y coordinates of visible
 #' locations of a single viewpoint. The output list includes x anf y coordinates of visible
 #' locations of each input viewpoints.
+#'
+#' @details Parallel computing used the functions from BiocParallel package
+#'
+#' @references Martin Morgan, Jiefei Wang, Valerie Obenchain, Michel Lang,
+#' Ryan Thompson and Nitesh Turaga (2021). BiocParallel: Bioconductor facilities
+#' for parallel evaluation. R package version 1.28.3.
+#' https://github.com/Bioconductor/BiocParallel
+#'
 #' @export
 #'
 #' @examples
