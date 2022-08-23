@@ -30,7 +30,7 @@
 #' @examples
 #'
 
-paral_calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
+calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
                                      viewpoints, offset_viewpoint=1.7,
                                      offset_samples=0, sample_points=NULL,
                                      r = NULL,

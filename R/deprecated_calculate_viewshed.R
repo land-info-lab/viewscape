@@ -1,4 +1,4 @@
-#' calculate_viewshed
+#' deprecated_calculate_viewshed
 #'
 #' @param dsm the raster layer of digital surface model/digital elevation model
 #' @param under the raster layer of digital surface model where the elevation
@@ -17,7 +17,7 @@
 #'
 #' @examples
 #'
-calculate_viewshed <- function(dsm,
+deprecated_calculate_viewshed <- function(dsm,
                                under=NULL,
                                dem=NULL,
                                viewpoint,
