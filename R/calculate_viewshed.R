@@ -1,4 +1,4 @@
-#' paral_calculate_viewshed
+#' calculate_viewshed
 #'
 #' @param dsm the raster layer of digital surface model/digital elevation model
 #' @param under the raster layer of digital surface model where the elevation
