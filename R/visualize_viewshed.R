@@ -17,7 +17,7 @@
 #'
 
 visualize_viewshed <- function(viewshed, dsm = NULL , plot = "polygon", output = FALSE, type = NULL){
-  vpt <- sp::SpatialPoints(test_function)
+  vpt <- sp::SpatialPoints(viewshed)
   # rasterize and vectorize the viewshed
   if (is.null(dsm) == FALSE){
     mask_v <- raster::mask(dsm, vpt)
