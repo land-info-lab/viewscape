@@ -12,10 +12,10 @@ samplealongline <- function(dsm, modified_dsm=NULL, dem=NULL, viewpoint, offset_
   # offset_samples is the height of sample coordinates. the unit of input should be meter
   # samplecoordinates is the coordinates of a certain cell(point) of a DSM
 
-  if(grepl("units=m",test_dsm@crs@projargs, fix = TRUE)){ # if unit is meter
+  if(grepl("units=m",dsm@crs@projargs, fix = TRUE)){ # if unit is meter
     offset_viewpoint <- offset_viewpoint
     offset_samples <- offset_samples
-  }else if(grepl("units=ft",test_dsm@crs@projargs, fix = TRUE)){ # if unit is feet
+  }else if(grepl("units=ft",dsm@crs@projargs, fix = TRUE)){ # if unit is feet
     offset_viewpoint <- offset_viewpoint * 3.281
     offset_samples <- offset_samples * 3.281
   }
