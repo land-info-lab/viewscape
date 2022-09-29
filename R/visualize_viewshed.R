@@ -41,7 +41,7 @@ visualize_viewshed <- function(viewshed, dsm = NULL , plot = "polygon", output =
   if (output == TRUE && is.null(type) == FALSE){
     if (type == "raster"){
       out <- mask_v
-    }else if ("polygon"){
+    }else if (type == "polygon"){
       polygon_v <- raster::rasterToPolygons(mask_v)
       polygon_v <- raster::buffer(polygon_v, width = 0.0001, dissolve = TRUE)
       out <- polygon_v

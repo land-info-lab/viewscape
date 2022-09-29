@@ -173,6 +173,8 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
         print("There is no visible point detected from this viewpoint")
       }else{
         viewscape_v <- c(viewscape_v, visible_coordinates)
+        colnames(viewscape_v)[1] <- 'x'
+        colnames(viewscape_v)[2] <- 'y'
       }
       return(viewscape_v)
     }
