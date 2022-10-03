@@ -9,8 +9,9 @@ Author@R: c(person("Xiaohao", "Yang", role = c("aut", "cre"),
            person("Mark", "Lindquist", role = c("aut")))
 Author: Xiaohao Yang
 Maintainer: Xiaohao Yang <xiaohaoy@umich.edu>
-Description: Calculates the viewable area for given a point and a digital 
+Description: Calculates the viewable area for given a point/multiple points and a digital 
     elevation model.
+Depends: R (>= 4.2)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -26,7 +27,11 @@ Suggests:
     sf,
     rgdal,
     qpdf,
-    rts
+    rts,
+    BiocManager,
+    rasterVis
 Config/testthat/edition: 3
 VignetteBuilder: knitr,
                  rmarkdown
+Remotes:
+  github::https://github.com/Bioconductor/BiocParallel.git
