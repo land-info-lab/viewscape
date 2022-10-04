@@ -27,7 +27,7 @@ Suggests:
 Config/testthat/edition: 3
 VignetteBuilder: knitr,
                  rmarkdown
-Remotes: github::Bioconductor/BiocParallel
+Remotes: bioc::BiocParallel
 Imports: 
     sf,
     raster,
