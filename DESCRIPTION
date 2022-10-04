@@ -27,11 +27,12 @@ Suggests:
 Config/testthat/edition: 3
 VignetteBuilder: knitr,
                  rmarkdown
-Remotes: bioc::BiocParallel
+biocViews:
 Imports: 
     sf,
     raster,
     rgdal,
     BiocManager,
     rasterVis,
-    rts
+    rts,
+    BiocParallel
