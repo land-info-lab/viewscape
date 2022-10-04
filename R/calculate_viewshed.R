@@ -49,22 +49,10 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
   #This can be ignored. (it is defaulted as NULL)
   # r is the radius for viewshed analysis. (it is defaulted as NULL)
 
-  if (require(BiocManager)==TRUE){
-    require(BiocManager)
-  }else{
-    install.packages("BiocManager")
-  }
-
-  if (require(BiocParallel)==TRUE){
-    require(BiocParallel)
-  }else{
-    install.packages("BiocParallel")
-  }
-
-  if (require(parallel)==TRUE){
-    require(parallel)
-  }else{
-    install.packages("parallel")
+  if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
+    type <- "FORK"
+  }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
+    type <- "SOCK"
   }
 
   if (multiviewpoints == FALSE){
@@ -91,7 +79,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
       }
     }
 
-    bpparam <- BiocParallel::SnowParam(workers=detectCores(), type="FORK")
+    bpparam <- BiocParallel::SnowParam(workers=detectCores(), type=type)
     visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
                                                   FUN = visiblesample,
                                                   dsm = dsm, modified_dsm=under,
@@ -151,7 +139,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
         }
       }
 
-      bpparam <- BiocParallel::SnowParam(workers=detectCores(), type="FORK")
+      bpparam <- BiocParallel::SnowParam(workers=detectCores(), type=type)
       visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
                                                     FUN = visiblesample,
                                                     dsm = dsm, modified_dsm=under,
