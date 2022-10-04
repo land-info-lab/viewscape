@@ -28,7 +28,7 @@ Config/testthat/edition: 3
 VignetteBuilder: knitr,
                  rmarkdown
 Remotes:
-  land-info-lab/viewscape
+  Bioconductor/BiocParallel
 Imports: 
     sf,
     raster,
