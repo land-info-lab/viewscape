@@ -140,11 +140,13 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
       }
 
       bpparam <- BiocParallel::SnowParam(workers=parallel::detectCores(), type=type)
-      visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
+      suppressWarnings(
+        visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
                                                     FUN = visiblesample,
                                                     dsm = dsm, modified_dsm=under,
                                                     dem=dem, viewpoint = viewpoint,
                                                     BPPARAM=bpparam)
+        )
 
       visible_coordinates <- as.matrix(visible_coordinates)
       visible_coordinates <- visible_coordinates[visible_coordinates[,1]!="NULL"]
