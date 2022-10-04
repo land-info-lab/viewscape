@@ -173,7 +173,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoints, offset_vie
       }
     }
 
-    bpparam <- BiocParallel::SnowParam(workers=detectCores(), type=type)
+    bpparam <- BiocParallel::SnowParam(workers=parallel::detectCores(), type=type)
     visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
                                                   FUN = visiblesample,
                                                   dsm = dsm, modified_dsm=under,
@@ -228,7 +228,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoints, offset_vie
         }
       }
 
-      bpparam <- BiocParallel::SnowParam(workers=detectCores(), type=type)
+      bpparam <- BiocParallel::SnowParam(workers=parallel::detectCores(), type=type)
       visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
                                                     FUN = visiblesample,
                                                     dsm = dsm, modified_dsm=under,
