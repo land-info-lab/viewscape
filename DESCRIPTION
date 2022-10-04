@@ -23,15 +23,16 @@ Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
-    raster,
-    sf,
-    rgdal,
-    qpdf,
-    rts,
-    BiocManager,
-    rasterVis
+    qpdf
 Config/testthat/edition: 3
 VignetteBuilder: knitr,
                  rmarkdown
 Remotes:
   github::https://github.com/Bioconductor/BiocParallel.git
+Imports: 
+    sf,
+    raster,
+    rgdal,
+    BiocManager,
+    rasterVis,
+    rts
