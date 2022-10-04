@@ -1,9 +1,9 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/land-info-lab/viewscape/workflows/R-CMD-check/badge.svg)](https://github.com/land-info-lab/viewscape/actions)
+[![R-CMD-check](https://github.com/billbillbilly/viewscape/workflows/R-CMD-check/badge.svg)](https://github.com/billbillbilly/viewscape/actions)
 [![Codecov test
-coverage](https://codecov.io/github/land-info-lab/viewscape/branch/master/graph/badge.svg)](https://codecov.io/github/land-info-lab/viewscape?branch=master)
+coverage](https://codecov.io/github/billbillbilly/viewscape/branch/master/graph/badge.svg)](https://codecov.io/github/billbillbilly/viewscape?branch=master)
 <!-- badges: end -->
 
 # viewscape
@@ -32,11 +32,11 @@ are a digital surface model (DSM) and a viewpoint.
 
 ``` r
   #Load in DSM
-  test_dsm <- raster::raster(system.file("test_data\\test_dsm.tif",
+  test_dsm <- raster::raster(system.file("extdata\\test_dsm.tif",
                                          package ="viewscape"))
 
   #Load in the viewpoint
-  test_viewpoint <- sf::read_sf(system.file("test_data\\test_viewpoint.shp",
+  test_viewpoint <- sf::read_sf(system.file("extdata\\test_viewpoint.shp",
                                                package = "viewscape"))
 
   #Transform viewpoint from shape file to coordinates 
