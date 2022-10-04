@@ -28,7 +28,7 @@ Config/testthat/edition: 3
 VignetteBuilder: knitr,
                  rmarkdown
 Remotes:
-  github::https://github.com/Bioconductor/BiocParallel.git
+  land-info-lab/viewscape
 Imports: 
     sf,
     raster,
