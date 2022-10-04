@@ -35,4 +35,5 @@ Imports:
     BiocManager,
     rasterVis,
     rts,
-    BiocParallel
+    BiocParallel,
+    parallel
