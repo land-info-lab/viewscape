@@ -112,7 +112,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
     # set a new empty vector
     viewscape_v <- c()
 
-    for(i in 1:length(viewpoints)){
+    for(i in 1:length(viewpoints[,1])){
       viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
       start_time <- Sys.time()
       if(is.null(r) == TRUE){
