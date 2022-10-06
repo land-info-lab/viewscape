@@ -31,7 +31,7 @@ The goal of viewscape package is to provide an accessible method of carrying out
 ```{r eval=FALSE}
 library(devtools)
 
-install_github("billbillbilly/viewscape")
+install_github("land-info-lab/viewscape")
 
 ```
 
@@ -39,11 +39,11 @@ The basic viewshed analysis can be accessed through calling the `calculate_views
 
 ```{r eval=FALSE}
   #Load in DSM
-  test_dsm <- raster::raster(system.file("test_data\\test_dsm.tif",
+  test_dsm <- raster::raster(system.file("extdata\\test_dsm.tif",
                                          package ="viewscape"))
 
   #Load in the viewpoint
-  test_viewpoint <- sf::read_sf(system.file("test_data\\test_viewpoint.shp",
+  test_viewpoint <- sf::read_sf(system.file("extdata\\test_viewpoint.shp",
                                                package = "viewscape"))
 
   #Transform viewpoint from shape file to coordinates 
