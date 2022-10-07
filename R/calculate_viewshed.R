@@ -142,10 +142,12 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
       bpparam <- BiocParallel::SnowParam(workers=parallel::detectCores(), type=type)
       suppressWarnings(
         visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
-                                                    FUN = visiblesample,
-                                                    dsm = dsm, modified_dsm=under,
-                                                    dem=dem, viewpoint = viewpoint,
-                                                    BPPARAM=bpparam)
+                                                      FUN = visiblesample,
+                                                      dsm = dsm, modified_dsm=under,
+                                                      dem=dem, viewpoint = viewpoint,
+                                                      offset_viewpoint=offset_viewpoint,
+                                                      offset_samples=offset_samples,
+                                                      BPPARAM=bpparam)
         )
 
       visible_coordinates <- as.matrix(visible_coordinates)
@@ -162,11 +164,11 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
       if(length(visible_coordinates[,1]) < 1){
         print("There is no visible point detected from this viewpoint")
       }else{
-        viewscape_v <- c(viewscape_v, visible_coordinates)
-        colnames(viewscape_v)[1] <- 'x'
-        colnames(viewscape_v)[2] <- 'y'
+        colnames(visible_coordinates)[1] <- 'x'
+        colnames(visible_coordinates)[2] <- 'y'
+        viewscape_v <- c(viewscape_v, list(visible_coordinates))
       }
-      return(viewscape_v)
     }
+    return(viewscape_v)
   }
 }

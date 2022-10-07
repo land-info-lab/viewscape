@@ -162,6 +162,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoints, offset_vie
       pdf[1,"y"] <- viewpoints[2]
       p <- sp::SpatialPoints(pdf)
       p <- sf::st_as_sf(p)
+      sf::st_crs(p) <- raster::crs(dsm)
       subarea <- sf::st_buffer(p, r)
       subdsm <- raster::crop(dsm, raster::extent(subarea))
       dsm <- subdsm
@@ -219,6 +220,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoints, offset_vie
         pdf[1,"y"] <- viewpoint[2]
         p <- sp::SpatialPoints(pdf)
         p <- sf::st_as_sf(p)
+        sf::st_crs(p) <- raster::crs(dsm)
         subarea <- sf::st_buffer(p, r)
         subdsm <- raster::crop(dsm, raster::extent(subarea))
         dsm <- subdsm
@@ -231,12 +233,14 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoints, offset_vie
       }
 
       bpparam <- BiocParallel::SnowParam(workers=parallel::detectCores(), type=type)
-      visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
-                                                    FUN = visiblesample,
-                                                    dsm = dsm, modified_dsm=under,
-                                                    dem=dem, viewpoint = viewpoint,
-                                                    BPPARAM=bpparam)
-
+      suppressWarnings(visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
+                                                                     FUN = visiblesample,
+                                                                     dsm = dsm, modified_dsm=under,
+                                                                     dem=dem, viewpoint = viewpoint,
+                                                                     offset_viewpoint=offset_viewpoint,
+                                                                     offset_samples=offset_samples,
+                                                                     BPPARAM=bpparam)
+                       )
       visible_coordinates <- as.matrix(visible_coordinates)
       visible_coordinates <- visible_coordinates[visible_coordinates[,1]!="NULL"]
       #convert list to matrix
@@ -248,9 +252,11 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoints, offset_vie
       if(length(visible_coordinates[,1]) < 1){
         print("There is no visible point detected from this viewpoint")
       }else{
-        viewscape_v <- c(viewscape_v, visible_coordinates)
+        colnames(visible_coordinates)[1] <- 'x'
+        colnames(visible_coordinates)[2] <- 'y'
+        viewscape_v <- c(viewscape_v, list(visible_coordinates))
       }
-      return(viewscape_v)
     }
+    return(viewscape_v)
   }
 }
