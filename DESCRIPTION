@@ -38,5 +38,3 @@ Imports:
     BiocParallel,
     parallel
 
-Remotes:
-    github::https://github.com/Bioconductor/BiocParallel.git
