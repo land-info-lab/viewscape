@@ -37,3 +37,6 @@ Imports:
     rts,
     BiocParallel,
     parallel
+
+Remotes:
+    github::https://github.com/Bioconductor/BiocParallel.git
