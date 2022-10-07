@@ -201,6 +201,8 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoints, offset_vie
     end_time <- Sys.time()
     time_taken <- end_time - start_time
     print(time_taken)
+    colnames(visible_coordinates)[1] <- 'x'
+    colnames(visible_coordinates)[2] <- 'y'
     return(visible_coordinates)
   }else if (multiviewpoints == TRUE){
     # set a new empty vector
