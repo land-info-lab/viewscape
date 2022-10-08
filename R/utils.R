@@ -210,7 +210,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoints, offset_vie
 
     for(i in 1:length(viewpoints[,1])){
       viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
-      start_time <- Sys.time()
+
       if(is.null(r) == TRUE){
         if(is.null(sample_points) == TRUE){
           sample_points <- raster::rasterToPoints(dsm) #convert raster to matrix
@@ -225,7 +225,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoints, offset_vie
         sf::st_crs(p) <- raster::crs(dsm)
         subarea <- sf::st_buffer(p, r)
         subdsm <- raster::crop(dsm, raster::extent(subarea))
-        dsm <- subdsm
+
         if(is.null(under) == FALSE){
           under <- raster::crop(under, raster::extent(subarea))
         }
@@ -237,7 +237,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL, viewpoints, offset_vie
       bpparam <- BiocParallel::SnowParam(workers=parallel::detectCores(), type=type)
       suppressWarnings(visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
                                                                      FUN = visiblesample,
-                                                                     dsm = dsm, modified_dsm=under,
+                                                                     dsm = subdsm, modified_dsm=under,
                                                                      dem=dem, viewpoint = viewpoint,
                                                                      offset_viewpoint=offset_viewpoint,
                                                                      offset_samples=offset_samples,

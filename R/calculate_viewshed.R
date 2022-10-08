@@ -70,7 +70,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
       p <- sf::st_as_sf(p)
       subarea <- sf::st_buffer(p, r)
       subdsm <- raster::crop(dsm, raster::extent(subarea))
-      dsm <- subdsm
+
       if(is.null(under) == FALSE){
         under <- raster::crop(under, raster::extent(subarea))
       }
@@ -82,7 +82,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
     bpparam <- BiocParallel::SnowParam(workers=parallel::detectCores(), type=type)
     visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
                                                   FUN = visiblesample,
-                                                  dsm = dsm, modified_dsm=under,
+                                                  dsm = subdsm, modified_dsm=under,
                                                   dem=dem, viewpoint = viewpoints,
                                                   offset_viewpoint=offset_viewpoint,
                                                   offset_samples=offset_samples,
@@ -131,7 +131,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
         p <- sf::st_as_sf(p)
         subarea <- sf::st_buffer(p, r)
         subdsm <- raster::crop(dsm, raster::extent(subarea))
-        dsm <- subdsm
+
         if(is.null(under) == FALSE){
           under <- raster::crop(under, raster::extent(subarea))
         }
@@ -145,7 +145,7 @@ calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
       suppressWarnings(
         visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
                                                       FUN = visiblesample,
-                                                      dsm = dsm, modified_dsm=under,
+                                                      dsm = subdsm, modified_dsm=under,
                                                       dem=dem, viewpoint = viewpoint,
                                                       offset_viewpoint=offset_viewpoint,
                                                       offset_samples=offset_samples,
