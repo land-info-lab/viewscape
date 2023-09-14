@@ -55,7 +55,7 @@ NumericMatrix viewshedCompute(NumericVector viewpoint, NumericVector x, NumericV
   int counter = 0;
   for (int i = 0; i < pointNumber; i++) {
     float viewline = sqrt(numericSquare(viewpoint[1]-x[i]) + numericSquare(viewpoint[2]-y[i]));
-    int steps = 1 + round(viewline/ resolution);
+    int steps = 1 + round(viewline/resolution);
     NumericVector zl;
     IntegerVector sequence = seq(0, steps);
     NumericVector step = as<NumericVector>(sequence);
