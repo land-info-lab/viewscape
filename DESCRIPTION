@@ -36,5 +36,6 @@ Imports:
     rasterVis,
     rts,
     BiocParallel,
-    parallel
+    parallel,
+    Rcpp
 
