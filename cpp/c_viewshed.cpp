@@ -1,76 +1,149 @@
 #include "iostream"
+#include <fstream>
+#include <string>
 #include <Rcpp.h>
+
 using namespace Rcpp;
 
 //[[Rcpp::export]]
-float numericSquare(float num) {
+int numericSquare(int num) {
   return num*num ;
 }
-//[[Rcpp::export]]
-NumericVector vectorSquare(NumericVector vector) {
-  return vector*vector;
-}
-//[[Rcpp::export]]
-NumericMatrix c_viewshed(NumericVector viewpoint, NumericVector x, NumericVector y, NumericVector z, int resolution) {
-  Rcout << "Starting computations ... ";
 
-  int pointNumber = x.size();
-  NumericMatrix visiblePoints(pointNumber, 3);
+//[[Rcpp::export]]
+NumericMatrix visibleLabel(
+    const NumericVector viewpoint,
+    const NumericMatrix dsm,
+    const int pointNumber,
+    const int resolution) {
 
-  float viewline;
-  int steps;
-  int index;
-  int counter = 0;
+  // const int pointNumber = x.size();
   NumericVector zl;
   NumericVector xl;
   NumericVector yl;
-  NumericVector xdistances(pointNumber);
-  NumericVector ydistances(pointNumber);
-  NumericVector distances(pointNumber);
-  NumericVector tempPt(3);
-  NumericVector zDelta;
-  IntegerVector ids;
-  NumericVector pt;
+  // //float label = Rcpp::as<float>(z);
+  // float * dis = new float[pointNumber];
+  // float * xa = new float[pointNumber];
+  // float * ya = new float[pointNumber];
+  // float * za = new float[pointNumber];//
+  //double *d1 = new double[1];//
+  //double *d2 = new double[1];//
 
-  for (int i = 0; i < pointNumber; i++) {
-    //Rcout << z[i] << "/  ";
-    viewline = sqrt(numericSquare(viewpoint[0]-x[i]) + numericSquare(viewpoint[1]-y[i]));
-    steps = 1 + round(viewline/resolution);
-    NumericVector sequence(steps);
-    std::iota(sequence.begin(), sequence.end(), 0);
-    xl = viewpoint[0] + sequence * (x[i]-viewpoint[0])/steps;
-    yl = viewpoint[1] + sequence * (y[i]-viewpoint[1])/steps;
+  const int rows = dsm.rows();
+  const int cols = dsm.cols();
 
-    if(viewpoint[2]<z[i]) {
-      zl = viewpoint[2] + sequence/steps*fabs(viewpoint[2]-z[i]);
-    } else if (viewpoint[2]>z[i]) {
-      zl = viewpoint[2] - sequence/steps*fabs(viewpoint[2]-z[i]);
-    } else if (viewpoint[2]==z[i]) {
-      zl = viewpoint[2] + 0*sequence;
-    }
+  //int viewline;
+  int steps;
+  // float * it;
+  //int index = 0;
 
-    NumericMatrix tempMatrix(steps, 3);
-    for (int j = 0; j < steps; j++) {
-      xdistances = (x-xl[j])*(x-xl[j]);
-      ydistances = (y-yl[j])*(y-yl[j]);
-      distances = xdistances + ydistances;
-      NumericVector::iterator it = std::min_element(distances.begin(),distances.end());
-      index = std::distance(distances.begin(), it);
-      tempPt = {x[index], y[index], z[index]};
-      tempMatrix.row(j) = tempPt;
-    }
+  NumericMatrix visible(rows, cols);
 
-    zDelta = zl - tempMatrix(_, 2);
-    ids = seq(0, zDelta.size()-1);
-    zDelta = zDelta[ids];
-    if (min(zDelta) >= 0) {
-      counter ++;
-      pt = {x[i], y[i], z[i]};
-      visiblePoints(counter-1 , _) = pt;
-    }
+  // for(int k = 0; k < pointNumber; ++k) {
+  //   xa[k] = x[k];
+  //   ya[k] = y[k];
+  //   za[k] = z[k];
+  // }
+
+  auto start = std::chrono::system_clock::now();
+  for (int i = 0; i < rows; i++) {
+     for (int j = 0; j < cols; j++) {
+       const double z = dsm(i,j);
+       steps = sqrt(numericSquare(viewpoint[0]-j) + numericSquare(viewpoint[1]-i));
+       NumericVector sequence(steps);
+       std::iota(sequence.begin(), sequence.end(), 1);
+       xl = viewpoint[0] + sequence * (j-viewpoint[0])/steps;
+       yl = viewpoint[1] + sequence * (i-viewpoint[1])/steps;
+       //Rcout << sequence[0] << "   /   ";
+
+       if(viewpoint[2]<z) {
+         zl = viewpoint[2] + sequence/steps*fabs(viewpoint[2]-z);
+       } else if (viewpoint[2]>z) {
+         zl = viewpoint[2] - sequence/steps*fabs(viewpoint[2]-z);
+       } else if (viewpoint[2]==z) {
+         zl = viewpoint[2] + 0*sequence;
+       }
+       int temp = 1;
+       for (int p = 0; p < steps; p++) {
+         const double d = zl[p] - dsm(yl[p],xl[p]);
+         //Rcout << d << "   ";
+         if (d < 0) {
+           temp = 0;
+           break;
+         }
+       }
+       visible(i,j) = temp;
+     }
   }
+  //for (int i = 0; i < pointNumber; i++) {
+    // viewline = sqrt(numericSquare(viewpoint[0]-x[i]) + numericSquare(viewpoint[1]-y[i]));
+    // steps = 1 + round(viewline/resolution);
+    // NumericVector sequence(steps);
+    // std::iota(sequence.begin(), sequence.end(), 0);
+    // xl = viewpoint[0] + sequence * (xa[i]-viewpoint[0])/steps;
+    // yl = viewpoint[1] + sequence * (ya[i]-viewpoint[1])/steps;
+    //
+    // if(viewpoint[2]<z[i]) {
+    //   zl = viewpoint[2] + sequence/steps*fabs(viewpoint[2]-za[i]);
+    // } else if (viewpoint[2]>za[i]) {
+    //   zl = viewpoint[2] - sequence/steps*fabs(viewpoint[2]-za[i]);
+    // } else if (viewpoint[2]==za[i]) {
+    //   zl = viewpoint[2] + 0*sequence;
+    // }
 
-  return visiblePoints(Range(0,counter-1), Range(0,2));
-  //return visiblePoints;
-  //return 0;
+    //double dd[steps];
+    //int temp = 1;
+
+    //dd[0] = 1;
+    // for (int j = 0; j < steps; j++) {
+    //   for(int k = 0; k < pointNumber; ++k) {
+    //     dis[k] = numericSquare(xa[k]-xl[j]) + numericSquare(ya[k]-yl[j]);
+    //   }
+    //   it = std::min_element(dis, dis + pointNumber);
+    //   int index = std::distance(dis, std::find(dis, dis + pointNumber, *it));
+    //   //d1[0] = zl[j] - za[index];
+    //   //d2[0] = std::fabs(zl[j] - za[index]);
+    //   //dd[j] = d1[0] + d2[0];
+    //   float d1 = zl[j] - za[index];
+    //   // double d2 = std::fabs(zl[j] - za[index]);
+    //   // dd[j] = d1 + d2;
+    //   // double a = dd[j];
+    //   // double b = dd[j-1];
+    //
+    //   if (d1 < 0) {
+    //     temp = 0;
+    //    break;
+    //   }
+    //   //temp = a * b;
+    //   //Rcout << temp << "   ";
+    //   //temp = dd[j] * dd[j-1];//
+    // }
+    //const double out = temp;
+    //const double out2 = 1;
+    //temp = 1;
+    //Rcout << temp << "   ";
+    //delta.emplace_back(temp);
+
+
+    // pp[i][0] = xa[i];
+    // pp[i][1] = ya[i];
+    // pp[i][2] = za[i];
+    // pp[i][3] = temp;//
+  //}
+
+  auto end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed_seconds = end-start;
+  std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+  std::cout << "finished computation at " << std::ctime(&end_time)
+            << "elapsed time: " << elapsed_seconds.count() << "s"
+            << std::endl;
+  // delete[] dis;
+  // delete[] xa;
+  // delete[] ya;
+  // delete[] za;
+  //delete[] d1;
+  //delete[] d2;
+
+  return visible;
 }
