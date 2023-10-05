@@ -2,8 +2,8 @@
 #'
 #' @param visiblepoints The viewshed calulated by function 'calculate_viewshed'
 #' @param viewpoint A matrix including x,y coordinates
-#' @param type The metric to be returned. 1=depth(Furthest distance);
-#' 2=depth variation; 3=both (a list).
+#' @param type numeric, indicating the type of metric to be returned. 1 = depth (Furthest distance);
+#' 2 = depth variation; 3 = both (a list).
 #'
 #' @return Numeric. If type = 1 or 2, the function will return furthest distance
 #' or standard deviation of distance as a number. If type = 3, the function will

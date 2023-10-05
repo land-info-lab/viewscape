@@ -1,22 +1,16 @@
 #' calculate_viewshed
 #'
 #' @param dsm the raster layer of digital surface model/digital elevation model
-#' @param under the raster layer of digital surface model where the elevation
-#' above crown base of trees was removed
-#' @param dem the raster of terrain without any vertical object. If input of
-#' dsm is already digital elevation model, this argument can be ignored
-#' @param viewpoint a matrix including x,y coordinates
+#' @param viewpoints a matrix including x,y coordinates
 #' or a dataframe including all viewpoints with x,y coordinates (if multiviewpoints = TRUE)
-#' @param offset_viewpoint the height offset at the viewpoint. the unit of input should be meter.
-#' @param offset_samples the height offset at all sample points. the unit of input should be meter
-#' sample_points a matrix of points that are converted from DSM.
-#' This can be ignored. (it is defaulted as NULL)
-#' @param r the radius for viewshed analysis. (it is defaulted as NULL)
+#' @param offset_viewpoint numeric, setting the height of the viewpoint.
+#' @param r numeric, setting the radius for viewshed analysis. (it is defaulted as NULL)
 #' @param multiviewpoints the radius for viewshed analysis. (it is defaulted as NULL)
-#'
-#' @return Dataframe or list. The output dataframe includes x anf y coordinates of visible
-#' locations of a single viewpoint. The output list includes x anf y coordinates of visible
-#' locations of each input viewpoints.
+#' @param parallel logical, indicating if parallel computing should be used to compute
+#' viewsheds of multiview points.
+#' @param visulization logical, indicating
+#' @return Raster or matrix. The output raster/matrix is binary. Value 1 means visible
+#' while value 0 means unvisible. If parallel is TRUE, the output will be a list of matrixes.
 #'
 #' @details Parallel computing used the functions from BiocParallel package
 #'
@@ -30,147 +24,53 @@
 #' @examples
 #'
 
-calculate_viewshed <- function(dsm, under=NULL, dem=NULL,
-                                     viewpoints, offset_viewpoint=1.7,
-                                     offset_samples=0, sample_points=NULL,
-                                     r = NULL,
-                                     multiviewpoints = FALSE){
-  # calculate viewshed based on a certain viewpoint
-
-  # dsm is raster layer of digital surface model/digital elevation model
-  ## under is raster layer of digital surface model where the elevation
-  #above crown base of trees was removed
-  ## dem is the raster of terrain without any vertical object. If input
-  #of dsm is already digital elevation model, this arguement can be ignored
-  # viewpoint is a matrix including x,y coordinates
-  # offset_viewpoint is the height of viewpoint. the unit of input should be meter
-  # offset_samples is the height of sample coordinates. the unit of input should be meter
-  ## sample_points is a matrix of points that are converted from DSM.
-  #This can be ignored. (it is defaulted as NULL)
-  # r is the radius for viewshed analysis. (it is defaulted as NULL)
-
-  if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
-    type <- "FORK"
-  }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-    type <- "SOCK"
-  }
-
+calculate_viewshed <- function(dsm,
+                               viewpoints,
+                               offset_viewpoint=1.7,
+                               r = NULL,
+                               multiviewpoints = FALSE,
+                               parallel = FALSE,
+                               visulization = FALSE){
   if (multiviewpoints == FALSE){
-    start_time <- Sys.time()
-    if(is.null(r) == TRUE){
-      if(is.null(sample_points) == TRUE){
-        sample_points <- raster::rasterToPoints(dsm) #convert raster to matrix
-      }
-    }else{
-      # create an extent to crop input raster
-      pdf <- data.frame(row.names = 1)
-      pdf[1,"x"] <- viewpoints[1]
-      pdf[1,"y"] <- viewpoints[2]
-      p <- sp::SpatialPoints(pdf)
-      p <- sf::st_as_sf(p)
-      subarea <- sf::st_buffer(p, r)
-      subdsm <- raster::crop(dsm, raster::extent(subarea))
-
-      if(is.null(under) == FALSE){
-        under <- raster::crop(under, raster::extent(subarea))
-      }
-      if(is.null(sample_points) == TRUE|is.null(sample_points) == FALSE){
-        sample_points <- raster::rasterToPoints(subdsm) #convert raster to matrix
-      }
+    # compute viewshed
+    output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint)
+    if (visulization == TRUE) {
+      raster_data <- raster::raster(output)
+      raster::extent(raster_data) <- raster::extent(dsm)
+      raster::res(raster_data) <- raster::res(dsm)
+      raster::plot(raster_data)
+      return(raster_data)
+    } else {
+      return(output)
     }
-
-    bpparam <- BiocParallel::SnowParam(workers=parallel::detectCores(), type=type)
-    visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
-                                                  FUN = visiblesample,
-                                                  dsm = subdsm, modified_dsm=under,
-                                                  dem=dem, viewpoint = viewpoints,
-                                                  offset_viewpoint=offset_viewpoint,
-                                                  offset_samples=offset_samples,
-                                                  BPPARAM=bpparam)
-
-    visible_coordinates <- as.matrix(visible_coordinates) #convert matrix to dataframe
-    visible_coordinates <- visible_coordinates[visible_coordinates[,1]!="NULL"]
-    #convert list to matrix
-    visible_coordinates <- matrix(unlist(visible_coordinates),
-                                  ncol = length(visible_coordinates),
-                                  nrow = 3)
-    visible_coordinates <- base::t(visible_coordinates)
-    #convert matrix to dataframe
-    visible_coordinates <- as.data.frame(visible_coordinates)
-    # remove the column of elevation for conversion of spatial point
-    visible_coordinates <- visible_coordinates[-c(3)]
-    if(length(visible_coordinates[,1]) < 1){
-      stop("There is no visible point detected")
-    }
-
-    print("Completed!")
-    end_time <- Sys.time()
-    time_taken <- end_time - start_time
-    print(time_taken)
-    colnames(visible_coordinates)[1] <- 'x'
-    colnames(visible_coordinates)[2] <- 'y'
-    return(visible_coordinates)
   }else if (multiviewpoints == TRUE){
     # set a new empty vector
-    viewscape_v <- c()
-
-    for(i in 1:length(viewpoints[,1])){
-      viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
-      start_time <- Sys.time()
-      if(is.null(r) == TRUE){
-        if(is.null(sample_points) == TRUE){
-          #convert raster to matrix
-          sample_points <- raster::rasterToPoints(dsm)
-        }
-      }else{
-        # create an extent to crop input raster
-        pdf <- data.frame(row.names = 1)
-        pdf[1,"x"] <- viewpoint[1]
-        pdf[1,"y"] <- viewpoint[2]
-        p <- sp::SpatialPoints(pdf)
-        p <- sf::st_as_sf(p)
-        subarea <- sf::st_buffer(p, r)
-        subdsm <- raster::crop(dsm, raster::extent(subarea))
-
-        if(is.null(under) == FALSE){
-          under <- raster::crop(under, raster::extent(subarea))
-        }
-        if(is.null(sample_points) == TRUE|is.null(sample_points) == FALSE){
-          #convert raster to matrix
-          sample_points <- raster::rasterToPoints(subdsm)
-        }
+    viewsheds <- c()
+    if (parallel == TRUE){
+      if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
+        type <- "FORK"
+      }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
+        type <- "SOCK"
       }
+      for (i in 1:length(viewpoints[,1])) {
 
+      }
       bpparam <- BiocParallel::SnowParam(workers=parallel::detectCores(), type=type)
       suppressWarnings(
-        visible_coordinates <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
-                                                      FUN = visiblesample,
-                                                      dsm = subdsm, modified_dsm=under,
-                                                      dem=dem, viewpoint = viewpoint,
-                                                      offset_viewpoint=offset_viewpoint,
-                                                      offset_samples=offset_samples,
-                                                      BPPARAM=bpparam)
-        )
-
-      visible_coordinates <- as.matrix(visible_coordinates)
-      visible_coordinates <- visible_coordinates[visible_coordinates[,1]!="NULL"]
-      #convert list to matrix
-      visible_coordinates <- matrix(unlist(visible_coordinates),
-                                    ncol = length(visible_coordinates),
-                                    nrow = 3)
-      visible_coordinates <- base::t(visible_coordinates)
-      #convert matrix to dataframe
-      visible_coordinates <- as.data.frame(visible_coordinates)
-      # remove the column of elevation for conversion of spatial point
-      visible_coordinates <- visible_coordinates[-c(3)]
-      if(length(visible_coordinates[,1]) < 1){
-        print("There is no visible point detected from this viewpoint")
-      }else{
-        colnames(visible_coordinates)[1] <- 'x'
-        colnames(visible_coordinates)[2] <- 'y'
-        viewscape_v <- c(viewscape_v, list(visible_coordinates))
+        viewsheds <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
+                                          FUN = radius_viewshed,
+                                          dsm = dsm,
+                                          viewpoint = viewpoint,
+                                          offset_viewpoint=offset_viewpoint,
+                                          BPPARAM=bpparam)
+      )
+    } else {
+      for(i in 1:length(viewpoints[,1])){
+        viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
+        output <- radius_viewshed(dsm, r, viewpoint, offset_viewpoint)
+        viewsheds <- c(viewsheds, list(output))
       }
     }
-    return(viewscape_v)
+    return(viewsheds)
   }
 }
