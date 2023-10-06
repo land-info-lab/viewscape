@@ -26,5 +26,10 @@ radius_viewshed <- function(dsm, r, viewPt, offset) {
   resolution <- round(raster::res(dsm)[1])
   # compute viewshed
   output <- visibleLabel(viewpoint, dsm_matrix, n_cell, resolution)
-  return(output)
+  e <- raster::extent(dsm)
+  return(c(output, e))
+}
+
+filter_viewshed <- function(viewshed, extent) {
+
 }

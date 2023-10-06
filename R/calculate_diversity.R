@@ -1,6 +1,6 @@
-#' calculate_landuse
+#' calculate_diversity
 #'
-#' @param landuse Raster. The raster of land use
+#' @param landuse Raster. The raster of land use/land cover
 #' @param dsm Raster. The digital surface model(DSM) that is used for
 #' function 'calculate_viewshed' to calculate viewshed.
 #' @param visiblepoints Dataframe. The viewshed calulated by
@@ -11,12 +11,14 @@
 #' @export
 #'
 #' @examples
-calculate_landuse <- function(landuse, dsm, visiblepoints){
-
-  ##landuse id the raster of land use
-  ##dsm is the DSM that is used to calculate viewshed
-  ##visiblepoints is the viewshed calulated by function 'calculate_viewshed'
-  ##the output is the percentage(%) of each type of land use
+calculate_diversity <- function(land, dsm, r, viewpoint, offset_viewpoint, out){
+  output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint)
+  raster_data <- raster::raster(output[1])
+  raster::extent(raster_data) <- output[2]
+  raster::res(raster_data) <- raster::res(dsm)
+  #mask the raster
+  tmpfilter <- raster_data == 1
+  filtered_raster <- raster::mask(visibleR, tmpfilter)
   temp_raster <- visiblepoints %>%
     #create a empty raster using the extent of viewshed
     sp::SpatialPoints() %>%
@@ -29,7 +31,7 @@ calculate_landuse <- function(landuse, dsm, visiblepoints){
     landuse <- raster::resample(landuse, dsm, method='ngb')
   }
   land_class <- landuse[raster::cellFromXY(landuse,
-                                        cbind(visiblepoints$x,visiblepoints$y))]
+                                           cbind(visiblepoints$x,visiblepoints$y))]
   class_df <- data.frame(class=land_class, count=1)
   # remove NULL value and nodata(class 0 is nadata in the raster of land use)
   class_df <- base::subset(class_df,

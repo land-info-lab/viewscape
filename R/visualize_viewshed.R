@@ -16,7 +16,7 @@
 #' @examples
 #'
 
-visualize_viewshed <- function(viewshed, dsm = NULL , plot = "polygon", output = FALSE, type = NULL){
+visualize_viewshed <- function(viewshed, extent, dsm = NULL , plot = "polygon", output = FALSE, type = NULL){
   vpt <- sp::SpatialPoints(viewshed)
   # rasterize and vectorize the viewshed
   if (is.null(dsm) == FALSE){

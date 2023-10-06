@@ -1,17 +1,19 @@
 #' calculate_viewshed
 #'
 #' @param dsm the raster layer of digital surface model/digital elevation model
-#' @param viewpoints a matrix including x,y coordinates
-#' or a dataframe including all viewpoints with x,y coordinates (if multiviewpoints = TRUE)
+#' @param viewpoints a matrix including one viewpoint with x,y coordinates
+#' or a matrix including several viewpoints with x,y coordinates (if multiviewpoints = TRUE)
 #' @param offset_viewpoint numeric, setting the height of the viewpoint.
 #' @param r numeric, setting the radius for viewshed analysis. (it is defaulted as NULL)
 #' @param multiviewpoints the radius for viewshed analysis. (it is defaulted as NULL)
 #' @param parallel logical, indicating if parallel computing should be used to compute
 #' viewsheds of multiview points.
-#' @param visulization logical, indicating
-#' @return Raster or matrix. The output raster/matrix is binary. Value 1 means visible
-#' while value 0 means unvisible. If parallel is TRUE, the output will be a list of matrixes.
+#' @param visualization logical, indicating
 #'
+#' @return Raster or vector. If visualization is enabled, the output is a binary raster.
+#' Value 1 means visible while value 0 means invisible. The vector includes a binary matrix,
+#' where Value 1 means visible while value 0 means invisible, and the extent of the vewshed.
+#' If parallel is TRUE, the output is a vector and visualization is unavailable.
 #' @details Parallel computing used the functions from BiocParallel package
 #'
 #' @references Martin Morgan, Jiefei Wang, Valerie Obenchain, Michel Lang,
@@ -35,8 +37,8 @@ calculate_viewshed <- function(dsm,
     # compute viewshed
     output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint)
     if (visulization == TRUE) {
-      raster_data <- raster::raster(output)
-      raster::extent(raster_data) <- raster::extent(dsm)
+      raster_data <- raster::raster(output[1])
+      raster::extent(raster_data) <- output[2]
       raster::res(raster_data) <- raster::res(dsm)
       raster::plot(raster_data)
       return(raster_data)
@@ -52,17 +54,14 @@ calculate_viewshed <- function(dsm,
       }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
         type <- "SOCK"
       }
-      for (i in 1:length(viewpoints[,1])) {
-
-      }
       bpparam <- BiocParallel::SnowParam(workers=parallel::detectCores(), type=type)
       suppressWarnings(
-        viewsheds <- BiocParallel::bplapply(X = split(sample_points,seq(nrow(sample_points))),
+        viewsheds <- BiocParallel::bplapply(X = split(viewpoints,seq(nrow(viewpoints))),
                                           FUN = radius_viewshed,
                                           dsm = dsm,
                                           viewpoint = viewpoint,
-                                          offset_viewpoint=offset_viewpoint,
-                                          BPPARAM=bpparam)
+                                          offset = offset_viewpoint,
+                                          BPPARAM = bpparam)
       )
     } else {
       for(i in 1:length(viewpoints[,1])){

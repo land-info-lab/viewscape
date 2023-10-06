@@ -1,9 +1,8 @@
 Package: viewscape
 Type: Package
-Title: Calculate Viewshed Analysis
-Version: 0.1.0
-Author@R: c(person("Xiaohao", "Yang", role = c("aut", "cre"), 
-    email = "xiaohaoy@umich.edu"),
+Title: Viewscape Analysis
+Version: 0.2.0
+Author@R: c(person("Xiaohao", "Yang", role = c("aut", "cre"), email = "xiaohaoy@umich.edu"),
            person("Nathan", "Fox", role = c("aut")),
            person("Derek", "Van Berkel", role = c("aut")),
            person("Mark", "Lindquist", role = c("aut")))
@@ -11,7 +10,7 @@ Author: Xiaohao Yang
 Maintainer: Xiaohao Yang <xiaohaoy@umich.edu>
 Description: Calculates the viewable area for given a point/multiple points and a digital 
     elevation model.
-Depends: R (>= 4.2)
+Depends: R (>= 4.1)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -38,4 +37,4 @@ Imports:
     BiocParallel,
     parallel,
     Rcpp
-
+LinkingTo:Rcpp
