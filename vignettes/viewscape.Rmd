@@ -1,39 +1,85 @@
 ---
 title: "viewscape"
-date: "2021-11-08"
+date: "2023-10-08"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{viewscape}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-## calculate_viewshed
+## Viewscape
 
 This vignette provides a basic overview of the functions in R package `viewscape`.
 
-The basic viewshed analysis can be accessed through calling the `calculate_viewshed`. The two needed objects to calculate the viewshed are a digital surface model (DSM) and a viewpoint.
+The basic viewshed analysis can be accessed through calling the `compute_viewshed`. The two needed objects to compute the viewshed are a digital surface model (DSM) and a viewpoint.
+
+### Compute viewshed
 
 ```{r eval=FALSE}
-  #Load in DSM
-  test_dsm <- raster::raster(system.file("test_data\\test_dsm.tif",
-                                         package ="viewscape"))
+#Load in DSM
+test_dsm <- raster::raster(system.file("test_dsm.tif", package ="viewscape"))
 
-  #Load in the viewpoint
-  test_viewpoint <- sf::read_sf(system.file("test_data\\test_viewpoint.shp",
-                                               package = "viewscape"))
+#Load in the viewpoint
+test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
 
-  #Transform viewpoint from shape file to coordinates 
-  test_viewpoint <- sf::st_coordinates(test_viewpoint)
-  test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
+#Transform viewpoint from shape file to coordinates 
+test_viewpoint <- sf::st_coordinates(test_viewpoint)
+test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
 
-  #Run function
-  test_function <- viewscape::calculate_viewshed(dsm = test_dsm,
-                                                 viewpoint = test_viewpoint)
+#Compute viewshed
+output <- viewscape::compute_viewshed(dsm = test_dsm, viewpoints = test_viewpoint, offset_viewpoint = 6, visualization=TRUE)
 ```
 
-## get_depth
+```{r}
+# overlap viewshed on DSM
+viewpoint <- matrix(0,1,3)
+viewpoint[1,1] <- test_viewpoint[1]
+viewpoint[1,2] <- test_viewpoint[2]
+output[output[] == 0 ] = NA
+raster::plot(test_dsm, axes=FALSE, box=FALSE, legend = FALSE)
+raster::plot(output, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALSE)
+raster::plot(sp::SpatialPoints(viewpoint), add = TRUE, col = "blue", axes=FALSE, box=FALSE, legend = FALSE)
+```
+# Compute the viewshed for multiple viewpoints
+
+```{r}
+# Load points (.shp file)
+test_viewpoints <- sf::read_sf(system.file("test_viewpoints.shp", package = "viewscape"))
+
+#Transform viewpoint from shape file to coordinates 
+test_viewpoints <- sf::st_coordinates(test_viewpoints)
+
+# Compute viewsheds
+# the output includes binary matrix and extent of viewshed 
+output <- viewscape::compute_viewshed(dsm = test_dsm, viewpoints = test_viewpoints, offset_viewpoint = 6, multiviewpoints = TRUE)
+```
+
+```{r}
+# plot all viewsheds on DSM
+raster::plot(test_dsm, axes=FALSE, box=FALSE, legend = FALSE)
+# each <- output[5]
+# raster_data <- raster::raster(each[[1]][[1]])
+# raster::extent(raster_data) <- each[[1]][[2]]
+# raster::res(raster_data) <- raster::res(test_dsm)
+# raster_data[raster_data[] == 0 ] = NA
+# raster::plot(raster_data, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALSE)
+for(i in 1:length(output)) {
+  each <- output[i]
+  raster_data <- raster::raster(each[[1]][[1]])
+  raster::extent(raster_data) <- each[[1]][[2]]
+  raster::res(raster_data) <- raster::res(test_dsm)
+  raster_data[raster_data[] == 0 ] = NA
+  raster::plot(raster_data, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALSE)
+}
+```
+
+## Calculate viewscape
 
 The function of view depth analysis can calculate two different metrics: the furthest distance and standard deviation of distances. To calculate view depth, there are two needed objects: the DSM that was used to get viewshed and result from viewshed analysis. Additionally, the third input parameter is used to customize the output.
+
+The function of extent analysis can calculate the total area of viewshed and needs the DSM that was used to get viewshed and result from viewshed analysis. 
+
+The following function can calculate the area of ground surface and standard deviation of elevations within a viewshed. The function needs a DSM and a DEM/DTM to calculate the metrics. Additionally, the third input parameter is used to customize the output.
 
 ```{r eval=FALSE}
   # calculate view depth within the viewshed
@@ -41,29 +87,7 @@ The function of view depth analysis can calculate two different metrics: the fur
 ```
 
 
-## get_depth
-
-The function of extent analysis can calculate the total area of viewshed and needs the DSM that was used to get viewshed and result from viewshed analysis. 
-
-```{r eval=FALSE}
-  # calculate extent of the viewshed
-  test_extent <- viewscape::get_extent(test_dsm, test_visiblepoint)
-```
-
-## get_horizontal
-
-The following function can calculate the area of ground surface and standard deviation of elevations within a viewshed. The function needs a DSM and a DEM/DTM to calculate the metrics. Additionally, the third input parameter is used to customize the output.
-
-```{r eval=FALSE}
-  # load DEM
-  test_dem <- raster::raster(system.file("test_data/test_dem.tif",
-                                         package ="viewscape"))
-  # calculate the area of ground surface and standard deviation of elevations
-   test_horizontal <- viewscape::get_horizontal(test_dsm, test_dem, 
-                                                test_visiblepoint, 3)
-```
-
-## calculate_canopy
+## calculate a single feature
 
 To calculate canopy area in a viewshed, the DSM that was used to get viewshed and a raster of canopy are needed. Additionally, input parameter 'data' is used to indicate the type of input canopy raster and 'nodata' is used to indicate the the value of cells that don't have any canopy.
 
@@ -77,8 +101,9 @@ To calculate canopy area in a viewshed, the DSM that was used to get viewshed an
                                                   test_visiblepoint)
 ```
 
-## calculate_landcover
+## Calculate land use/cover diversity
 
+The land use analysis calculates the percentage(%) of each type of land use in a viewshed. The DSM that was used to get viewshed, visible points, and a raster of land use are needed.
 The land cover analysis calculates the areas of perviousness and imperviousness and percentages(%) of perviousness and imperviousness in a viewshed. The DSM that was used to get viewshed, visible points, and a raster of land cover are needed. Input parameters 'vegetation' and 'imperviousness' are used to indicate the code of perviousness including trees or grass and the code of imperviousness including buildings, parking, and roads.
 
 ```{r eval=FALSE}
@@ -95,8 +120,6 @@ The land cover analysis calculates the areas of perviousness and imperviousness 
 ```
 
 ## calculate_landuse
-
-The land use analysis calculates the percentage(%) of each type of land use in a viewshed. The DSM that was used to get viewshed, visible points, and a raster of land use are needed.
 
 ```{r eval=FALSE}
   # load landuse raster

@@ -1,44 +1,52 @@
 #' calculate_diversity
 #'
-#' @param landuse Raster. The raster of land use/land cover
+#' @param land Raster. The raster of land use/land cover
 #' @param dsm Raster. The digital surface model(DSM) that is used for
 #' function 'calculate_viewshed' to calculate viewshed.
-#' @param visiblepoints Dataframe. The viewshed calulated by
-#' function 'calculate_viewshed'.
-#'
+#' @param r numeric, setting the radius for viewshed analysis. (it is defaulted as NULL)
+#' @param viewpoint matrix, including one viewpoint with x,y coordinates
+#' or a matrix including several viewpoints with x,y coordinates (if multiviewpoints = TRUE)
+#' @param offset_viewpoint numeric, setting the height of the viewpoint.
+#' @param proportion logical, indicating if the percentage(%) of each land use should
+#' be returned. Default is FALSE.
 #' @return Dataframe. The output is the percentage(%) of each type of land use
 #' within a viewshed.
 #' @export
 #'
 #' @examples
-calculate_diversity <- function(land, dsm, r, viewpoint, offset_viewpoint, out){
+calculate_diversity <- function(land,
+                                dsm,
+                                r = NULL,
+                                viewpoint,
+                                offset_viewpoint,
+                                proportion = FALSE){
+  if (raster::crs(land) != raster::crs(dsm)) {
+    stop("your input rasters should have same coordinate reference system")
+  }
+  #compute viewshed
   output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint)
-  raster_data <- raster::raster(output[1])
-  raster::extent(raster_data) <- output[2]
-  raster::res(raster_data) <- raster::res(dsm)
-  #mask the raster
-  tmpfilter <- raster_data == 1
-  filtered_raster <- raster::mask(visibleR, tmpfilter)
-  temp_raster <- visiblepoints %>%
-    #create a empty raster using the extent of viewshed
+  pt <- filter_viewshed(output[1], output[2])
+  temp_raster <- pt %>%
     sp::SpatialPoints() %>%
     raster::raster(crs=dsm@crs, resolution=raster::res(dsm))
-  #get extent of the empty raster
+  # calculate the proportion of each class
   viewshed_extent <- raster::extent(temp_raster)
-  dsm <- raster::crop(dsm, viewshed_extent)
-  landuse <- raster::crop(landuse, viewshed_extent)
-  if(raster::res(landuse)[1] != raster::res(dsm)[1]){
-    landuse <- raster::resample(landuse, dsm, method='ngb')
+  land <- raster::crop(land, viewshed_extent)
+  if(raster::res(land)[1] != raster::res(dsm)[1]){
+    land <- raster::resample(land, temp_raster, method='ngb')
   }
-  land_class <- landuse[raster::cellFromXY(landuse,
-                                           cbind(visiblepoints$x,visiblepoints$y))]
+  land_class <- landuse[raster::cellFromXY(land,
+                                           cbind(pt$x,pt$y))]
   class_df <- data.frame(class=land_class, count=1)
-  # remove NULL value and nodata(class 0 is nadata in the raster of land use)
   class_df <- base::subset(class_df,
-                           is.na(class_df$class)==FALSE & class_df$class!=0,
+                           is.na(class_df$class)==FALSE,
                            select = c(class, count))
   land_class <- dplyr::count(class_df, class)
-  land_class$total<- sum(land_class$n)
+  land_class$total <- sum(land_class$n)
   land_class$proportion <- land_class$n/land_class$total*100
+  # calculate Shannon diversity index
+  p <- land_class$proportion
+  p <- p[p > 0]
+  sdi <- sd_index(p)
   return(land_class)
 }

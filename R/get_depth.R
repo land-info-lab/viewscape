@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-get_depth <- function(visiblepoints, viewpoint, type){
+get_depth <- function(dsm, dem = NULL, r, viewpoint, offset_viewpoint, type){
   ##visiblepoints is the viewshed calulated by function 'calculate_viewshed'
   ##viewpoint is a matrix including x,y coordinates
   ##type is the metric to be returned. 1=depth(Furthest distance);

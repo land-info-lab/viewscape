@@ -6,16 +6,10 @@
 using namespace Rcpp;
 
 //[[Rcpp::export]]
-int numericSquare(int num) {
-  return num*num ;
-}
-
-//[[Rcpp::export]]
-NumericMatrix visibleLabel(
+Rcpp::IntegerMatrix visibleLabel(
     const NumericVector viewpoint,
     const NumericMatrix dsm,
-    const int pointNumber,
-    const int resolution) {
+    const double h) {
 
   NumericVector zl;
   NumericVector xl;
@@ -23,13 +17,13 @@ NumericMatrix visibleLabel(
   const int rows = dsm.rows();
   const int cols = dsm.cols();
   int steps;
-  NumericMatrix visible(rows, cols);
+  IntegerMatrix visible(rows, cols);
 
-  auto start = std::chrono::system_clock::now();
+  //auto start = std::chrono::system_clock::now();
   for (int i = 0; i < rows; i++) {
      for (int j = 0; j < cols; j++) {
-       const double z = dsm(i,j);
-       steps = sqrt(numericSquare(viewpoint[0]-j) + numericSquare(viewpoint[1]-i));
+       const double z = dsm(i,j) + h;
+       steps = sqrt((viewpoint[0]-j)*(viewpoint[0]-j) + (viewpoint[1]-i)*(viewpoint[1]-i));
        NumericVector sequence(steps);
        std::iota(sequence.begin(), sequence.end(), 1);
        xl = viewpoint[0] + sequence * (j-viewpoint[0])/steps;
@@ -53,12 +47,12 @@ NumericMatrix visibleLabel(
        visible(i,j) = temp;
      }
   }
-  auto end = std::chrono::system_clock::now();
-  std::chrono::duration<double> elapsed_seconds = end-start;
-  std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-
-  std::cout << "finished computation at " << std::ctime(&end_time)
-            << "elapsed time: " << elapsed_seconds.count() << "s"
-            << std::endl;
+  // auto end = std::chrono::system_clock::now();
+  // std::chrono::duration<double> elapsed_seconds = end-start;
+  // std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+  //
+  // std::cout << "finished computation at " << std::ctime(&end_time)
+  //           << "elapsed time: " << elapsed_seconds.count() << "s"
+  //           << std::endl;
   return visible;
 }

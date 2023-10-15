@@ -1,2 +1,4 @@
-exportPattern("^[[:alpha:]]+")
-importFrom("stats", "sd")
+export(compute_viewshed)
+export(visibleLabel)
+importFrom(Rcpp, evalCpp)
+useDynLib(viewscape, .registration = TRUE)

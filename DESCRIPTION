@@ -8,8 +8,9 @@ Author@R: c(person("Xiaohao", "Yang", role = c("aut", "cre"), email = "xiaohaoy@
            person("Mark", "Lindquist", role = c("aut")))
 Author: Xiaohao Yang
 Maintainer: Xiaohao Yang <xiaohaoy@umich.edu>
-Description: Calculates the viewable area for given a point/multiple points and a digital 
-    elevation model.
+Description: A collection of functions to make R a more effective viewscape analysis 
+    tool for calculating viewscape metrics based on computing the viewable area for 
+    given a point/multiple viewpoints and a digital elevation model.
 Depends: R (>= 4.1)
 License: GPL-3
 Encoding: UTF-8
@@ -28,6 +29,7 @@ VignetteBuilder: knitr,
                  rmarkdown
 biocViews:
 Imports: 
+    Rcpp,
     sf,
     raster,
     rgdal,
@@ -36,5 +38,4 @@ Imports:
     rts,
     BiocParallel,
     parallel,
-    Rcpp
-LinkingTo:Rcpp
+LinkingTo: Rcpp

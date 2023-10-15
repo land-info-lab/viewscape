@@ -10,35 +10,22 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// numericSquare
-int numericSquare(int num);
-RcppExport SEXP _viewscape_numericSquare(SEXP numSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type num(numSEXP);
-    rcpp_result_gen = Rcpp::wrap(numericSquare(num));
-    return rcpp_result_gen;
-END_RCPP
-}
 // visibleLabel
-NumericMatrix visibleLabel(const NumericVector viewpoint, const NumericMatrix dsm, const int pointNumber, const int resolution);
-RcppExport SEXP _viewscape_visibleLabel(SEXP viewpointSEXP, SEXP dsmSEXP, SEXP pointNumberSEXP, SEXP resolutionSEXP) {
+Rcpp::IntegerMatrix visibleLabel(const NumericVector viewpoint, const NumericMatrix dsm, const double h);
+RcppExport SEXP _viewscape_visibleLabel(SEXP viewpointSEXP, SEXP dsmSEXP, SEXP hSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericVector >::type viewpoint(viewpointSEXP);
     Rcpp::traits::input_parameter< const NumericMatrix >::type dsm(dsmSEXP);
-    Rcpp::traits::input_parameter< const int >::type pointNumber(pointNumberSEXP);
-    Rcpp::traits::input_parameter< const int >::type resolution(resolutionSEXP);
-    rcpp_result_gen = Rcpp::wrap(visibleLabel(viewpoint, dsm, pointNumber, resolution));
+    Rcpp::traits::input_parameter< const double >::type h(hSEXP);
+    rcpp_result_gen = Rcpp::wrap(visibleLabel(viewpoint, dsm, h));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_viewscape_numericSquare", (DL_FUNC) &_viewscape_numericSquare, 1},
-    {"_viewscape_visibleLabel", (DL_FUNC) &_viewscape_visibleLabel, 4},
+    {"_viewscape_visibleLabel", (DL_FUNC) &_viewscape_visibleLabel, 3},
     {NULL, NULL, 0}
 };
 

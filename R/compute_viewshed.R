@@ -1,19 +1,21 @@
-#' calculate_viewshed
+#' compute_viewshed
 #'
-#' @param dsm the raster layer of digital surface model/digital elevation model
-#' @param viewpoints a matrix including one viewpoint with x,y coordinates
+#' @param dsm raster, the digital surface model/digital elevation model
+#' @param viewpoints vector, including x,y coordinates of a viewpoint
 #' or a matrix including several viewpoints with x,y coordinates (if multiviewpoints = TRUE)
 #' @param offset_viewpoint numeric, setting the height of the viewpoint.
+#' @param offset_height numeric, setting the height of positions that a given viewpoint will
+#' look at. The defaut is 0
 #' @param r numeric, setting the radius for viewshed analysis. (it is defaulted as NULL)
 #' @param multiviewpoints the radius for viewshed analysis. (it is defaulted as NULL)
 #' @param parallel logical, indicating if parallel computing should be used to compute
 #' viewsheds of multiview points.
 #' @param visualization logical, indicating
 #'
-#' @return Raster or vector. If visualization is enabled, the output is a binary raster.
-#' Value 1 means visible while value 0 means invisible. The vector includes a binary matrix,
+#' @return Raster or list. If visualization is enabled, the output is a binary raster.
+#' Value 1 means visible while value 0 means invisible. The list includes a binary matrix,
 #' where Value 1 means visible while value 0 means invisible, and the extent of the vewshed.
-#' If parallel is TRUE, the output is a vector and visualization is unavailable.
+#' If parallel is TRUE, the output is the list and visualization is unavailable.
 #' @details Parallel computing used the functions from BiocParallel package
 #'
 #' @references Martin Morgan, Jiefei Wang, Valerie Obenchain, Michel Lang,
@@ -22,25 +24,47 @@
 #' https://github.com/Bioconductor/BiocParallel
 #'
 #' @export
-#'
+#' @useDynLib viewscape
+#' @importFrom Rcpp sourceCpp
+#' @importFrom raster extent
+#' @importFrom raster res
+#' @importFrom raster plot
 #' @examples
 #'
 
-calculate_viewshed <- function(dsm,
-                               viewpoints,
-                               offset_viewpoint=1.7,
-                               r = NULL,
-                               multiviewpoints = FALSE,
-                               parallel = FALSE,
-                               visulization = FALSE){
+compute_viewshed <- function(dsm,
+                             viewpoints,
+                             offset_viewpoint=1.7,
+                             offset_height = 0,
+                             r = NULL,
+                             multiviewpoints = FALSE,
+                             parallel = FALSE,
+                             visualization = FALSE){
+  if (is.null(dsm) == TRUE) {
+    stop("DSM is missing!")
+  } else if (is.null(viewpoints) == TRUE) {
+    stop("viewpoint(s) is missing!")
+  }
   if (multiviewpoints == FALSE){
     # compute viewshed
-    output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint)
-    if (visulization == TRUE) {
-      raster_data <- raster::raster(output[1])
-      raster::extent(raster_data) <- output[2]
+    output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint, offset_height)
+    if (visualization == TRUE) {
+      raster_data <- raster::raster(output[[1]])
+      raster::extent(raster_data) <- output[[2]]
       raster::res(raster_data) <- raster::res(dsm)
-      raster::plot(raster_data)
+      raster::plot(raster_data,
+                   axes=FALSE,
+                   box=FALSE,
+                   legend = FALSE)
+      v<- matrix(0,1,3)
+      v[1,1] <- viewpoints[1]
+      v[1,2] <- viewpoints[2]
+      raster::plot(sp::SpatialPoints(v),
+                   add=TRUE,
+                   col="red",
+                   axes=FALSE,
+                   box=FALSE,
+                   legend=FALSE)
       return(raster_data)
     } else {
       return(output)
@@ -59,7 +83,7 @@ calculate_viewshed <- function(dsm,
         viewsheds <- BiocParallel::bplapply(X = split(viewpoints,seq(nrow(viewpoints))),
                                           FUN = radius_viewshed,
                                           dsm = dsm,
-                                          viewpoint = viewpoint,
+                                          r = r,
                                           offset = offset_viewpoint,
                                           BPPARAM = bpparam)
       )
