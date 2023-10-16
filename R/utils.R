@@ -1,11 +1,12 @@
-#' @noRd
 #' @useDynLib viewscape
 #' @import Rcpp
 #' @import raster
 #' @import sp
 #' @import sf
+#' @import httr2
 #' @importFrom Rcpp sourceCpp
-#'
+#' @noRd
+
 radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   # create an extent to crop input raster
   if(is.null(r) == FALSE){
@@ -59,43 +60,44 @@ return_response <- function(bbox) {
   api1 <- 'https://tnmaccess.nationalmap.gov/api/v1/products?bbox='
   api2 <- paste0(bbox[1], ",", bbox[2], ",", bbox[3], ",", bbox[4])
   api3 <- '&datasets=Lidar%20Point%20Cloud%20(LPC)&prodFormats=LAS,LAZ'
-  resp <- httr2::request(paste0(api1, api2, api3)) %>% req_perform()
-  json <- httr2::resp_body_json(resp)
-
+  json <- httr2::request(paste0(api1, api2, api3)) %>%
+    req_perform() %>%
+    httr2::resp_body_json()
   items <- json$total
   cat(paste0("Find ", items, " items", "\n"))
   titles <- c()
   sourceId <- c()
   metaUrl <- c()
   sizeInBytes <- c()
-  lastUpdated <- c()
+  startYear <- c()
   previewGraphicURL <- c()
   downloadLazURL <- c()
-  boundingBoxMinX <- c()
-  boundingBoxMaxX <- c()
-  boundingBoxMinY <- c()
-  boundingBoxMaxY <- c()
   if (items >= 1) {
     for (i in 1:items) {
-      item <- json[[i]]
+      item <- json[[2]][[i]]
       titles <- c(titles, item$title)
       sourceId <- c(sourceId, item$sourceId)
-      metaUrl <- c(metaUrl, item$metaUrl)
+      url <- paste0(item$metaUrl, "?format=json")
+      metaUrl <- c(metaUrl, url)
       sizeInBytes <- c(sizeInBytes, item$sizeInBytes)
-      lastUpdated <- c(lastUpdated, item$lastUpdated)
+      startYear <- c(startYear, find_year(url))
       previewGraphicURL <- c(previewGraphicURL, item$previewGraphicURL)
       downloadLazURL <- c(downloadLazURL, item$downloadLazURL)
-      boundingBoxMinX <- c(boundingBoxMinX, item$boundingBoxMinX)
-      boundingBoxMaxX <- c(boundingBoxMaxX, item$boundingBoxMaxX)
-      boundingBoxMinY <- c(boundingBoxMinY, item$boundingBoxMinY)
-      boundingBoxMaxY <- c(boundingBoxMaxY, item$boundingBoxMaxY)
     }
     df <- data.frame(titles, sourceId,
                      metaUrl, sizeInBytes,
-                     lastUpdated, previewGraphicURL,
-                     downloadLazURL, boundingBoxMinX,
-                     boundingBoxMaxX, boundingBoxMinY,
-                     boundingBoxMaxY)
+                     startYear, previewGraphicURL,
+                     downloadLazURL)
     return(df)
   }
 }
+
+# find year
+find_year <- function(url) {
+  j <- httr2::request(url) %>%
+    req_perform() %>%
+    httr2::resp_body_json()
+  date <- j$dates[[2]]$dateString %>% strsplit("-") %>% unlist()
+  return(as.integer(date[1]))
+}
+
