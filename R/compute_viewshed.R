@@ -29,8 +29,14 @@
 #' @importFrom raster extent
 #' @importFrom raster res
 #' @importFrom raster plot
-#' @examples
 #'
+#' @examples
+#' test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
+#' #Compute viewshed
+#' output <- compute_viewshed(dsm = dsm,
+#'                            viewpoints = test_viewpoint,
+#'                            offset_viewpoint = 6,
+#'                            visualization = TRUE)
 
 compute_viewshed <- function(dsm,
                              viewpoints,

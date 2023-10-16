@@ -1,4 +1,5 @@
 #' calculate_diversity
+#' @description
 #'
 #' @param land Raster. The raster of land use/land cover
 #' @param dsm Raster. The digital surface model(DSM) that is used for

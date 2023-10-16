@@ -53,3 +53,49 @@ get_buffer <- function(x, y, r) {
   subarea <- sf::st_buffer(p, r)
   return(subarea)
 }
+
+# create a request of the TNMAccess API
+return_response <- function(bbox) {
+  api1 <- 'https://tnmaccess.nationalmap.gov/api/v1/products?bbox='
+  api2 <- paste0(bbox[1], ",", bbox[2], ",", bbox[3], ",", bbox[4])
+  api3 <- '&datasets=Lidar%20Point%20Cloud%20(LPC)&prodFormats=LAS,LAZ'
+  resp <- httr2::request(paste0(api1, api2, api3)) %>% req_perform()
+  json <- httr2::resp_body_json(resp)
+
+  items <- json$total
+  cat(paste0("Find ", items, " items", "\n"))
+  titles <- c()
+  sourceId <- c()
+  metaUrl <- c()
+  sizeInBytes <- c()
+  lastUpdated <- c()
+  previewGraphicURL <- c()
+  downloadLazURL <- c()
+  boundingBoxMinX <- c()
+  boundingBoxMaxX <- c()
+  boundingBoxMinY <- c()
+  boundingBoxMaxY <- c()
+  if (items >= 1) {
+    for (i in 1:items) {
+      item <- json[[i]]
+      titles <- c(titles, item$title)
+      sourceId <- c(sourceId, item$sourceId)
+      metaUrl <- c(metaUrl, item$metaUrl)
+      sizeInBytes <- c(sizeInBytes, item$sizeInBytes)
+      lastUpdated <- c(lastUpdated, item$lastUpdated)
+      previewGraphicURL <- c(previewGraphicURL, item$previewGraphicURL)
+      downloadLazURL <- c(downloadLazURL, item$downloadLazURL)
+      boundingBoxMinX <- c(boundingBoxMinX, item$boundingBoxMinX)
+      boundingBoxMaxX <- c(boundingBoxMaxX, item$boundingBoxMaxX)
+      boundingBoxMinY <- c(boundingBoxMinY, item$boundingBoxMinY)
+      boundingBoxMaxY <- c(boundingBoxMaxY, item$boundingBoxMaxY)
+    }
+    df <- data.frame(titles, sourceId,
+                     metaUrl, sizeInBytes,
+                     lastUpdated, previewGraphicURL,
+                     downloadLazURL, boundingBoxMinX,
+                     boundingBoxMaxX, boundingBoxMinY,
+                     boundingBoxMaxY)
+    return(df)
+  }
+}

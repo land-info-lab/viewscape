@@ -30,6 +30,7 @@ VignetteBuilder: knitr,
 biocViews:
 Imports: 
     Rcpp,
+    dplyr,
     sf,
     raster,
     rgdal,
@@ -38,4 +39,6 @@ Imports:
     rts,
     BiocParallel,
     parallel,
+    httr2,
+    imager
 LinkingTo: Rcpp
