@@ -69,6 +69,8 @@ get_lidar <- function(x,
   # filter overlapping files
   lastYear <- max(result$startYear)
   result <- subset(result, startYear == lastYear)
+  num <- length(result[,1])
+  cat(paste0("Downloading ", num," file(s)...\n"))
   title <- result$titles
   download <- result$downloadLazURL
   # download data
@@ -76,15 +78,18 @@ get_lidar <- function(x,
   for (i in 1:num) {
     destination <- paste0(folder, "/", title[i], ".laz")
     files <- c(files, destination)
-    download.file(download[i], destination)
+    download.file(download[i],
+                  destination,
+                  method = 'curl',
+                  quiet = TRUE)
   }
   # clip and merge
   lasc <- lidR::readLAScatalog(files)
   las <- lidR::clip_rectangle(lasc,
-                              xleft = bbox[1],
-                              xright = bbox[3],
-                              ybottom = bbox[2],
-                              ytop = bbox[4])
+                              xleft = xmin,
+                              xright = xmax,
+                              ybottom = ymin,
+                              ytop = ymax)
   # save
   lidR::writeLAS(las, paste0(folder, "/", Sys.time(), ".laz"))
   rm(lasc)
