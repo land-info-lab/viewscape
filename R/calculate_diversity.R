@@ -14,6 +14,8 @@
 #' within a viewshed.
 #' @export
 #'
+#' @references
+#'
 #' @examples
 #'
 

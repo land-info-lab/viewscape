@@ -1,5 +1,5 @@
 #' compute_viewshed
-#'
+#' @description Compute the viewshed based on a given spaial point or a set of points.
 #' @param dsm raster, the digital surface model/digital elevation model
 #' @param viewpoints vector, including x,y coordinates of a viewpoint
 #' or a matrix including several viewpoints with x,y coordinates (if multiviewpoints = TRUE)
@@ -46,15 +46,15 @@ compute_viewshed <- function(dsm,
                              multiviewpoints = FALSE,
                              parallel = FALSE,
                              visualization = FALSE){
-  if (is.null(dsm) == TRUE) {
+  if (missing(dsm)) {
     stop("DSM is missing!")
-  } else if (is.null(viewpoints) == TRUE) {
+  } else if (missing(viewpoints)) {
     stop("viewpoint(s) is missing!")
   }
   if (multiviewpoints == FALSE){
     # compute viewshed
     output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint, offset_height)
-    if (visualization == TRUE) {
+    if (visualization) {
       raster_data <- raster::raster(output[[1]])
       raster::extent(raster_data) <- output[[2]]
       raster::res(raster_data) <- raster::res(dsm)
@@ -75,7 +75,7 @@ compute_viewshed <- function(dsm,
     } else {
       return(output)
     }
-  }else if (multiviewpoints == TRUE){
+  }else if (multiviewpoints){
     # set a new empty vector
     viewsheds <- c()
     if (parallel == TRUE){

@@ -5,8 +5,8 @@
 #' @import sf
 #' @import httr2
 #' @importFrom Rcpp sourceCpp
-#' @noRd
 
+#' @noRd
 radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   # create an extent to crop input raster
   if(is.null(r) == FALSE){
@@ -30,6 +30,7 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   return(list(output, e))
 }
 
+#' @noRd
 filter_viewshed <- function(viewshed, extent) {
   raster_data <- raster::raster(viewshed)
   raster::extent(raster_data) <- extent
@@ -39,11 +40,13 @@ filter_viewshed <- function(viewshed, extent) {
   return(pt)
 }
 
+#' @noRd
 # H=−∑[(pi)×ln(pi)]
 sd_index <- function(p) {
   return(sum(ln(p) * p) * -1)
 }
 
+#' @noRd
 # create a buffer based on a given point
 get_buffer <- function(x, y, r) {
   pdf <- data.frame(row.names = 1)
@@ -55,13 +58,14 @@ get_buffer <- function(x, y, r) {
   return(subarea)
 }
 
+#' @noRd
 # create a request of the TNMAccess API
 return_response <- function(bbox) {
   api1 <- 'https://tnmaccess.nationalmap.gov/api/v1/products?bbox='
   api2 <- paste0(bbox[1], ",", bbox[2], ",", bbox[3], ",", bbox[4])
   api3 <- '&datasets=Lidar%20Point%20Cloud%20(LPC)&prodFormats=LAS,LAZ'
   json <- httr2::request(paste0(api1, api2, api3)) %>%
-    req_perform() %>%
+    httr2::req_perform() %>%
     httr2::resp_body_json()
   items <- json$total
   cat(paste0("Find ", items, " items", "\n"))
@@ -92,10 +96,11 @@ return_response <- function(bbox) {
   }
 }
 
+#' @noRd
 # find year
 find_year <- function(url) {
   j <- httr2::request(url) %>%
-    req_perform() %>%
+    httr2::req_perform() %>%
     httr2::resp_body_json()
   date <- j$dates[[2]]$dateString %>% strsplit("-") %>% unlist()
   return(as.integer(date[1]))

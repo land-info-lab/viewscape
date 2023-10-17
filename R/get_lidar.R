@@ -75,16 +75,21 @@ get_lidar <- function(x,
   download <- result$downloadLazURL
   # download data
   files <- c()
+  if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
+    m <- "curl"
+  }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
+    m <- "wininet"
+  }
   for (i in 1:num) {
     destination <- paste0(folder, "/", title[i], ".laz")
     files <- c(files, destination)
     download.file(download[i],
                   destination,
-                  method = 'curl',
+                  method = m,
                   quiet = TRUE)
   }
   # clip and merge
-  lasc <- lidR::readLAScatalog(files)
+  lasc <- lidR::readLAScatalog(files, progress = FALSE)
   las <- lidR::clip_rectangle(lasc,
                               xleft = xmin,
                               xright = xmax,
