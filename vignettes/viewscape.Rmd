@@ -43,6 +43,9 @@ raster::plot(sp::SpatialPoints(viewpoint), add = TRUE, col = "blue", axes=FALSE,
 # Compute the viewshed for multiple viewpoints
 
 ```{r}
+#Load in DSM
+test_dsm <- raster::raster(system.file("test_dsm.tif", package ="viewscape"))
+
 # Load points (.shp file)
 test_viewpoints <- sf::read_sf(system.file("test_viewpoints.shp", package = "viewscape"))
 
@@ -56,19 +59,20 @@ output <- viewscape::compute_viewshed(dsm = test_dsm, viewpoints = test_viewpoin
 
 ```{r}
 # plot all viewsheds on DSM
-raster::plot(test_dsm, axes=FALSE, box=FALSE, legend = FALSE)
 # each <- output[5]
 # raster_data <- raster::raster(each[[1]][[1]])
 # raster::extent(raster_data) <- each[[1]][[2]]
 # raster::res(raster_data) <- raster::res(test_dsm)
 # raster_data[raster_data[] == 0 ] = NA
 # raster::plot(raster_data, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALSE)
+par(mfrow=c(3,3))
 for(i in 1:length(output)) {
   each <- output[i]
   raster_data <- raster::raster(each[[1]][[1]])
   raster::extent(raster_data) <- each[[1]][[2]]
   raster::res(raster_data) <- raster::res(test_dsm)
   raster_data[raster_data[] == 0 ] = NA
+  raster::plot(test_dsm, axes=FALSE, box=FALSE, legend = FALSE)
   raster::plot(raster_data, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALSE)
 }
 ```
@@ -130,3 +134,33 @@ The land cover analysis calculates the areas of perviousness and imperviousness 
                                                     dsm = test_dsm,
                                                     visiblepoints = test_visiblepoint)
 ```
+
+## Get LiDAR data information via API 
+
+```{r}
+# search for lidar data information using bbox
+search_result <- lidar_search(bbox = c(-83.742282,42.273389,-83.733442,42.278724), preview = TRUE)
+```
+
+```{r}
+search_result
+```
+
+## Download LiDAR data with a given point and searching distance
+```{r}
+# try coordinates -83.741289,42.270146 (in south Michigan, USA)
+# radius is 1000ft
+las <- get_lidar(x = -83.741289, 
+                 y = 42.270146, 
+                 r = 1000, 
+                 epsg = 2253,
+                 folder = '/Users/yangxiaohao/Downloads/testfunction',
+                 plot = FALSE)
+```
+
+```{r}
+# Create DTM
+lidR::classify_ground(las)
+```
+
+For more usages of lidR please refer: https://github.com/r-lidar/lidR/tree/master and https://rpubs.com/jesseast/lidR4smarties
