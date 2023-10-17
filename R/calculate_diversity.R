@@ -15,6 +15,8 @@
 #' @export
 #'
 #' @examples
+#'
+
 calculate_diversity <- function(land,
                                 dsm,
                                 r = NULL,
