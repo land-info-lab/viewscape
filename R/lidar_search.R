@@ -1,5 +1,6 @@
 #' lidar_search
-#' @description Search for data within a bounding box via the TNMAccess API
+#' @description Search for data within a bounding box via
+#' the TNMAccess API: https://tnmaccess.nationalmap.gov/api/v1/docs
 #' @param bbox vector, indicating the bounding box to search for data.
 #'
 #' @param preview logical. If TRUE, the image of the LiDAR data will
@@ -9,6 +10,8 @@
 #'
 #' @return dataframe
 #' @import imager
+#'
+#' @export
 
 lidar_search <- function(bbox, preview = FALSE, folder = NULL) {
   if (missing(bbox)) {

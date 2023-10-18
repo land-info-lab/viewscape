@@ -2,12 +2,7 @@
 #' @description
 #'
 #' @param land Raster. The raster of land use/land cover
-#' @param dsm Raster. The digital surface model(DSM) that is used for
-#' function 'calculate_viewshed' to calculate viewshed.
-#' @param r numeric, setting the radius for viewshed analysis. (it is defaulted as NULL)
-#' @param viewpoint matrix, including one viewpoint with x,y coordinates
-#' or a matrix including several viewpoints with x,y coordinates (if multiviewpoints = TRUE)
-#' @param offset_viewpoint numeric, setting the height of the viewpoint.
+#' @param viewshed Viewshed object [package "viewscape"].
 #' @param proportion logical, indicating if the percentage(%) of each land use should
 #' be returned. Default is FALSE.
 #' @return Dataframe. The output is the percentage(%) of each type of land use
@@ -20,17 +15,12 @@
 #'
 
 calculate_diversity <- function(land,
-                                dsm,
-                                r = NULL,
-                                viewpoint,
-                                offset_viewpoint,
+                                viewshed,
                                 proportion = FALSE){
-  if (raster::crs(land) != raster::crs(dsm)) {
+  if (raster::crs(land) != viewshed@crs) {
     stop("your input rasters should have same coordinate reference system")
   }
-  #compute viewshed
-  output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint)
-  pt <- filter_viewshed(output[1], output[2])
+  #pt <- filter_viewshed(viewshed)
   temp_raster <- pt %>%
     sp::SpatialPoints() %>%
     raster::raster(crs=dsm@crs, resolution=raster::res(dsm))

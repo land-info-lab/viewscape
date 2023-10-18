@@ -1,3 +1,4 @@
+#' @noMd
 #' @useDynLib viewscape
 #' @import Rcpp
 #' @import raster
@@ -28,10 +29,13 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   output <- visibleLabel(viewpoint, dsm_matrix, offset2)
   e <- raster::extent(dsm)
   return(list(output, e))
+  #return(Viewshed(output, raster::res(dsm), raster::extent(dsm)))
 }
 
 #' @noRd
-filter_viewshed <- function(viewshed, extent) {
+filter_invisible <- function(data) {
+  viewshed <- data[1]
+  extent <- data[2]
   raster_data <- raster::raster(viewshed)
   raster::extent(raster_data) <- extent
   raster::res(raster_data) <- raster::res(dsm)

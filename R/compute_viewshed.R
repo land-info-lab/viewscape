@@ -9,10 +9,13 @@
 #' @param r numeric, setting the radius for viewshed analysis. (it is defaulted as NULL)
 #' @param multiviewpoints the radius for viewshed analysis. (it is defaulted as NULL)
 #' @param parallel logical, indicating if parallel computing should be used to compute
-#' viewsheds of multiview points.
-#' @param visualization logical, indicating
+#' viewsheds of multiview points. The default is FALSE. When it is TRUE, arguements 'raster'
+#' and 'plot' are ignored
+#' @param raster logical, if it is TRUE, the raster of viewshed will be returned.
+#' The default is FALSE
+#' @param plot logical, if it is TRUE, the raster of viewshed will be displayed
 #'
-#' @return Raster or list. If visualization is enabled, the output is a binary raster.
+#' @return Raster or list. If raster is TRUE, the output is a binary raster.
 #' Value 1 means visible while value 0 means invisible. The list includes a binary matrix,
 #' where Value 1 means visible while value 0 means invisible, and the extent of the vewshed.
 #' If parallel is TRUE, the output is the list and visualization is unavailable.
@@ -23,12 +26,13 @@
 #' for parallel evaluation. R package version 1.28.3.
 #' https://github.com/Bioconductor/BiocParallel
 #'
-#' @export
 #' @useDynLib viewscape
 #' @importFrom Rcpp sourceCpp
 #' @importFrom raster extent
 #' @importFrom raster res
 #' @importFrom raster plot
+#'
+#' @export
 #'
 #' @examples
 #' test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
@@ -36,7 +40,8 @@
 #' output <- compute_viewshed(dsm = dsm,
 #'                            viewpoints = test_viewpoint,
 #'                            offset_viewpoint = 6,
-#'                            visualization = TRUE)
+#'                            raster = TRUE,
+#'                            plot = TRUE)
 
 compute_viewshed <- function(dsm,
                              viewpoints,
@@ -45,32 +50,38 @@ compute_viewshed <- function(dsm,
                              r = NULL,
                              multiviewpoints = FALSE,
                              parallel = FALSE,
-                             visualization = FALSE){
+                             raster = FALSE,
+                             plot = FALSE){
   if (missing(dsm)) {
     stop("DSM is missing!")
   } else if (missing(viewpoints)) {
     stop("viewpoint(s) is missing!")
   }
+  if (plot) {
+    raster <- TRUE
+  }
   if (multiviewpoints == FALSE){
     # compute viewshed
     output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint, offset_height)
-    if (visualization) {
+    if (raster) {
       raster_data <- raster::raster(output[[1]])
       raster::extent(raster_data) <- output[[2]]
       raster::res(raster_data) <- raster::res(dsm)
-      raster::plot(raster_data,
-                   axes=FALSE,
-                   box=FALSE,
-                   legend = FALSE)
-      v<- matrix(0,1,3)
-      v[1,1] <- viewpoints[1]
-      v[1,2] <- viewpoints[2]
-      raster::plot(sp::SpatialPoints(v),
-                   add=TRUE,
-                   col="red",
-                   axes=FALSE,
-                   box=FALSE,
-                   legend=FALSE)
+      if (plot) {
+        raster::plot(raster_data,
+                     axes=FALSE,
+                     box=FALSE,
+                     legend = FALSE)
+        v<- matrix(0,1,3)
+        v[1,1] <- viewpoints[1]
+        v[1,2] <- viewpoints[2]
+        raster::plot(sp::SpatialPoints(v),
+                     add=TRUE,
+                     col="red",
+                     axes=FALSE,
+                     box=FALSE,
+                     legend=FALSE)
+      }
       return(raster_data)
     } else {
       return(output)
