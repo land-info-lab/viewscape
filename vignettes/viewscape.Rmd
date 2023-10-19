@@ -13,7 +13,9 @@ This vignette provides a basic overview of the functions in R package `viewscape
 
 The basic viewshed analysis can be accessed through calling the `compute_viewshed`. The two needed objects to compute the viewshed are a digital surface model (DSM) and a viewpoint.
 
-### Compute viewshed
+### 1. Compute viewshed
+
+# 1.1 Compute single viewshed
 
 ```{r eval=FALSE}
 #Load in DSM
@@ -27,7 +29,7 @@ test_viewpoint <- sf::st_coordinates(test_viewpoint)
 test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
 
 #Compute viewshed
-output <- viewscape::compute_viewshed(dsm = test_dsm, viewpoints = test_viewpoint, offset_viewpoint = 6, visualization=TRUE)
+output <- viewscape::compute_viewshed(dsm = test_dsm, viewpoints = test_viewpoint, offset_viewpoint = 6, plot=TRUE)
 ```
 
 ```{r}
@@ -40,7 +42,8 @@ raster::plot(test_dsm, axes=FALSE, box=FALSE, legend = FALSE)
 raster::plot(output, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALSE)
 raster::plot(sp::SpatialPoints(viewpoint), add = TRUE, col = "blue", axes=FALSE, box=FALSE, legend = FALSE)
 ```
-# Compute the viewshed for multiple viewpoints
+
+# 1.2 Compute the viewshed for multiple viewpoints
 
 ```{r}
 #Load in DSM
@@ -77,8 +80,9 @@ for(i in 1:length(output)) {
 }
 ```
 
-## Calculate viewscape
+### 2. Calculate viewscape metrics
 
+# 2.1 Calculate the metrics of viewshed
 The function of view depth analysis can calculate two different metrics: the furthest distance and standard deviation of distances. To calculate view depth, there are two needed objects: the DSM that was used to get viewshed and result from viewshed analysis. Additionally, the third input parameter is used to customize the output.
 
 The function of extent analysis can calculate the total area of viewshed and needs the DSM that was used to get viewshed and result from viewshed analysis. 
@@ -91,39 +95,27 @@ The following function can calculate the area of ground surface and standard dev
 ```
 
 
-## calculate a single feature
+# 2.2 Calculate land use/cover diversity
 
-To calculate canopy area in a viewshed, the DSM that was used to get viewshed and a raster of canopy are needed. Additionally, input parameter 'data' is used to indicate the type of input canopy raster and 'nodata' is used to indicate the the value of cells that don't have any canopy.
-
-```{r eval=FALSE}
-  # load canopy raster
-  test_canopy <- raster::raster(system.file("test_data/test_canopy.tif",
-                                            package ="viewscape"))
-  # calculate the area of canopy
-  test_canopy_area <- viewscape::calculate_canopy(data = 1, test_canopy, 
-                                                  nodata = 0, test_dsm, 
-                                                  test_visiblepoint)
-```
-
-## Calculate land use/cover diversity
-
-The land use analysis calculates the percentage(%) of each type of land use in a viewshed. The DSM that was used to get viewshed, visible points, and a raster of land use are needed.
-The land cover analysis calculates the areas of perviousness and imperviousness and percentages(%) of perviousness and imperviousness in a viewshed. The DSM that was used to get viewshed, visible points, and a raster of land cover are needed. Input parameters 'vegetation' and 'imperviousness' are used to indicate the code of perviousness including trees or grass and the code of imperviousness including buildings, parking, and roads.
+The land use/cover diversity analysis calculates the percentage(%) of each type of land use/ cover within a viewshed to get the Shannon Diversity Index. 
 
 ```{r eval=FALSE}
-  # load landuse raster
- test_landcover <- raster::raster(system.file("test_data/test_landcover.tif",
-                                            package ="viewscape"))
-
-  # calculate the areas and percentages of perviousness and imperviousness 
-  # in the sample data of land cover, value 2 is for vegetation and value 4 is for imperviousness
-  test_landcover_area <- viewscape::calculate_landcover(landcover = test_landcover, 
-                                                        dsm = test_dsm,
-                                                        visiblepoints = test_visiblepoint,
-                                                        vegetation = 2, imperviousness = 4)
+# load landuse raster
+test_landuse <- raster::raster(system.file("test_landcover.tif",
+                                           package ="viewscape"))
+raster::plot(test_landuse, 
+             breaks = c(1,2,3,4), 
+             col = terrain.colors(3))
 ```
 
-## calculate_landuse
+```{r}
+# the Shannon Diversity Index
+test_diversity <- calculate_diversity()
+```
+
+# 2.3 calculate a single feature
+
+The analysis is to calculate the percentages(%) of a feature (including trees, buildings, parking, and roads) within the viewshed.
 
 ```{r eval=FALSE}
   # load landuse raster
@@ -135,7 +127,9 @@ The land cover analysis calculates the areas of perviousness and imperviousness 
                                                     visiblepoints = test_visiblepoint)
 ```
 
-## Get LiDAR data information via API 
+## 3. Get LiDAR data
+
+# 3.1 Get LiDAR data information via API 
 
 ```{r}
 # search for lidar data information using bbox
@@ -160,7 +154,14 @@ las <- get_lidar(x = -83.741289,
 
 ```{r}
 # Create DTM
-lidR::classify_ground(las)
+dtm_ <- lidR::rasterize_terrain(las, res = 5, lidR::tin())
+raster::plot(dtm_)
+```
+
+```{r}
+# Create DSM
+dsm_ <- lidR::rasterize_canopy(las, res = 5, lidR::dsmtin())
+raster::plot(dsm_)
 ```
 
 For more usages of lidR please refer: https://github.com/r-lidar/lidR/tree/master and https://rpubs.com/jesseast/lidR4smarties

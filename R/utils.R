@@ -1,13 +1,10 @@
-#' @noMd
 #' @useDynLib viewscape
-#' @import Rcpp
 #' @import raster
 #' @import sp
 #' @import sf
 #' @import httr2
-#' @importFrom Rcpp sourceCpp
 
-#' @noRd
+#' @noMd
 radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   # create an extent to crop input raster
   if(is.null(r) == FALSE){
@@ -32,7 +29,7 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   #return(Viewshed(output, raster::res(dsm), raster::extent(dsm)))
 }
 
-#' @noRd
+#' @noMd
 filter_invisible <- function(data) {
   viewshed <- data[1]
   extent <- data[2]
@@ -44,13 +41,13 @@ filter_invisible <- function(data) {
   return(pt)
 }
 
-#' @noRd
+#' @noMd
 # H=−∑[(pi)×ln(pi)]
 sd_index <- function(p) {
   return(sum(ln(p) * p) * -1)
 }
 
-#' @noRd
+#' @noMd
 # create a buffer based on a given point
 get_buffer <- function(x, y, r) {
   pdf <- data.frame(row.names = 1)
@@ -62,7 +59,7 @@ get_buffer <- function(x, y, r) {
   return(subarea)
 }
 
-#' @noRd
+#' @noMd
 # create a request of the TNMAccess API
 return_response <- function(bbox) {
   api1 <- 'https://tnmaccess.nationalmap.gov/api/v1/products?bbox='
@@ -100,7 +97,7 @@ return_response <- function(bbox) {
   }
 }
 
-#' @noRd
+#' @noMd
 # find year
 find_year <- function(url) {
   j <- httr2::request(url) %>%

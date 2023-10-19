@@ -11,13 +11,13 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // visibleLabel
-Rcpp::IntegerMatrix visibleLabel(const NumericVector viewpoint, const NumericMatrix dsm, const double h);
+Rcpp::IntegerMatrix visibleLabel(const NumericVector& viewpoint, const NumericMatrix& dsm, const double h);
 RcppExport SEXP _viewscape_visibleLabel(SEXP viewpointSEXP, SEXP dsmSEXP, SEXP hSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericVector >::type viewpoint(viewpointSEXP);
-    Rcpp::traits::input_parameter< const NumericMatrix >::type dsm(dsmSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type viewpoint(viewpointSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type dsm(dsmSEXP);
     Rcpp::traits::input_parameter< const double >::type h(hSEXP);
     rcpp_result_gen = Rcpp::wrap(visibleLabel(viewpoint, dsm, h));
     return rcpp_result_gen;

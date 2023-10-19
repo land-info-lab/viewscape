@@ -7,8 +7,8 @@ using namespace Rcpp;
 
 //[[Rcpp::export]]
 Rcpp::IntegerMatrix visibleLabel(
-    const NumericVector viewpoint,
-    const NumericMatrix dsm,
+    const NumericVector &viewpoint,
+    const NumericMatrix &dsm,
     const double h) {
 
   NumericVector zl;
@@ -19,7 +19,7 @@ Rcpp::IntegerMatrix visibleLabel(
   int steps;
   IntegerMatrix visible(rows, cols);
 
-  //auto start = std::chrono::system_clock::now();
+  auto start = std::chrono::system_clock::now();
   for (int i = 0; i < rows; i++) {
      for (int j = 0; j < cols; j++) {
        const double z = dsm(i,j) + h;
@@ -47,12 +47,11 @@ Rcpp::IntegerMatrix visibleLabel(
        visible(i,j) = temp;
      }
   }
-  // auto end = std::chrono::system_clock::now();
-  // std::chrono::duration<double> elapsed_seconds = end-start;
-  // std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-  //
-  // std::cout << "finished computation at " << std::ctime(&end_time)
-  //           << "elapsed time: " << elapsed_seconds.count() << "s"
-  //           << std::endl;
+  auto end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed_seconds = end-start;
+  std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+  std::cout << "elapsed time: " << elapsed_seconds.count() << "s"
+            << std::endl;
   return visible;
 }
