@@ -29,6 +29,8 @@
 #' @import httr2
 #' @import lidR
 #' @importFrom(dplyr, "%>%")
+#'
+#' @export
 
 get_lidar <- function(x,
                       y,

@@ -1,5 +1,8 @@
 #' calculate_feature
-#' @description
+#' @description The calculate_feature function is designed to extract specific
+#' feature-related information within a viewshed. It allows you to compute
+#' the proportion of the feature that is present in the viewshed.
+#'
 #' @param type Numeric. The input type of canopy raster.
 #' type=1: percentage raster (that represents the percentage of
 #' canopy area in each cell).

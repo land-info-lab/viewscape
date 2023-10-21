@@ -2,7 +2,7 @@
 title: "viewscape"
 author: "Xiaohao Yang"
 date: "2023-10-20"
-output: rmarkdown::html_vignette
+output: md_document
 vignette: >
   %\VignetteIndexEntry{viewscape}
   %\VignetteEngine{knitr::rmarkdown}
@@ -16,9 +16,13 @@ The basic viewshed analysis can be accessed through calling the `compute_viewshe
 
 ## 1. Compute viewshed
 
+```{r}
+library(viewscape)
+```
+
 ### 1.1 Compute single viewshed
 
-```{r eval=FALSE}
+```{r}
 #Load in DSM
 test_dsm <- raster::raster(system.file("test_dsm.tif", 
                                        package ="viewscape"))
@@ -92,7 +96,7 @@ The function of extent analysis can calculate the total area of viewshed and nee
 
 The following function can calculate the area of ground surface and standard deviation of elevations within a viewshed. The function needs a DSM and a DEM/DTM to calculate the metrics.
 
-```{r eval=FALSE}
+```{r}
 # Load DTM
 test_dtm <- raster::raster(system.file("test_dtm.tif", 
                                        package ="viewscape"))
@@ -122,9 +126,6 @@ test_metrics <- viewscape::calculate_viewmetrics(output[[1]],
                                                  test_dsm, 
                                                  test_dtm, 
                                                  list(test_canopy, test_building))
-```
-
-```{r}
 test_metrics
 ```
 
@@ -132,7 +133,7 @@ test_metrics
 
 calculate_diversity() calculates the proportion of each type of land use/ cover within a viewshed to get the Shannon Diversity Index. 
 
-```{r eval=FALSE}
+```{r}
 # load landuse raster
 test_landcover <- raster::raster(system.file("test_landuse.tif",
                                            package ="viewscape"))
@@ -140,8 +141,10 @@ raster::plot(test_landcover, axes=FALSE)
 ```
 
 ```{r}
-# the Shannon Diversity Index (SDI)
-test_diversity <- calculate_diversity(test_landcover, output[[1]], proportion = TRUE)
+i# the Shannon Diversity Index (SDI)
+test_diversity <- viewscape::calculate_diversity(test_landcover, 
+                                                 output[[1]], 
+                                                 proportion = TRUE)
 # SDI and The proportion of each type of land use
 test_diversity
 ```
@@ -168,9 +171,6 @@ test_canopy_proportion
 ```{r}
 # search for lidar data information using bbox
 search_result <- viewscape::lidar_search(bbox = c(-83.742282,42.273389,-83.733442,42.278724), preview = TRUE)
-```
-
-```{r}
 search_result
 ```
 
