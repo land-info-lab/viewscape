@@ -35,14 +35,7 @@ calculate_diversity <- function(land,
     land <- raster::projectRaster(land, crs = viewshed@crs)
   }
   pt <- filter_invisible(viewshed, FALSE)
-  temp_raster <- pt %>%
-    sp::SpatialPoints() %>%
-    raster::raster(crs=viewshed@crs, resolution=viewshed@resolution)
   # calculate the proportion of each class
-  land <- raster::crop(land, raster::extent(temp_raster))
-  if(raster::res(land)[1] != viewshed@resolution[1]){
-    land <- raster::resample(land, temp_raster, method='ngb')
-  }
   land_class <- raster::extract(land, pt, df=TRUE)
   colnames(land_class)[2] <- 'type'
   land_class <- dplyr::count(land_class, type)

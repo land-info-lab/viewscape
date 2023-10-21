@@ -8,15 +8,15 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-## Viewscape
+# Viewscape
 
 This vignette provides a basic overview of the functions in R package `viewscape`.
 
 The basic viewshed analysis can be accessed through calling the `compute_viewshed`. The two needed objects to compute the viewshed are a digital surface model (DSM) and a viewpoint.
 
-### 1. Compute viewshed
+## 1. Compute viewshed
 
-# 1.1 Compute single viewshed
+### 1.1 Compute single viewshed
 
 ```{r eval=FALSE}
 #Load in DSM
@@ -49,7 +49,7 @@ raster::plot(output, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALS
 raster::plot(sp::SpatialPoints(viewpoint), add = TRUE, col = "blue", axes=FALSE, box=FALSE, legend = FALSE)
 ```
 
-# 1.2 Compute the viewshed for multiple viewpoints
+### 1.2 Compute the viewshed for multiple viewpoints
 
 ```{r}
 #Load in DSM
@@ -83,9 +83,9 @@ for(i in 1:length(output)) {
 }
 ```
 
-### 2. Calculate viewscape metrics
+## 2. Calculate viewscape metrics
 
-# 2.1 Calculate the metrics of viewshed
+### 2.1 Calculate the metrics of viewshed
 The function of view depth analysis can calculate two different metrics: the furthest distance and standard deviation of distances. To calculate view depth, there are two needed objects: the DSM that was used to get viewshed and result from viewshed analysis.
 
 The function of extent analysis can calculate the total area of viewshed and needs the DSM that was used to get viewshed and result from viewshed analysis. 
@@ -128,7 +128,7 @@ test_metrics <- viewscape::calculate_viewmetrics(output[[1]],
 test_metrics
 ```
 
-# 2.2 Calculate land use/cover diversity
+### 2.2 Calculate land use/cover diversity
 
 calculate_diversity() calculates the proportion of each type of land use/ cover within a viewshed to get the Shannon Diversity Index. 
 
@@ -142,14 +142,11 @@ raster::plot(test_landcover, axes=FALSE)
 ```{r}
 # the Shannon Diversity Index (SDI)
 test_diversity <- calculate_diversity(test_landcover, output[[1]], proportion = TRUE)
-```
-
-```{r}
 # SDI and The proportion of each type of land use
 test_diversity
 ```
 
-# 2.3 calculate a single feature
+### 2.3 calculate a single feature
 
 calculate_feature is to calculate the proportion of a feature (including trees, buildings, parking, and roads) within the viewshed. This function can be applied to 
 
@@ -158,14 +155,15 @@ calculate_feature is to calculate the proportion of a feature (including trees, 
 test_canopy <- raster::raster(system.file("test_canopy.tif",
                                           package ="viewscape"))
 # calculate the percentage of each type of land use  
-test_canopy_proportion <- viewscape::calculate_feature(landuse = test_canopy, 
-                                                    dsm = test_dsm,
-                                                    visiblepoints = test_visiblepoint)
+test_canopy_proportion <- viewscape::calculate_feature(type = 2, 
+                                                       feature = test_canopy,
+                                                       viewshed = output[[1]])
+test_canopy_proportion
 ```
 
 ## 3. Get LiDAR data
 
-# 3.1 Get LiDAR data information via API 
+### 3.1 Get LiDAR data information via API 
 
 ```{r}
 # search for lidar data information using bbox
@@ -176,7 +174,8 @@ search_result <- viewscape::lidar_search(bbox = c(-83.742282,42.273389,-83.73344
 search_result
 ```
 
-## Download LiDAR data with a given point and searching distance
+### 3.2 Download LiDAR data with a given point and searching distance
+
 ```{r}
 # try coordinates -83.741289,42.270146 (in south Michigan, USA)
 # radius is 1000ft

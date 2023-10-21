@@ -52,6 +52,15 @@ get_buffer <- function(x, y, r) {
   return(subarea)
 }
 
+#' #' @noMd
+#' # crop raster with a viewshed object
+#' crop_raster <- function(pt, ra, crs, resolution) {
+#'   temp_raster <- pt %>%
+#'     sp::SpatialPoints() %>%
+#'     raster::raster(crs=crs, resolution=resolution)
+#'   return(raster::crop(ra, raster::extent(temp_raster)))
+#' }
+
 #' @noMd
 # create a request of the TNMAccess API
 return_response <- function(bbox) {
