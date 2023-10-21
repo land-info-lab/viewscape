@@ -123,7 +123,7 @@ metrics and the rest of the functions available in this package please
 refer to the [package
 website](https://billbillbilly.github.io/viewscape/). For more
 information and examples of the functions check out the [package
-vignette](needs%20to%20be%20created).
+vignette](https://github.com/land-info-lab/viewscape/blob/cpp/vignettes/viewscape.md).
 
 ## Issues and bugs
 
