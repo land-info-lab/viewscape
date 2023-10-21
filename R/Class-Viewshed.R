@@ -11,7 +11,8 @@
 
 setClass(
   Class = "Viewshed",
-  representation(visible = "matrix",
+  representation(viewpoint = "numeric",
+                 visible = "matrix",
                  resolution = "numeric",
                  extent = "Extent",
                  crs = "CRS")

@@ -1,19 +1,19 @@
 #' compute_viewshed
 #' @description Compute the viewshed based on a given spaial point or a set of points.
-#' @param dsm raster, the digital surface model/digital elevation model
-#' @param viewpoints vector, including x,y coordinates of a viewpoint
+#' @param dsm Raster, the digital surface model/digital elevation model
+#' @param viewpoints Vector, including x,y coordinates of a viewpoint
 #' or a matrix including several viewpoints with x,y coordinates (if multiviewpoints = TRUE)
 #' @param offset_viewpoint numeric, setting the height of the viewpoint.
 #' @param offset_height numeric, setting the height of positions that a given viewpoint will
 #' look at. The defaut is 0
-#' @param r numeric, setting the radius for viewshed analysis. (it is defaulted as NULL)
+#' @param r Numeric, setting the radius for viewshed analysis. (it is defaulted as NULL)
 #' @param multiviewpoints the radius for viewshed analysis. (it is defaulted as NULL)
-#' @param parallel logical, indicating if parallel computing should be used to compute
+#' @param parallel Logical, indicating if parallel computing should be used to compute
 #' viewsheds of multiview points. The default is FALSE. When it is TRUE, arguements 'raster'
 #' and 'plot' are ignored
-#' @param raster logical, if it is TRUE, the raster of viewshed will be returned.
+#' @param raster Logical, if it is TRUE, the raster of viewshed will be returned.
 #' The default is FALSE
-#' @param plot logical, if it is TRUE, the raster of viewshed will be displayed
+#' @param plot Logical, if it is TRUE, the raster of viewshed will be displayed
 #'
 #' @return Raster or list. If raster is TRUE, the output is a binary raster.
 #' Value 1 means visible while value 0 means invisible. The list includes a binary matrix,
@@ -35,8 +35,11 @@
 #' @export
 #'
 #' @examples
+#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+#' test_viewpoint <- sf::st_coordinates(test_viewpoint)
 #' test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
 #' #Compute viewshed
+#' dsm <- raster::raster(system.file("test_dsm.tif", package ="viewscape"))
 #' output <- compute_viewshed(dsm = dsm,
 #'                            viewpoints = test_viewpoint,
 #'                            offset_viewpoint = 6,
@@ -64,9 +67,6 @@ compute_viewshed <- function(dsm,
     # compute viewshed
     output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint, offset_height)
     if (raster) {
-      # raster_data <- raster::raster(output[[1]])
-      # raster::extent(raster_data) <- output[[2]]
-      # raster::res(raster_data) <- raster::res(dsm)
       raster_data <- filter_invisible(output, raster)
       if (plot) {
         raster::plot(raster_data,

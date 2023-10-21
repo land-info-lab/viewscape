@@ -24,6 +24,7 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   # compute viewshed
   label_matrix <- visibleLabel(viewpoint, dsm_matrix, offset2)
   output <- new("Viewshed",
+                viewpoint = viewPt,
                 visible = label_matrix,
                 resolution = raster::res(dsm),
                 extent = raster::extent(dsm),
@@ -32,22 +33,11 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   #return(Viewshed(output, raster::res(dsm), raster::extent(dsm)))
 }
 
-
-# filter_invisible <- function(data) {
-#   viewshed <- data[1]
-#   extent <- data[2]
-#   raster_data <- raster::raster(viewshed)
-#   raster::extent(raster_data) <- extent
-#   raster::res(raster_data) <- raster::res(dsm)
-#   pt <- raster::rasterToPoints(raster_data)
-#   pt <- pt[pt[,3] == 1,]
-#   return(pt)
-# }
-
 #' @noMd
 # H=−∑[(pi)×ln(pi)]
 sd_index <- function(p) {
-  return(sum(ln(p) * p) * -1)
+  out <- sum(log(p) * p) * -1
+  return(round(out, digits = 3))
 }
 
 #' @noMd
@@ -68,7 +58,7 @@ return_response <- function(bbox) {
   api1 <- 'https://tnmaccess.nationalmap.gov/api/v1/products?bbox='
   api2 <- paste0(bbox[1], ",", bbox[2], ",", bbox[3], ",", bbox[4])
   api3 <- '&datasets=Lidar%20Point%20Cloud%20(LPC)&prodFormats=LAS,LAZ'
-  json <- httr2::request(paste0(api1, api2, api3)) %>%
+  json <- httr2::request(paste0(api1, api2, api3)) %>% req_timeout(10) %>%
     httr2::req_perform() %>%
     httr2::resp_body_json()
   items <- json$total
@@ -103,7 +93,7 @@ return_response <- function(bbox) {
 #' @noMd
 # find year
 find_year <- function(url) {
-  j <- httr2::request(url) %>%
+  j <- httr2::request(url) %>% req_timeout(10) %>%
     httr2::req_perform() %>%
     httr2::resp_body_json()
   date <- j$dates[[2]]$dateString %>% strsplit("-") %>% unlist()

@@ -7,6 +7,10 @@
 #' be returned. Default is FALSE.
 #' @return Dataframe. The output is the percentage(%) of each type of land use
 #' within a viewshed.
+#' @import dplyr
+#' @import raster
+#' @import sp
+#'
 #' @export
 #'
 #' @references
@@ -17,33 +21,33 @@
 calculate_diversity <- function(land,
                                 viewshed,
                                 proportion = FALSE){
-  if (raster::crs(land) != viewshed@crs) {
-    cat("Your input (land) rasters has different
+
+  if (isFALSE(raster::compareCRS(raster::crs(land), viewshed@crs))) {
+    cat("Your input (land) rasters have different
         coordinate reference system from the viewshed\n")
     cat("Reprojetion will be processing ...\n")
+    land <- raster::projectRaster(land, crs = viewshed@crs)
   }
-  pt <- filter_viewshed(viewshed, FALSE)
+  pt <- filter_invisible(viewshed, FALSE)
   temp_raster <- pt %>%
     sp::SpatialPoints() %>%
-    raster::raster(crs=dsm@crs, resolution=viewshed@resolution)
+    raster::raster(crs=viewshed@crs, resolution=viewshed@resolution)
   # calculate the proportion of each class
-  viewshed_extent <- raster::extent(temp_raster)
-  land <- raster::crop(land, viewshed_extent)
-  if(raster::res(land)[1] != viewshed@resolution){
+  land <- raster::crop(land, raster::extent(temp_raster))
+  if(raster::res(land)[1] != viewshed@resolution[1]){
     land <- raster::resample(land, temp_raster, method='ngb')
   }
-  land_class <- landuse[raster::cellFromXY(land,
-                                           cbind(pt$x,pt$y))]
-  class_df <- data.frame(class=land_class, count=1)
-  class_df <- base::subset(class_df,
-                           is.na(class_df$class)==FALSE,
-                           select = c(class, count))
-  land_class <- dplyr::count(class_df, class)
-  land_class$total <- sum(land_class$n)
-  land_class$proportion <- land_class$n/land_class$total*100
+  land_class <- raster::extract(land, pt, df=TRUE)
+  colnames(land_class)[2] <- 'type'
+  land_class <- dplyr::count(land_class, type)
+  total <- sum(land_class$n)
+  land_class$proportion <- land_class$n/total
   # calculate Shannon diversity index
   p <- land_class$proportion
-  p <- p[p > 0]
   sdi <- sd_index(p)
-  return(land_class)
+  if (proportion) {
+    return(list(SDI=sdi, Proportion=t(subset(land_class, select = c(type, proportion)))))
+  } else {
+    return(sdi)
+  }
 }
