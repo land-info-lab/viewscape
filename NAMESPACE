@@ -2,6 +2,7 @@
 
 export(calculate_diversity)
 export(calculate_feature)
+export(calculate_viewmetrics)
 export(compute_viewshed)
 export(lidar_search)
 export(visualize_viewshed)

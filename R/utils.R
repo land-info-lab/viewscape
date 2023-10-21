@@ -58,7 +58,7 @@ return_response <- function(bbox) {
   api1 <- 'https://tnmaccess.nationalmap.gov/api/v1/products?bbox='
   api2 <- paste0(bbox[1], ",", bbox[2], ",", bbox[3], ",", bbox[4])
   api3 <- '&datasets=Lidar%20Point%20Cloud%20(LPC)&prodFormats=LAS,LAZ'
-  json <- httr2::request(paste0(api1, api2, api3)) %>% req_timeout(10) %>%
+  json <- httr2::request(paste0(api1, api2, api3)) %>% req_timeout(10000) %>%
     httr2::req_perform() %>%
     httr2::resp_body_json()
   items <- json$total

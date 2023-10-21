@@ -25,34 +25,77 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-
-The goal of viewscape package is to provide an accessible method of carrying out viewshed analysis within the R environment. The viewscape R pacakge can currently be downloaded via github.
+The goal of viewscape package is to provide an accessible method of carrying out landscape spatial analysis based on the viewshed within the R environment. The viewscape R pacakge can currently be downloaded via github.
 
 ```{r eval=FALSE}
 library(devtools)
 
 install_github("land-info-lab/viewscape")
-
 ```
 
-The basic viewshed analysis can be accessed through calling the `calculate_viewshed`. The two needed objects to calculate the viewshed are a digital surface model (DSM) and a viewpoint.
+The basic viewshed analysis can be accessed through calling the `compute_viewshed`. The two needed objects are a digital surface model (DSM) and a viewpoint. It provides flexibility for single or multi-viewpoint analyses
+and allows options for parallel processing, raster output, and plotting.
+
+Based on the viewshed, a set of configuration metrics can be calculated, including:
+1. Extent: The total area of the viewshed, calculated as the number of visible grid cells multiplied by the grid resolution.\n
+2. Depth: The furthest visible distance within the viewshed from the viewpoint.\n
+3. Vdepth: The standard deviation of distances to visible points, providing a measure of the variation in visible distances.\n
+4. Horizontal: The total visible horizontal or terrestrial area within the viewshed.\n
+5. Relief: The standard deviation of elevations of the visible ground surface.\n
+6. Skyline: Variation of (Standard deviation) of the vertical viewscape (visible canopy and buildings).\n
+7. Shannon diversity index: Based on the number of land use/cover classes and the proportion of distribution.\n
+8. Proportion of other object: Building, trees, or paved surface.
 
 ```{r eval=FALSE}
-  #Load in DSM
-  test_dsm <- raster::raster(system.file("extdata\\test_dsm.tif",
-                                         package ="viewscape"))
+#Load in DSM
+test_dsm <- raster::raster(system.file("test_dsm.tif", 
+                                       package ="viewscape"))
 
-  #Load in the viewpoint
-  test_viewpoint <- sf::read_sf(system.file("extdata\\test_viewpoint.shp",
-                                               package = "viewscape"))
+#Load in the viewpoint
+test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", 
+                                          package = "viewscape"))
 
-  #Transform viewpoint from shape file to coordinates 
-  test_viewpoint <- sf::st_coordinates(test_viewpoint)
-  test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
+#Transform viewpoint from shape file to coordinates 
+test_viewpoint <- sf::st_coordinates(test_viewpoint)
+test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
 
-  #Run function
-  test_visiblepoint <- viewscape::calculate_viewshed(dsm = test_dsm,
-                                                     viewpoint = test_viewpoint)
+#Compute viewshed
+output <- viewscape::compute_viewshed(dsm = test_dsm, 
+                                      viewpoints = test_viewpoint, 
+                                      offset_viewpoint = 6, 
+                                      plot=TRUE)
+
+# Load DTM
+test_dtm <- raster::raster(system.file("test_dtm.tif", 
+                                       package ="viewscape"))
+
+# load landuse raster
+test_landcover <- raster::raster(system.file("test_landuse.tif",
+                                           package ="viewscape"))
+
+# Load canopy raster
+test_canopy <- raster::raster(system.file("test_canopy.tif", 
+                                       package ="viewscape"))
+
+# Load building footprints raster
+test_building <- raster::raster(system.file("test_building.tif", 
+                                       package ="viewscape"))
+
+# calculate metrics given the viewshed
+test_metrics <- viewscape::calculate_viewmetrics(output, 
+                                                 test_dsm, 
+                                                 test_dtm, 
+                                                 list(test_canopy, test_building))
+
+# the Shannon Diversity Index (SDI)
+test_diversity <- calculate_diversity(test_landcover, output, proportion = TRUE)
+```
+
+Baesd on the TNMAccess API, LiDAR search facilitate the retrieval and exploration of LiDAR (Light Detection and Ranging) data (from USGS) within a specified bounding box (bbox). This function enables users to search for LiDAR data, preview available graphics, and optionally download LiDAR data files for further viewscape analysis. Current dataset of USGS covers the most area in the US: https://apps.nationalmap.gov/lidar-explorer/#/ 
+
+```{r}
+# search for lidar data information using bbox
+search_result <- viewscape::lidar_search(bbox = c(-83.742282,42.273389,-83.733442,42.278724), preview = TRUE)
 ```
 
 From viewshed analysis, the visible area of a viewpoint is presented by visible points. There are several viewshed metrics such as can be calculated based on the visible points. For further information on these metrics and the rest of the functions available in this package please refer to the [package website](https://billbillbilly.github.io/viewscape/). For more information and examples of the functions check out the [package vignette](needs to be created).

@@ -24,6 +24,8 @@
 #' Modeling restorative potential of urban environments by coupling viewscape analysis of lidar
 #' data with experiments in immersive virtual environments. Landscape and Urban Planning, 195, 103704.
 #' @import raster
+#'
+#' @export
 
 calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   if (missing(viewshed)) {
