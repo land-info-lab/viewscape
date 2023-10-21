@@ -32,6 +32,7 @@ Imports:
     Rcpp,
     dplyr,
     sf,
+    sp,
     raster,
     rgdal,
     BiocManager,

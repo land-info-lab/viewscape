@@ -64,9 +64,10 @@ compute_viewshed <- function(dsm,
     # compute viewshed
     output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint, offset_height)
     if (raster) {
-      raster_data <- raster::raster(output[[1]])
-      raster::extent(raster_data) <- output[[2]]
-      raster::res(raster_data) <- raster::res(dsm)
+      # raster_data <- raster::raster(output[[1]])
+      # raster::extent(raster_data) <- output[[2]]
+      # raster::res(raster_data) <- raster::res(dsm)
+      raster_data <- filter_invisible(output, raster)
       if (plot) {
         raster::plot(raster_data,
                      axes=FALSE,
@@ -108,7 +109,7 @@ compute_viewshed <- function(dsm,
       for(i in 1:length(viewpoints[,1])){
         viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
         output <- radius_viewshed(dsm, r, viewpoint, offset_viewpoint)
-        viewsheds <- c(viewsheds, list(output))
+        viewsheds <- c(viewsheds, output)
       }
     }
     return(viewsheds)

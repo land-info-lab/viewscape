@@ -7,32 +7,32 @@
 #' @slot extent Extent [package 'raster']
 #' @slot crs crs [package 'raster']
 #'
+#' @md
 
 setClass(
-  "Viewshed",
-  slots = list(
-    visible = "matrix",
-    resolution = "numeric",
-    extent = "Extent",
-    crs = "CRS"
-  )
+  Class = "Viewshed",
+  representation(visible = "matrix",
+                 resolution = "numeric",
+                 extent = "Extent",
+                 crs = "CRS")
 )
 
-mkviewshed <- function(visible, resolution, extent, crs) {
-  new("Viewshed",
-      visible = visible,
-      resolution = resolution,
-      extent = extent,
-      crs = crs)
-}
+setGeneric("filter_invisible", function(object, ifRaster){
+  standardGeneric("filter_invisible")
+})
 
-# setMethod("filter_invisible", signature = "Viewshed",
-#           function(object)
-#           {
-#             raster_data <- raster::raster(object@visible)
-#             raster::extent(raster_data) <- object@extent
-#             raster::res(raster_data) <- raster::res(object@resolution)
-#             pt <- raster::rasterToPoints(raster_data)
-#             pt <- pt[pt[,3] == 1,]
-#             return(pt)
-#           })
+setMethod("filter_invisible", signature(object="Viewshed", ifRaster="logical"),
+          function(object, ifRaster)
+          {
+            raster_data <- raster::raster(object@visible)
+            raster::extent(raster_data) <- object@extent
+            raster::res(raster_data) <- object@resolution
+            if (ifRaster) {
+              return(raster_data)
+            } else {
+              pt <- raster::rasterToPoints(raster_data)
+              pt <- pt[pt[,3] == 1,]
+              pt <- pt[,-3]
+              return(pt)
+            }
+          })

@@ -1,4 +1,3 @@
-#' @useDynLib viewscape
 #' @import raster
 #' @import sp
 #' @import sf
@@ -23,23 +22,27 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   # get raster information
   dsm_matrix <- raster::as.matrix(dsm)
   # compute viewshed
-  output <- visibleLabel(viewpoint, dsm_matrix, offset2)
-  e <- raster::extent(dsm)
-  return(list(output, e))
+  label_matrix <- visibleLabel(viewpoint, dsm_matrix, offset2)
+  output <- new("Viewshed",
+                visible = label_matrix,
+                resolution = raster::res(dsm),
+                extent = raster::extent(dsm),
+                crs = raster::crs(dsm))
+  return(output)
   #return(Viewshed(output, raster::res(dsm), raster::extent(dsm)))
 }
 
-#' @noMd
-filter_invisible <- function(data) {
-  viewshed <- data[1]
-  extent <- data[2]
-  raster_data <- raster::raster(viewshed)
-  raster::extent(raster_data) <- extent
-  raster::res(raster_data) <- raster::res(dsm)
-  pt <- raster::rasterToPoints(raster_data)
-  pt <- pt[pt[,3] == 1,]
-  return(pt)
-}
+
+# filter_invisible <- function(data) {
+#   viewshed <- data[1]
+#   extent <- data[2]
+#   raster_data <- raster::raster(viewshed)
+#   raster::extent(raster_data) <- extent
+#   raster::res(raster_data) <- raster::res(dsm)
+#   pt <- raster::rasterToPoints(raster_data)
+#   pt <- pt[pt[,3] == 1,]
+#   return(pt)
+# }
 
 #' @noMd
 # H=−∑[(pi)×ln(pi)]

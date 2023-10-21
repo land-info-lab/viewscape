@@ -12,15 +12,15 @@ function 'calculate_viewshed' to calculate viewshed.}
 
 \item{dem}{The raster of terrain without any vertical object}
 
-\item{visiblepoints}{the viewshed calulated by function 'calculate_viewshed'.}
+\item{visiblepoints}{the viewshed calculated by function 'calculate_viewshed'.}
 
 \item{type}{The metric to be returned. 1=depth(Furthest distance);
 2=depth variation; 3=both (a list).}
 }
 \value{
 Numeric. If type = 1 or 2, the function will return area of
-gound surface or standard deviation of elevations as a number. If type = 3,
-the function will return both metrics above as a vestor.
+ground surface or standard deviation of elevations as a number. If type = 3,
+the function will return both metrics above as a vector.
 }
 \description{
 get_horizontal

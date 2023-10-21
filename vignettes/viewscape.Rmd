@@ -1,6 +1,7 @@
 ---
 title: "viewscape"
-date: "2023-10-08"
+author: "Xiaohao Yang"
+date: "2023-10-20"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{viewscape}
@@ -19,17 +20,22 @@ The basic viewshed analysis can be accessed through calling the `compute_viewshe
 
 ```{r eval=FALSE}
 #Load in DSM
-test_dsm <- raster::raster(system.file("test_dsm.tif", package ="viewscape"))
+test_dsm <- raster::raster(system.file("test_dsm.tif", 
+                                       package ="viewscape"))
 
 #Load in the viewpoint
-test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", 
+                                          package = "viewscape"))
 
 #Transform viewpoint from shape file to coordinates 
 test_viewpoint <- sf::st_coordinates(test_viewpoint)
 test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
 
 #Compute viewshed
-output <- viewscape::compute_viewshed(dsm = test_dsm, viewpoints = test_viewpoint, offset_viewpoint = 6, plot=TRUE)
+output <- viewscape::compute_viewshed(dsm = test_dsm, 
+                                      viewpoints = test_viewpoint, 
+                                      offset_viewpoint = 6, 
+                                      plot=TRUE)
 ```
 
 ```{r}
@@ -47,34 +53,31 @@ raster::plot(sp::SpatialPoints(viewpoint), add = TRUE, col = "blue", axes=FALSE,
 
 ```{r}
 #Load in DSM
-test_dsm <- raster::raster(system.file("test_dsm.tif", package ="viewscape"))
+test_dsm <- raster::raster(system.file("test_dsm.tif", 
+                                       package ="viewscape"))
 
 # Load points (.shp file)
-test_viewpoints <- sf::read_sf(system.file("test_viewpoints.shp", package = "viewscape"))
+test_viewpoints <- sf::read_sf(system.file("test_viewpoints.shp", 
+                                           package = "viewscape"))
 
 #Transform viewpoint from shape file to coordinates 
 test_viewpoints <- sf::st_coordinates(test_viewpoints)
 
 # Compute viewsheds
 # the output includes binary matrix and extent of viewshed 
-output <- viewscape::compute_viewshed(dsm = test_dsm, viewpoints = test_viewpoints, offset_viewpoint = 6, multiviewpoints = TRUE)
+output <- viewscape::compute_viewshed(dsm = test_dsm, 
+                                      viewpoints = test_viewpoints, 
+                                      offset_viewpoint = 6, 
+                                      multiviewpoints = TRUE,
+                                      raster=TRUE)
 ```
 
 ```{r}
-# plot all viewsheds on DSM
-# each <- output[5]
-# raster_data <- raster::raster(each[[1]][[1]])
-# raster::extent(raster_data) <- each[[1]][[2]]
-# raster::res(raster_data) <- raster::res(test_dsm)
-# raster_data[raster_data[] == 0 ] = NA
-# raster::plot(raster_data, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALSE)
+# Use plot all viewsheds on DSM
 par(mfrow=c(3,3))
 for(i in 1:length(output)) {
-  each <- output[i]
-  raster_data <- raster::raster(each[[1]][[1]])
-  raster::extent(raster_data) <- each[[1]][[2]]
-  raster::res(raster_data) <- raster::res(test_dsm)
-  raster_data[raster_data[] == 0 ] = NA
+  each <- output[[i]]
+  raster_data <- viewscape::visualize_viewshed(each, outputtype="raster")
   raster::plot(test_dsm, axes=FALSE, box=FALSE, legend = FALSE)
   raster::plot(raster_data, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALSE)
 }
@@ -83,46 +86,56 @@ for(i in 1:length(output)) {
 ### 2. Calculate viewscape metrics
 
 # 2.1 Calculate the metrics of viewshed
-The function of view depth analysis can calculate two different metrics: the furthest distance and standard deviation of distances. To calculate view depth, there are two needed objects: the DSM that was used to get viewshed and result from viewshed analysis. Additionally, the third input parameter is used to customize the output.
+The function of view depth analysis can calculate two different metrics: the furthest distance and standard deviation of distances. To calculate view depth, there are two needed objects: the DSM that was used to get viewshed and result from viewshed analysis.
 
 The function of extent analysis can calculate the total area of viewshed and needs the DSM that was used to get viewshed and result from viewshed analysis. 
 
-The following function can calculate the area of ground surface and standard deviation of elevations within a viewshed. The function needs a DSM and a DEM/DTM to calculate the metrics. Additionally, the third input parameter is used to customize the output.
+The following function can calculate the area of ground surface and standard deviation of elevations within a viewshed. The function needs a DSM and a DEM/DTM to calculate the metrics.
 
 ```{r eval=FALSE}
-  # calculate view depth within the viewshed
-  test_depth <- viewscape::get_depth(test_visiblepoint, test_viewpoint, 3)
-```
+# Load DTM
+test_dtm <- raster::raster(system.file("test_dtm.tif", 
+                                       package ="viewscape"))
 
-
-# 2.2 Calculate land use/cover diversity
-
-The land use/cover diversity analysis calculates the percentage(%) of each type of land use/ cover within a viewshed to get the Shannon Diversity Index. 
-
-```{r eval=FALSE}
-# load landuse raster
-test_landuse <- raster::raster(system.file("test_landcover.tif",
-                                           package ="viewscape"))
-raster::plot(test_landuse, 
-             breaks = c(1,2,3,4), 
-             col = terrain.colors(3))
+# calculate metrics given the viewshed
+test_metrics <- viewscape::calculate_viewmetrics(output[[1]], test_dsm, test_dtm)
 ```
 
 ```{r}
-# the Shannon Diversity Index
-test_diversity <- calculate_diversity()
+test_metrics
+```
+
+# 2.2 Calculate land use/cover diversity
+
+calculate_diversity() calculates the proportion of each type of land use/ cover within a viewshed to get the Shannon Diversity Index. 
+
+```{r eval=FALSE}
+# load landuse raster
+test_landcover <- raster::raster(system.file("test_landuse.tif",
+                                           package ="viewscape"))
+raster::plot(test_landcover, axes=FALSE)
+```
+
+```{r}
+# the Shannon Diversity Index (SDI)
+test_diversity <- calculate_diversity(test_landcover, output[[1]], proportion = TRUE)
+```
+
+```{r}
+# SDI and The proportion of each type of land use
+test_diversity
 ```
 
 # 2.3 calculate a single feature
 
-The analysis is to calculate the percentages(%) of a feature (including trees, buildings, parking, and roads) within the viewshed.
+calculate_feature is to calculate the proportion of a feature (including trees, buildings, parking, and roads) within the viewshed. This function can be applied to 
 
 ```{r eval=FALSE}
-  # load landuse raster
- test_landuse <- raster::raster(system.file("test_data/test_landuse.tif",
-                                            package ="viewscape"))
-  # calculate the percentage of each type of land use  
-  test_landuse_area <- viewscape::calculate_landuse(landuse = test_landuse, 
+# load landuse raster
+test_canopy <- raster::raster(system.file("test_canopy.tif",
+                                          package ="viewscape"))
+# calculate the percentage of each type of land use  
+test_canopy_proportion <- viewscape::calculate_feature(landuse = test_canopy, 
                                                     dsm = test_dsm,
                                                     visiblepoints = test_visiblepoint)
 ```
@@ -133,7 +146,7 @@ The analysis is to calculate the percentages(%) of a feature (including trees, b
 
 ```{r}
 # search for lidar data information using bbox
-search_result <- lidar_search(bbox = c(-83.742282,42.273389,-83.733442,42.278724), preview = TRUE)
+search_result <- viewscape::lidar_search(bbox = c(-83.742282,42.273389,-83.733442,42.278724), preview = TRUE)
 ```
 
 ```{r}
@@ -144,12 +157,12 @@ search_result
 ```{r}
 # try coordinates -83.741289,42.270146 (in south Michigan, USA)
 # radius is 1000ft
-las <- get_lidar(x = -83.741289, 
-                 y = 42.270146, 
-                 r = 1000, 
-                 epsg = 2253,
-                 folder = '/Users/yangxiaohao/Downloads/testfunction',
-                 plot = FALSE)
+las <- viewscape::get_lidar(x = -83.741289,
+                            y = 42.270146,
+                            r = 1000,
+                            epsg = 2253,
+                            folder = '/Users/yangxiaohao/Downloads/testfunction',
+                            plot = FALSE)
 ```
 
 ```{r}

@@ -5,18 +5,17 @@
 #' canopy area in each cell).
 #' type=2: binary raster (that only uses two values to represent whether
 #' canopy exists in each cell).
-#' @param raster Raster.
-#' @param dsm Raster. The digital surface model(DSM) that is used to
-#' compute viewshed.
-#' @param nodata Numeric. If type = 2, it indicates the value of
+#' @param feature Raster.
+#' @param viewshed Viewshed object.
+#' @param value Numeric. If type = 2, it indicates the value of
 #' cells that are empty. (it is defaulted as NULL)
 #'
 #' @return Numeric. The canopy area in the viewshed.
 #' @export
 #'
 #' @examples
-calculate_feature <- function(type, raster, dsm, r, viewpoint, offset_viewpoint, nodata=NULL){
-  if (raster::crs(raster) != raster::crs(dsm)) {
+calculate_feature <- function(type, feature, viewshed, value=NULL){
+  if (raster::crs(feature) != viewshed@crs) {
     stop("your input rasters should have same coordinate reference system")
   }
   #create a empty raster using the extent of viewshed

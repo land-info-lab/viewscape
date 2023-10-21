@@ -4,15 +4,15 @@
 \alias{get_depth}
 \title{get_depth}
 \usage{
-get_depth(visiblepoints, viewpoint, type)
+get_depth(dsm, dem = NULL, r, viewpoint, offset_viewpoint, type)
 }
 \arguments{
-\item{visiblepoints}{The viewshed calulated by function 'calculate_viewshed'}
-
 \item{viewpoint}{A matrix including x,y coordinates}
 
-\item{type}{The metric to be returned. 1=depth(Furthest distance);
-2=depth variation; 3=both (a list).}
+\item{type}{numeric, indicating the type of metric to be returned. 1 = depth (Furthest distance);
+2 = depth variation; 3 = both (a list).}
+
+\item{visiblepoints}{The viewshed calulated by function 'calculate_viewshed'}
 }
 \value{
 Numeric. If type = 1 or 2, the function will return furthest distance

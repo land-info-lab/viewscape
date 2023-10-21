@@ -18,16 +18,18 @@ calculate_diversity <- function(land,
                                 viewshed,
                                 proportion = FALSE){
   if (raster::crs(land) != viewshed@crs) {
-    stop("your input rasters should have same coordinate reference system")
+    cat("Your input (land) rasters has different
+        coordinate reference system from the viewshed\n")
+    cat("Reprojetion will be processing ...\n")
   }
-  #pt <- filter_viewshed(viewshed)
+  pt <- filter_viewshed(viewshed, FALSE)
   temp_raster <- pt %>%
     sp::SpatialPoints() %>%
-    raster::raster(crs=dsm@crs, resolution=raster::res(dsm))
+    raster::raster(crs=dsm@crs, resolution=viewshed@resolution)
   # calculate the proportion of each class
   viewshed_extent <- raster::extent(temp_raster)
   land <- raster::crop(land, viewshed_extent)
-  if(raster::res(land)[1] != raster::res(dsm)[1]){
+  if(raster::res(land)[1] != viewshed@resolution){
     land <- raster::resample(land, temp_raster, method='ngb')
   }
   land_class <- landuse[raster::cellFromXY(land,
