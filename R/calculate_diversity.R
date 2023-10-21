@@ -1,12 +1,17 @@
 #' calculate_diversity
-#' @description
+#' @description The calculate_diversity function is designed to calculate landscape
+#' diversity metrics within a viewshed. It takes as input a land cover raster,
+#' a viewshed object representing the observer's line of sight, and an optional
+#' parameter to compute class proportions.
 #'
-#' @param land Raster. The raster of land use/land cover
+#' @param land Raster. The raster of land use/land cover representing different
+#' land use/cover classes.
 #' @param viewshed Viewshed object [package "viewscape"].
-#' @param proportion logical, indicating if the percentage(%) of each land use should
-#' be returned. Default is FALSE.
-#' @return Dataframe. The output is the percentage(%) of each type of land use
-#' within a viewshed.
+#' @param proportion logical (Optional), indicating whether to return class
+#' proportions along with the Shannon Diversity Index (SDI). (default is FALSE).
+#' @return List. a list containing the Shannon Diversity Index (SDI) and,
+#' if the proportion parameter is set to TRUE, a table of class proportions
+#' within the viewshed.
 #' @import dplyr
 #' @import raster
 #' @import sp
@@ -16,12 +21,13 @@
 #' @references
 #'
 #' @examples
-#'
+#' diversity_metrics <- calculate_diversity(land_cover_raster,
+#'                                          viewshed_object,
+#'                                          proportion = TRUE)
 
 calculate_diversity <- function(land,
                                 viewshed,
                                 proportion = FALSE){
-
   if (isFALSE(raster::compareCRS(raster::crs(land), viewshed@crs))) {
     cat("Your input (land) rasters have different
         coordinate reference system from the viewshed\n")

@@ -97,8 +97,31 @@ The following function can calculate the area of ground surface and standard dev
 test_dtm <- raster::raster(system.file("test_dtm.tif", 
                                        package ="viewscape"))
 
+# Load canopy raster
+test_canopy <- raster::raster(system.file("test_canopy.tif", 
+                                       package ="viewscape"))
+
+# Load building footprints raster
+test_building <- raster::raster(system.file("test_building.tif", 
+                                       package ="viewscape"))
+
+raster::plot(test_dtm)
+```
+
+```{r}
+raster::plot(test_canopy)
+```
+
+```{r}
+raster::plot(test_building)
+```
+
+```{r}
 # calculate metrics given the viewshed
-test_metrics <- viewscape::calculate_viewmetrics(output[[1]], test_dsm, test_dtm)
+test_metrics <- viewscape::calculate_viewmetrics(output[[1]], 
+                                                 test_dsm, 
+                                                 test_dtm, 
+                                                 list(test_canopy, test_building))
 ```
 
 ```{r}

@@ -1,9 +1,22 @@
 #' calculate_viewmetrics
-#' @description calculate configuration metrics of the viewshed
+#' @description The calculate_viewmetrics function is designed to compute a set of
+#' configuration metrics based on a given viewshed object and optionally, digital surface
+#' models (DSM) and digital terrain models (DTM) for terrain analysis.
+#' The function calculates various metrics that describe the visibility characteristics
+#' of a landscape from a specific viewpoint.The metrics include:\n
+#' 1. Extent: The total area of the viewshed, calculated as the number of visible grid
+#' cells multiplied by the grid resolution.\n
+#' 2. Depth: The furthest visible distance within the viewshed from the viewpoint.\n
+#' 3. Vdepth: The standard deviation of distances to visible points,
+#' providing a measure of the variation in visible distances.\n
+#' 4. Horizontal: The total visible horizontal or terrestrial area within the viewshed.\n
+#' 5. Relief: The standard deviation of elevations of the visible ground surface.\n
+#' 6. Skyline: The standard deviation of the vertical viewscape, including visible
+#' canopy and buildings, when specified.
 #' @param viewshed Viewshed object.
-#' @param dsm Raster, Digital Surface Model
+#' @param dsm Raster, Digital Surface Model for the calculation of
 #' @param dtm Raster, Digital Terrain Model
-#' @param masks Vector, a vector including rasters of canopy and building footprints.
+#' @param masks List, a list including rasters of canopy and building footprints.
 #' For example of canopy raster, the value for cells without canopy should be 0 and
 #' the value for cells with canopy can be any number.
 #' @return List
@@ -12,7 +25,7 @@
 #' data with experiments in immersive virtual environments. Landscape and Urban Planning, 195, 103704.
 #' @import raster
 
-calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = c()) {
+calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   if (missing(viewshed)) {
     stop("Viewshed object is missing")
   }
@@ -56,27 +69,30 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = c()) {
   # skyline - Variation of (Standard deviation) of the vertical viewscape
   # (visible canopy and buildings)
   if (length(masks) == 2) {
-    if (isFALSE(raster::compareCRS(raster::crs(masks[1]), viewshed@crs))) {
+    if (isFALSE(raster::compareCRS(raster::crs(masks[[1]]), viewshed@crs))) {
       cat("First input mask has different
         coordinate reference system from the viewshed\n")
       cat("Reprojetion will be processing ...\n")
-      masks[1] <- raster::projectRaster(masks[1], crs = viewshed@crs)
+      masks[[1]] <- raster::projectRaster(masks[[1]], crs = viewshed@crs)
     }
-    if (isFALSE(raster::compareCRS(raster::crs(masks[2]), viewshed@crs))) {
+    if (isFALSE(raster::compareCRS(raster::crs(masks[[2]]), viewshed@crs))) {
       cat("Second input mask has different
         coordinate reference system from the viewshed\n")
       cat("Reprojetion will be processing ...\n")
-      masks[2] <- raster::projectRaster(masks[2], crs = viewshed@crs)
+      masks[[2]] <- raster::projectRaster(masks[[2]], crs = viewshed@crs)
     }
     dsm_z <- raster::extract(dsm, visiblepoints, df=TRUE)
-    masks1 <- raster::extract(masks[1], visiblepoints, df=TRUE)
-    masks2 <- raster::extract(masks[2], visiblepoints, df=TRUE)
-    colnames(dtm_z)[2] <- 'z'
+    masks_1 <- raster::extract(masks[[1]], visiblepoints, df=TRUE)
+    masks_2 <- raster::extract(masks[[2]], visiblepoints, df=TRUE)
+    colnames(dsm_z)[2] <- 'z'
     colnames(masks_1)[2] <- 'masks1'
     colnames(masks_2)[2] <- 'masks2'
-    mask_df <- cbind(dsm_z, cbind(masks_1, masks_2))
-    mask_df <- subset(mask_df, masks1 != 0 && masks2 != 0)
+    mask_df <- cbind(masks_1, masks_2)
+    mask_df <- cbind(mask_df, dsm_z)
+    mask_df <- subset(mask_df, masks1 != 0 )
+    mask_df <- subset(mask_df, masks2 != 0)
     output[[length(output)+1]] = sd(mask_df$z)
+    names(output) <- c("extent", "depth", "vdepth", "horizontal", "relief", "skyline")
   }
   return(output)
 }

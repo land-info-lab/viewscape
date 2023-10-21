@@ -1,18 +1,33 @@
 #' visualize_viewshed
+#' @description The visualize_viewshed function is designed for the visualization
+#' of a viewshed analysis, providing users with various options for visualizing
+#' the results. The function works with a viewshed object and offers multiple
+#' plotting and output types.
 #'
 #' @param viewshed Viewshed object
-#' @param plottype the type of visualization of a viewshed,
-#' including "polygon", "raster", and "3D". Default is ""
-#' @param outputtype the type of visualized viewshed format to be returned,
-#' including "raster" and "polygon". The default is "".
-#' If it is "raster" or "polygon", the raster or polygon of a viewshed
-#' will be returned
-#' @return Raster or Polygon of a viewshed
+#' @param plottype String, specifying the type of visualization ("polygon,"
+#' "raster," or "3D").
+#' @param outputtype String, specifying the type of output object ("raster"
+#' or "polygon").
+#' @return Visualized viewshed as either a raster or polygon object,
+#' depending on the outputtype specified.
 #'
 #' @export
 #'
 #' @examples
-#'
+#' # Visualize the viewshed as polygons
+#' visualize_viewshed(viewshed, plottype = "polygon")
+#' # Visualize the viewshed as a raster
+#' visualize_viewshed(viewshed, plottype = "raster")
+#' # Visualize the viewshed in 3D
+#' visualize_viewshed(viewshed, plottype = "3D")
+#' # Get the visualized viewshed as a polygon object
+#' polygon_viewshed <- visualize_viewshed(viewshed,
+#'                                        plottype = "polygon",
+#'                                        outputtype = "polygon")
+
+
+
 
 visualize_viewshed <- function(viewshed,
                                plottype = "",

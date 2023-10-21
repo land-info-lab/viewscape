@@ -7,20 +7,24 @@
 #'
 #' @param x numeric, indicating Longtitude of the center point.
 #' @param y numeric, indicating latitude of the center point.
-#' @param r numeric, indicating searching distance.
+#' @param r numeric, indicating search distance for LiDAR data.
 #' The maximum distance is 800m (2625ft).
 #' If r > 800m (2625ft), it will be reset to 800m (2625ft).
-#' @param epsg numeric, indicating epsg code
+#' @param epsg numeric, the EPSG code specifying the coordinate reference system.
 #' @param folder string, indicating a path for downloading the LiDAR data
-#' @param plot logical, if it is TRUE, final data will be visualized as
-#' point cloud. The default is FALSE
+#' @param plot logical (default is FALSE), enable or disable the plotting of
+#' the processed LiDAR data.
 #'
-#' @return .las data
+#' @return The function returns the processed LiDAR data as a lidR LAS object.
+#'
 #' @references Jean-Romain Roussel and David Auty (2022).
 #' Airborne LiDAR Data Manipulation and Visualization for
 #' Forestry Applications. R package version 4.0.1. https://cran.r-project.org/package=lidR
-#' @example las <- get_lidar(-83.741289, 42.270146, 1000, 2253, 'path/to/folder')
+#'
+#' @example
+#' las <- get_lidar(-83.741289, 42.270146, 1000, 2253, 'path/to/folder')
 #' raster::plot(lidR::rasterize_canopy(las, 10, dsmtin()))
+#'
 #' @import sp
 #' @import httr2
 #' @import lidR

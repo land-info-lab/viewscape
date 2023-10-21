@@ -1,24 +1,34 @@
 #' compute_viewshed
-#' @description Compute the viewshed based on a given spaial point or a set of points.
+#' @description The compute_viewshed function is designed for computing viewsheds,
+#' which are areas visible from specific viewpoints, based on a Digital Surface
+#' Model (DSM). It provides flexibility for single or multi-viewpoint analyses
+#' and allows options for parallel processing, raster output, and plotting.
+#'
 #' @param dsm Raster, the digital surface model/digital elevation model
 #' @param viewpoints Vector, including x,y coordinates of a viewpoint
-#' or a matrix including several viewpoints with x,y coordinates (if multiviewpoints = TRUE)
+#' or a matrix including several viewpoints with x,y coordinates
+#' (if multiviewpoints = TRUE)
 #' @param offset_viewpoint numeric, setting the height of the viewpoint.
-#' @param offset_height numeric, setting the height of positions that a given viewpoint will
-#' look at. The defaut is 0
-#' @param r Numeric, setting the radius for viewshed analysis. (it is defaulted as NULL)
-#' @param multiviewpoints the radius for viewshed analysis. (it is defaulted as NULL)
-#' @param parallel Logical, indicating if parallel computing should be used to compute
-#' viewsheds of multiview points. The default is FALSE. When it is TRUE, arguements 'raster'
-#' and 'plot' are ignored
-#' @param raster Logical, if it is TRUE, the raster of viewshed will be returned.
+#' (default is 1.7 meters).
+#' @param offset_height numeric, setting the height of positions that a given
+#' viewpoint will look at. (defaut is 0)
+#' @param r Numeric (optional), setting the radius for viewshed analysis.
+#' (it is defaulted as NULL)
+#' @param multiviewpoints the radius for viewshed analysis.
+#' (it is defaulted as NULL)
+#' @param parallel Logical, (default is FALSE) indicating if parallel computing
+#' should be used to compute viewsheds of multiview points. When it is TRUE,
+#' arguements 'raster' and 'plot' are ignored
+#' @param raster Logical, (default is FALSE) if it is TRUE, the raster of
+#' viewshed will be returned.
 #' The default is FALSE
-#' @param plot Logical, if it is TRUE, the raster of viewshed will be displayed
+#' @param plot Logical, (default is FALSE) if it is TRUE, the raster of
+#' viewshed will be displayed
 #'
-#' @return Raster or list. If raster is TRUE, the output is a binary raster.
-#' Value 1 means visible while value 0 means invisible. The list includes a binary matrix,
-#' where Value 1 means visible while value 0 means invisible, and the extent of the vewshed.
-#' If parallel is TRUE, the output is the list and visualization is unavailable.
+#' @return Raster or list. For single-viewpoint analysis, the function returns
+#' either a raster (raster is TRUE) or a viewshed object. Value 1 means visible while
+#' value 0 means invisible. For multi-viewpoint analysis, a list of viewsheds
+#' is returned.
 #' @details Parallel computing used the functions from BiocParallel package
 #'
 #' @references Martin Morgan, Jiefei Wang, Valerie Obenchain, Michel Lang,
@@ -45,6 +55,10 @@
 #'                            offset_viewpoint = 6,
 #'                            raster = TRUE,
 #'                            plot = TRUE)
+#'
+#' # Calculate viewsheds for multiple viewpoints in parallel
+#' viewsheds <- compute_viewshed(dsm, multi_viewpoints, multiviewpoints = TRUE, parallel = TRUE)
+#'
 
 compute_viewshed <- function(dsm,
                              viewpoints,

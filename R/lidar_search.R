@@ -1,16 +1,27 @@
 #' lidar_search
-#' @description Search for data within a bounding box via
-#' the TNMAccess API: https://tnmaccess.nationalmap.gov/api/v1/docs
-#' @param bbox vector, indicating the bounding box to search for data.
-#'
-#' @param preview logical. If TRUE, the image of the LiDAR data will
-#' be display for the preview purposes. The default is FALSE
-#' @param folder string, indicating a path for downloading the LiDAR data.
-#' If folder is set, All available data will be downloaded.
+#' @description The lidar_search function is designed to facilitate the retrieval
+#' and exploration of LiDAR (Light Detection and Ranging) data within a specified
+#' bounding box (bbox). This function enables users to search for LiDAR data,
+#' preview available graphics, and optionally download LiDAR data files for
+#' further analysis.
+#' @param bbox vector, a bounding box defining the geographical area
+#' for the LiDAR data search.
+#' @param preview logical. If TRUE (default is FALSE), enable or disable
+#' previewing LiDAR graphics.
+#' @param folder string (optional), indicating an optional folder path
+#' where downloaded LiDAR data files will be saved.
 #'
 #' @return dataframe
 #' @import imager
 #'
+#' @example
+#' # Perform a LiDAR data search within a bounding box
+#' search_result <- lidar_search(bbox, preview = TRUE, folder = "downloads")
+#' # Perform a LiDAR data search and download data without preview
+#' lidar_search(bbox, folder = "downloads")
+#'
+#' @note The lidar_search function simplifies the process of searching for
+#' and working with LiDAR data via the TNMAccess API: https://tnmaccess.nationalmap.gov/api/v1/docs.
 #' @export
 
 lidar_search <- function(bbox, preview = FALSE, folder = NULL) {
