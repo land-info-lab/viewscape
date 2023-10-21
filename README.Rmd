@@ -36,15 +36,18 @@ install_github("land-info-lab/viewscape")
 The basic viewshed analysis can be accessed through calling the `compute_viewshed`. The two needed objects are a digital surface model (DSM) and a viewpoint. It provides flexibility for single or multi-viewpoint analyses
 and allows options for parallel processing, raster output, and plotting.
 
-Based on the viewshed, a set of configuration metrics can be calculated, including:
-1. Extent: The total area of the viewshed, calculated as the number of visible grid cells multiplied by the grid resolution.\n
-2. Depth: The furthest visible distance within the viewshed from the viewpoint.\n
-3. Vdepth: The standard deviation of distances to visible points, providing a measure of the variation in visible distances.\n
-4. Horizontal: The total visible horizontal or terrestrial area within the viewshed.\n
-5. Relief: The standard deviation of elevations of the visible ground surface.\n
-6. Skyline: Variation of (Standard deviation) of the vertical viewscape (visible canopy and buildings).\n
-7. Shannon diversity index: Based on the number of land use/cover classes and the proportion of distribution.\n
-8. Proportion of other object: Building, trees, or paved surface.
+Based on the viewshed, a set of configuration metrics can be calculated using `calculate_viewmetrics`, `calculate_diversity`, and `calculate_feature`. 
+
+The metrics are including:
+
+* Extent: The total area of the viewshed, calculated as the number of visible grid cells multiplied by the grid resolution.
+* Depth: The furthest visible distance within the viewshed from the viewpoint.
+* Vdepth: The standard deviation of distances to visible points, providing a measure of the variation in visible distances.
+* Horizontal: The total visible horizontal or terrestrial area within the viewshed.
+* Relief: The standard deviation of elevations of the visible ground surface.
+* Skyline: Variation of (Standard deviation) of the vertical viewscape (visible canopy and buildings).
+* Shannon diversity index: Based on the number of land use/cover classes and the proportion of distribution.
+* Proportion of other object: Building, trees, or paved surface.
 
 ```{r eval=FALSE}
 #Load in DSM
