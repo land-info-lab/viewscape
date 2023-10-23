@@ -73,7 +73,7 @@ output <- viewscape::compute_viewshed(dsm = test_dsm,
                                       viewpoints = test_viewpoints, 
                                       offset_viewpoint = 6, 
                                       multiviewpoints = TRUE,
-                                      raster=TRUE)
+                                      parallel = TRUE)
 ```
 
 ```{r}

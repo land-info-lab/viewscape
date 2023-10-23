@@ -1,9 +1,9 @@
 #' get_lidar
 #' @description Search for and download LiDAR data based on coordinates
 #' of a spatial point with a given distance. The maximum distance is 800m.
-#' Different dataset could be found and the function automatically
-#' To get more details of data on a larger scale,
-#' please use viewscape::lidar_search.
+#' Different dataset could be found and the function automatically downloads
+#' the latest dataset
+#' To get more details of data on a larger scale, please use viewscape::lidar_search.
 #'
 #' @param x numeric, indicating Longtitude of the center point.
 #' @param y numeric, indicating latitude of the center point.
