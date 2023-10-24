@@ -35,6 +35,7 @@ calculate_diversity <- function(land,
     land <- raster::projectRaster(land, crs = viewshed@crs)
   }
   pt <- filter_invisible(viewshed, FALSE)
+  land <- raster::crop(land, viewshed@extent)
   # calculate the proportion of each class
   land_class <- raster::extract(land, pt, df=TRUE)
   colnames(land_class)[2] <- 'type'

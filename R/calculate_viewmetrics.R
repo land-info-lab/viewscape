@@ -41,20 +41,27 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   extent <- pointnumber * resolution^2
   output[[length(output)+1]] = extent
   # depth - Furthest visible distance given the viewscape
-  depths <- c()
-  for (i in 1:nrow(visiblepoints)) {
-    distance <- sqrt((viewshed@viewpoint[1]-x[i])^2 +
-                       (viewshed@viewpoint[2]-y[i])^2)
-    depths <- c(depths, distance)
-  }
+  # depths <- c()
+  # for (i in 1:nrow(visiblepoints)) {
+  #   distance <- sqrt((viewshed@viewpoint[1]-x[i])^2 +
+  #                      (viewshed@viewpoint[2]-y[i])^2)
+  #   depths <- c(depths, distance)
+  # }
+  depths <- get_depths(viewshed@viewpoint[1],
+                       viewshed@viewpoint[2],
+                       x,
+                       y,
+                       nrow(visiblepoints))
   # depth
   output[[length(output)+1]] = max(depths)
   # vdepth
   output[[length(output)+1]] = sd(depths)
   names(output) <- c("extent", "depth", "vdepth")
+  dsm <- raster::crop(dsm, viewshed@extent)
   # horizontal - Total visible horizontal or terrestrial area
   # relief - Variation (Standard deviation) in elevation of the visible ground surface.
   if (isFALSE(missing(dsm)) && isFALSE(missing(dtm))) {
+    dtm <- raster::crop(dtm, viewshed@extent)
     dtm_z <- raster::extract(dtm, visiblepoints, df=TRUE)
     dsm_z <- raster::extract(dsm, visiblepoints, df=TRUE)
     colnames(dtm_z)[2] <- 'dtm_z'
@@ -83,9 +90,11 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
       cat("Reprojetion will be processing ...\n")
       masks[[2]] <- raster::projectRaster(masks[[2]], crs = viewshed@crs)
     }
+    masks_1 <- raster::crop(masks[[1]], viewshed@extent)
+    masks_2 <- raster::crop(masks[[2]], viewshed@extent)
     dsm_z <- raster::extract(dsm, visiblepoints, df=TRUE)
-    masks_1 <- raster::extract(masks[[1]], visiblepoints, df=TRUE)
-    masks_2 <- raster::extract(masks[[2]], visiblepoints, df=TRUE)
+    masks_1 <- raster::extract(masks_1, visiblepoints, df=TRUE)
+    masks_2 <- raster::extract(masks_2, visiblepoints, df=TRUE)
     colnames(dsm_z)[2] <- 'z'
     colnames(masks_1)[2] <- 'masks1'
     colnames(masks_2)[2] <- 'masks2'

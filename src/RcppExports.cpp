@@ -10,6 +10,21 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// get_depths
+NumericVector get_depths(double px, double py, NumericVector& x, NumericVector& y, int num);
+RcppExport SEXP _viewscape_get_depths(SEXP pxSEXP, SEXP pySEXP, SEXP xSEXP, SEXP ySEXP, SEXP numSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type px(pxSEXP);
+    Rcpp::traits::input_parameter< double >::type py(pySEXP);
+    Rcpp::traits::input_parameter< NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type num(numSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_depths(px, py, x, y, num));
+    return rcpp_result_gen;
+END_RCPP
+}
 // visibleLabel
 Rcpp::IntegerMatrix visibleLabel(const NumericVector& viewpoint, const NumericMatrix& dsm, const double h);
 RcppExport SEXP _viewscape_visibleLabel(SEXP viewpointSEXP, SEXP dsmSEXP, SEXP hSEXP) {
@@ -25,6 +40,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_viewscape_get_depths", (DL_FUNC) &_viewscape_get_depths, 5},
     {"_viewscape_visibleLabel", (DL_FUNC) &_viewscape_visibleLabel, 3},
     {NULL, NULL, 0}
 };

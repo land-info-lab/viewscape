@@ -39,6 +39,7 @@ visualize_viewshed <- function(viewshed,
   vpt <- filter_invisible(viewshed, FALSE)
   mask_v <- raster::mask(filter_invisible(viewshed, TRUE),
                          sp::SpatialPoints(vpt))
+
   if (plottype == "polygon"){
     polygon_v <- raster::rasterToPolygons(mask_v)
     polygon_v <- raster::buffer(polygon_v, width = 0.0001, dissolve = TRUE)
