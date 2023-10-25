@@ -6,7 +6,6 @@
 #' @noMd
 radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   resolution <- raster::res(dsm)
-
   # create an extent to crop input raster
   subarea <- get_buffer(viewPt[1], viewPt[2], r)
   subdsm <- raster::crop(dsm, raster::extent(subarea))

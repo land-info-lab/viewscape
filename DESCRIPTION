@@ -40,6 +40,8 @@ Imports:
     rts,
     BiocParallel,
     parallel,
+    future,
+    furrr,
     httr2,
     imager
 LinkingTo: Rcpp

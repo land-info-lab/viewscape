@@ -118,20 +118,28 @@ compute_viewshed <- function(dsm,
     # set a new empty vector
     viewsheds <- c()
     if (parallel == TRUE){
+      workers <- parallel::detectCores()
+      inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
-        type <- "FORK"
+        bpparam <- BiocParallel::SnowParam(workers=workers, type="FORK")
+        suppressWarnings(
+          viewsheds <- BiocParallel::bplapply(X = inputs,
+                                              FUN = radius_viewshed,
+                                              dsm = dsm,
+                                              r = r,
+                                              offset = offset_viewpoint,
+                                              BPPARAM = bpparam)
+        )
       }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-        type <- "PSOCK"
+        future::plan(multisession, workers = workers)
+        viewsheds <- furrr::future_map(inputs, function(input){
+          radius_viewshed(dsm=dsm,
+                          r=r,
+                          viewPt=input,
+                          offset=offset_viewpoint)
+        })
+        future::plan(NULL)
       }
-      bpparam <- BiocParallel::SnowParam(workers=parallel::detectCores(), type=type)
-      suppressWarnings(
-        viewsheds <- BiocParallel::bplapply(X = split(viewpoints,seq(nrow(viewpoints))),
-                                          FUN = radius_viewshed,
-                                          dsm = dsm,
-                                          r = r,
-                                          offset = offset_viewpoint,
-                                          BPPARAM = bpparam)
-      )
     } else {
       for(i in 1:length(viewpoints[,1])){
         viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
