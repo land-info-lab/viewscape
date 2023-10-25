@@ -121,7 +121,7 @@ compute_viewshed <- function(dsm,
       if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
         type <- "FORK"
       }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-        type <- "SOCK"
+        type <- "PSOCK"
       }
       bpparam <- BiocParallel::SnowParam(workers=parallel::detectCores(), type=type)
       suppressWarnings(
