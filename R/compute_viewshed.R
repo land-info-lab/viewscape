@@ -131,7 +131,7 @@ compute_viewshed <- function(dsm,
                                               BPPARAM = bpparam)
         )
       }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-        future::plan(multisession, workers = workers)
+        future::plan(future::multisession, workers = workers)
         viewsheds <- furrr::future_map(inputs, function(input){
           radius_viewshed(dsm=dsm,
                           r=r,
