@@ -74,6 +74,19 @@ compute_viewshed <- function(dsm,
   } else if (missing(viewpoints)) {
     stop("viewpoint(s) is missing!")
   }
+  dsm_units <- sf::st_crs(dsm)$units
+  if(is.null(r) == TRUE){
+    if (dsm_units == "ft") {
+      r <- 3281
+    } else if (dsm_units == "m") {
+      r <- 1000
+    }
+  }
+  if (dsm_units == "ft" && r > 3281) {
+    r <- 3281
+  } else if (dsm_units == "m" && r > 1000) {
+    r <- 1000
+  }
   if (plot) {
     raster <- TRUE
   }

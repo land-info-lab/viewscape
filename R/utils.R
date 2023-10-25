@@ -6,20 +6,8 @@
 #' @noMd
 radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   resolution <- raster::res(dsm)
-  dsm_units <- sf::st_crs(dsm)$units
+
   # create an extent to crop input raster
-  if(is.null(r) == TRUE){
-    if (dsm_units == "ft") {
-      r <- 3281
-    } else if (dsm_units == "m") {
-      r <- 1000
-    }
-  }
-  if (dsm_units == "ft" && r > 3281) {
-    r <- 3281
-  } else if (dsm_units == "m" && r > 1000) {
-    r <- 1000
-  }
   subarea <- get_buffer(viewPt[1], viewPt[2], r)
   subdsm <- raster::crop(dsm, raster::extent(subarea))
   dsm <- subdsm
