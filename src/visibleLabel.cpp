@@ -2,6 +2,8 @@
 #include <string>
 #include <Rcpp.h>
 #include <fstream>
+#include <algorithm>
+#include <chrono>
 
 
 using namespace Rcpp;
