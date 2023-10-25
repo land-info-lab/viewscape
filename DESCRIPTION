@@ -34,7 +34,6 @@ Imports:
     sf,
     sp,
     raster,
-    rgdal,
     BiocManager,
     rasterVis,
     rts,
