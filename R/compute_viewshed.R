@@ -122,20 +122,25 @@ compute_viewshed <- function(dsm,
       inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
         bpparam <- BiocParallel::SnowParam(workers=workers, type="FORK")
+        suppressWarnings(
+          viewsheds <- BiocParallel::bplapply(X = inputs,
+                                              FUN = radius_viewshed,
+                                              dsm = dsm,
+                                              r = r,
+                                              offset = offset_viewpoint,
+                                              BPPARAM = bpparam)
+        )
       }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
         cl <- parallel::makeCluster(workers)
         doParallel::registerDoParallel(cl)
-        bpparam <- BiocParallel::DoparParam()
-      }
-      suppressWarnings(
-        viewsheds <- BiocParallel::bplapply(X = inputs,
-                                            FUN = radius_viewshed,
-                                            dsm = dsm,
-                                            r = r,
-                                            offset = offset_viewpoint,
-                                            BPPARAM = bpparam)
-      )
-      if (isTRUE(Sys.info()[1]=="Windows") == TRUE) {
+        BiocParallel::register(BiocParallel::DoparParam())
+        suppressWarnings(
+          viewsheds <- BiocParallel::bplapply(X = inputs,
+                                              FUN = radius_viewshed,
+                                              dsm = dsm,
+                                              r = r,
+                                              offset = offset_viewpoint)
+        )
         parallel::stopCluster(cl)
       }
     } else {
