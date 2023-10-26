@@ -19,6 +19,8 @@
 #' @param parallel Logical, (default is FALSE) indicating if parallel computing
 #' should be used to compute viewsheds of multiview points. When it is TRUE,
 #' arguements 'raster' and 'plot' are ignored
+#' @param workers Numeric, indicating the number of CPU cores that will be used
+#' for parallel computing. It is required if 'parallel' is 'TRUE'.
 #' @param raster Logical, (default is FALSE) if it is TRUE, the raster of
 #' viewshed will be returned.
 #' The default is FALSE
@@ -67,6 +69,7 @@ compute_viewshed <- function(dsm,
                              r = NULL,
                              multiviewpoints = FALSE,
                              parallel = FALSE,
+                             workers = 0,
                              raster = FALSE,
                              plot = FALSE){
   if (missing(dsm)) {
@@ -118,31 +121,23 @@ compute_viewshed <- function(dsm,
     # set a new empty vector
     viewsheds <- c()
     if (parallel == TRUE){
-      workers <- parallel::detectCores()
+      if (workers == 0) {
+        stop("Please specify the number of CPU cores (workers)")
+      }
       inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
         bpparam <- BiocParallel::SnowParam(workers=workers, type="FORK")
-        suppressWarnings(
-          viewsheds <- BiocParallel::bplapply(X = inputs,
-                                              FUN = radius_viewshed,
-                                              dsm = dsm,
-                                              r = r,
-                                              offset = offset_viewpoint,
-                                              BPPARAM = bpparam)
-        )
       }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-        cl <- parallel::makeCluster(workers)
-        doParallel::registerDoParallel(cl)
-        BiocParallel::register(BiocParallel::DoparParam())
-        suppressWarnings(
-          viewsheds <- BiocParallel::bplapply(X = inputs,
-                                              FUN = radius_viewshed,
-                                              dsm = dsm,
-                                              r = r,
-                                              offset = offset_viewpoint)
-        )
-        parallel::stopCluster(cl)
+        bpparam <- BiocParallel::SnowParam(workers=workers)
       }
+      suppressWarnings(
+        viewsheds <- BiocParallel::bplapply(X = inputs,
+                                            FUN = radius_viewshed,
+                                            dsm = dsm,
+                                            r = r,
+                                            offset = offset_viewpoint,
+                                            BPPARAM = bpparam)
+      )
     } else {
       for(i in 1:length(viewpoints[,1])){
         viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
