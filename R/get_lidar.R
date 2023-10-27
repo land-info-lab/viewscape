@@ -8,8 +8,8 @@
 #' @param x numeric, indicating Longtitude of the center point.
 #' @param y numeric, indicating latitude of the center point.
 #' @param r numeric, indicating search distance for LiDAR data.
-#' The maximum distance is 800m (2625ft).
-#' If r > 800m (2625ft), it will be reset to 800m (2625ft).
+#' The maximum distance is 1000m (3281ft).
+#' If r > 1000m, it will be reset to 1000m.
 #' @param epsg numeric, the EPSG code specifying the coordinate reference system.
 #' @param folder string, indicating a path for downloading the LiDAR data
 #' @param plot logical (default is FALSE), enable or disable the plotting of
@@ -52,10 +52,10 @@ get_lidar <- function(x,
   longlat <- sp::CRS("+proj=longlat")
   # check searching distance
   unit <- sub(".no_defs", "", sub(".*=", "", proj@projargs))
-  if (r > 800 && unit == "m ") {
-    r <- 800
-  } else if (r > 2625 && unit == "us-ft " ) {
-    r <- 2625
+  if (r > 1000 && unit == "m ") {
+    r <- 1000
+  } else if (r > 3281 && unit == "us-ft " ) {
+    r <- 3281
   }
   # create bbox
   coor <- data.frame(lon=x, lat=y)
