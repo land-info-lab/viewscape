@@ -24,7 +24,7 @@ github.
 ``` r
 library(devtools)
 
-# Install the package 'BiocParallel' for enabling paralell computing
+# (For MAC and LINUX users) Install the package 'BiocParallel' for enabling paralell computing
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("BiocParallel")

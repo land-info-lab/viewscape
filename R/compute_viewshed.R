@@ -140,7 +140,8 @@ compute_viewshed <- function(dsm,
           viewsheds <- radius_viewshed_m(dsm=dsm,
                                          r=r,
                                          viewPts=viewpoints,
-                                         offset=offset_viewpoint)
+                                         offset=offset_viewpoint,
+                                         workers=workers)
         )
       }
       doParallel::stopImplicitCluster()

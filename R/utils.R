@@ -33,7 +33,7 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
 }
 
 #' @noMd
-radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
+radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0, workers) {
   output <- list()
   resolution <- raster::res(dsm)
   projt <- raster::crs(dsm)
@@ -43,7 +43,7 @@ radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
   vpts <- cbind(x, y)
   vpts <- cbind(vpts, z)
   distance <- round(r/resolution[1])
-  label_matrix <- visibleLabel(vpts, dsm, distance, offset, offset2)
+  label_matrix <- visibleLabel(vpts, dsm, distance, offset, offset2, workers)
   for(i in 1:length(label_matrix)) {
     subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
     output[[i]] <- new("Viewshed",

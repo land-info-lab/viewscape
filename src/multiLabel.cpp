@@ -1,6 +1,9 @@
 #include <Rcpp.h>
-#include "iostream"
+#include <iostream>
 #include <fstream>
+#ifdef _WIN32
+#include <omp.h>  // Include OpenMP for Windows
+#endif
 
 using namespace Rcpp;
 
@@ -9,11 +12,18 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
                       Rcpp::NumericMatrix &dsm,
                       const int max_dis,
                       const double vpth,
-                      const double h) {
+                      const double h,
+                      const int workers) {
+  #ifdef _WIN32
+  omp_set_num_threads(workers);
+  #endif
   const int vptnum = vpts.rows();
   Rcpp::List output(vptnum);
   const int rows = dsm.rows();
   const int cols = dsm.cols();
+  #ifdef _WIN32
+  #pragma omp parallel for
+  #endif
   for (int i = 0; i < vptnum; i++) {
     int vx = vpts(i,0);
     int vy = vpts(i,1);
@@ -47,7 +57,6 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
     const int sub_cols = sub_dsm.cols();
     int steps;
     Rcpp::IntegerMatrix visible(sub_rows, sub_cols);
-
     for (int j = 0; j < sub_rows; j++) {
       for (int k = 0; k < sub_cols; k++) {
         steps = sqrt((vx-k)*(vx-k) + (vy-j)*(vy-j));
