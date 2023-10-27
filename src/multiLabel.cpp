@@ -88,7 +88,7 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
         }
       }
     }
-    output[i] = visible;
+    output(i) = visible;
   }
   return output;
 }
