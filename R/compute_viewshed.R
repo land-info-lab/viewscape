@@ -127,17 +127,23 @@ compute_viewshed <- function(dsm,
       inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
         bpparam <- BiocParallel::SnowParam(workers=workers, type="FORK")
+        suppressWarnings(
+          viewsheds <- BiocParallel::bplapply(X = inputs,
+                                              FUN = radius_viewshed,
+                                              dsm = dsm,
+                                              r = r,
+                                              offset = offset_viewpoint,
+                                              BPPARAM = bpparam)
+        )
       }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-        bpparam <- BiocParallel::SnowParam(workers=workers)
+        suppressWarnings(
+          viewsheds <- radius_viewshed_m(dsm=dsm,
+                                         r=r,
+                                         viewPts=viewpoints,
+                                         offset=offset_viewpoint)
+        )
       }
-      suppressWarnings(
-        viewsheds <- BiocParallel::bplapply(X = inputs,
-                                            FUN = radius_viewshed,
-                                            dsm = dsm,
-                                            r = r,
-                                            offset = offset_viewpoint,
-                                            BPPARAM = bpparam)
-      )
+
     } else {
       for(i in 1:length(viewpoints[,1])){
         viewpoint <- c(viewpoints[i,1],viewpoints[i,2])

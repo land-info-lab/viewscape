@@ -6,6 +6,7 @@
 #' @noMd
 radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   resolution <- raster::res(dsm)
+  distance <- round(r/resolution[1])
   # create an extent to crop input raster
   subarea <- get_buffer(viewPt[1], viewPt[2], r)
   subdsm <- raster::crop(dsm, raster::extent(subarea))
@@ -21,13 +22,37 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   # get raster information
   dsm_matrix <- raster::as.matrix(dsm)
   # compute viewshed
-  label_matrix <- visibleLabel(viewpoint, dsm_matrix, offset2)
+  label_matrix <- visibleLabel(viewpoint, dsm_matrix, offset2, distance)
   output <- new("Viewshed",
                 viewpoint = viewPt,
                 visible = label_matrix,
                 resolution = resolution,
                 extent = raster::extent(dsm),
                 crs = raster::crs(dsm))
+  return(output)
+}
+
+#' @noMd
+radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
+  output <- list()
+  resolution <- raster::res(dsm)
+  projt <- raster::crs(dsm)
+  x <- raster::colFromX(dsm, viewPts[,1])
+  y <- raster::rowFromY(dsm, viewPts[,2])
+  z <- raster::extract(dsm, viewPts)
+  vpts <- cbind(x, y)
+  vpts <- cbind(vpts, z)
+  distance <- round(r/resolution[1])
+  label_matrix <- visibleLabel(vpts, dsm, distance, offset, offset2)
+  for(i in 1:length(label_matrix)) {
+    subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
+    output[[i]] <- new("Viewshed",
+                       viewpoint = viewPts[i,],
+                       visible = label_matrix[[i]],
+                       resolution = resolution,
+                       extent = raster::extent(subarea),
+                       crs = projt)
+  }
   return(output)
 }
 
