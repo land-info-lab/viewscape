@@ -14,16 +14,16 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
                       const double vpth,
                       const double h,
                       const int workers) {
-  // #ifdef _WIN32
-  // omp_set_num_threads(workers);
-  // #endif
+  #ifdef _WIN32
+  omp_set_num_threads(workers);
+  #endif
   const int vptnum = vpts.rows();
   Rcpp::List output(vptnum);
   const int rows = dsm.rows();
   const int cols = dsm.cols();
-  // #ifdef _WIN32
-  // #pragma omp parallel for
-  // #endif
+  #ifdef _WIN32
+  #pragma omp parallel for
+  #endif
   for (int i = 0; i < vptnum; i++) {
     int vx = vpts(i,0);
     int vy = vpts(i,1);

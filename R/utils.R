@@ -44,7 +44,12 @@ radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0, workers) {
   vpts <- cbind(vpts, z)
   distance <- round(r/resolution[1])
   dsm_matrix <- raster::as.matrix(dsm)
-  label_matrix <- multiLabel(vpts, dsm_matrix, distance, offset, offset2, workers)
+  label_matrix <- multiLabel(vpts=vpts,
+                             dsm=dsm_matrix,
+                             max_dis=distance,
+                             vpth=offset,
+                             h=offset2,
+                             workers=workers)
   for(i in 1:length(label_matrix)) {
     subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
     output[[i]] <- new("Viewshed",
