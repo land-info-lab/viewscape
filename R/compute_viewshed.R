@@ -124,8 +124,8 @@ compute_viewshed <- function(dsm,
       if (workers == 0) {
         stop("Please specify the number of CPU cores (workers)")
       }
-      inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
+        inputs <- split(viewpoints,seq(nrow(viewpoints)))
         bpparam <- BiocParallel::SnowParam(workers=workers, type="FORK")
         suppressWarnings(
           viewsheds <- BiocParallel::bplapply(X = inputs,
@@ -143,7 +143,7 @@ compute_viewshed <- function(dsm,
                                          offset=offset_viewpoint)
         )
       }
-
+      doParallel::stopImplicitCluster()
     } else {
       for(i in 1:length(viewpoints[,1])){
         viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
