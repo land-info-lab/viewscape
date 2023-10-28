@@ -6,7 +6,7 @@
 coverage](https://codecov.io/github/land-info-lab/viewscape/branch/master/graph/badge.svg)](https://codecov.io/github/land-info-lab/viewscape?branch=master)
 <!-- badges: end -->
 
-# viewscape
+# Viewscape
 
 <p align="left">
 
@@ -130,7 +130,7 @@ visible points. There are several viewshed metrics such as can be
 calculated based on the visible points. For further information on these
 metrics and the rest of the functions available in this package please
 refer to the [package
-website](https://billbillbilly.github.io/viewscape/). For more
+website](https://land-info-lab.github.io/viewscape/). For more
 information and examples of the functions check out the [package
 vignette](https://github.com/land-info-lab/viewscape/blob/cpp/vignettes/viewscape.md).
 
@@ -141,6 +141,6 @@ high resolution digital elevation models.
 
 If you discover a bug not associated with connection to the API that is
 not already a [reported
-issue](https://github.com/billbillbilly/viewscape/issues), please [open
-a new issue](https://github.com/billbillbilly/viewscape/issues/new)
+issue](https://github.com/land-info-lab/viewscape/issues), please [open
+a new issue](https://github.com/land-info-lab/viewscape/issues/new)
 providing a reproducible example.
