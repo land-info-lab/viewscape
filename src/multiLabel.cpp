@@ -19,10 +19,7 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
   Rcpp::List output(vptnum);
   const int rows = dsm.rows();
   const int cols = dsm.cols();
-  #ifdef _WIN32
-    #pragma omp parallel num_threads(workers)
-    #pragma omp for
-  #endif
+
   for (int i = 0; i < vptnum; i++) {
     int vx = vpts(i,0);
     int vy = vpts(i,1);
@@ -57,6 +54,10 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
     int steps;
     Rcpp::IntegerMatrix visible(sub_rows, sub_cols);
     for (int j = 0; j < sub_rows; j++) {
+#ifdef _WIN32
+#pragma omp parallel num_threads(workers)
+#pragma omp for
+#endif
       for (int k = 0; k < sub_cols; k++) {
         steps = sqrt((vx-k)*(vx-k) + (vy-j)*(vy-j));
         const double z = dsm(j,k) + h;
