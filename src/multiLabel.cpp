@@ -14,9 +14,9 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
                       const double vpth,
                       const double h,
                       const int workers) {
-  #ifdef _WIN32
-  omp_set_num_threads(workers);
-  #endif
+  // #ifdef _WIN32
+  // omp_set_num_threads(workers);
+  // #endif
   const int vptnum = vpts.rows();
   Rcpp::List output(vptnum);
   const int rows = dsm.rows();

@@ -52,11 +52,12 @@ radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0, workers) {
                              workers=workers)
   for(i in 1:length(label_matrix)) {
     subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
+    subdsm <- raster::crop(dsm, raster::extent(subarea))
     output[[i]] <- new("Viewshed",
                        viewpoint = viewPts[i,],
                        visible = label_matrix[[i]],
                        resolution = resolution,
-                       extent = raster::extent(subarea),
+                       extent = raster::extent(subdsm),
                        crs = projt)
   }
   return(output)
