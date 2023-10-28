@@ -2,11 +2,11 @@
 #include <iostream>
 #include <fstream>
 #ifdef _WIN32
-#include <omp.h>  // Include OpenMP for Windows
+  #include <omp.h>  // Include OpenMP for Windows
 #endif
-
 using namespace Rcpp;
 
+// [[Rcpp::plugins(openmp)]]
 // [[Rcpp::export]]
 Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
                       Rcpp::NumericMatrix &dsm,
@@ -14,15 +14,14 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
                       const double vpth,
                       const double h,
                       const int workers) {
-  // #ifdef _WIN32
-  // omp_set_num_threads(workers);
-  // #endif
+
   const int vptnum = vpts.rows();
   Rcpp::List output(vptnum);
   const int rows = dsm.rows();
   const int cols = dsm.cols();
   #ifdef _WIN32
-  #pragma omp parallel for
+    #pragma omp parallel num_threads(workers)
+    #pragma omp parallel for private(i)
   #endif
   for (int i = 0; i < vptnum; i++) {
     int vx = vpts(i,0);
