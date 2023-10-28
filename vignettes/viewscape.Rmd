@@ -68,7 +68,6 @@ test_viewpoints <- sf::read_sf(system.file("test_viewpoints.shp",
 test_viewpoints <- sf::st_coordinates(test_viewpoints)
 
 # Compute viewsheds
-# the output includes binary matrix and extent of viewshed 
 output <- viewscape::compute_viewshed(dsm = test_dsm, 
                                       viewpoints = test_viewpoints, 
                                       offset_viewpoint = 6, 

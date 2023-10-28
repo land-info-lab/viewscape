@@ -11,48 +11,6 @@ digital surface model (DSM) and a viewpoint.
 
     library(viewscape)
 
-    ## Warning: replacing previous import 'imager::bbox' by 'lidR::bbox' when loading
-    ## 'viewscape'
-
-    ## Warning: replacing previous import 'imager::watershed' by 'lidR::watershed' when
-    ## loading 'viewscape'
-
-    ## Warning: replacing previous import 'lidR::projection<-' by
-    ## 'raster::projection<-' when loading 'viewscape'
-
-    ## Warning: replacing previous import 'lidR::projection' by 'raster::projection'
-    ## when loading 'viewscape'
-
-    ## loading... 
-    ## MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM/MMM/MMM/M///MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMMMMMMMMMMMMMMMMMMMMMMMMM/M////MM/M/MM//////MM//MM///MM///MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMMMMMMMMMMMMMMMMM/M////MM//MM/MM/MMMM//MMM///MM///MM/////MM//MM/MMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMMMMMMMMMMMM/////MM/MM/M/MMM/mn=======nmMMMM/M/MM/////MMM///MMM/MMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMMMMMMM////MM/MMMMMMmn-=====nMMMMMMMMMMn=====nmMMMMMM///MMM//MMM////M/MMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMMMM///M/MMMMmm-======nMMMMm:::::::::::NMMMn-=======nmMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMM//MMMMMMm-====nMMMN::::::..............::::::MMMMn-======nmMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMM///MMMM-===nMMN:::::::....////XXXooo...........::::::::NMMn-====nmMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMM-==MMn:::...........////XX??-||-oo................:::::::::NMM-===MMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMM-===MNn:..............///XXXX??------oo.......................::::MMM==MMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMM==:.................iiii'''ii??----oooo...................::::MMM-===MMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMM==:...............iii'''''iiiii////oooo................:::MMMM-===MMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMM==:::............iii''''''iii///oooo..............:::::MMM-===MMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMMMM==::::.........iii'''''ooo//ooooo.........::::::MMMM-==MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMMMMMMM==::::::.....iioo'''''//ooooo.....::::::MMMM-==MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMMMMMMMMMMM==:::::::..ioooooooooo:::::::::MMMMMM==MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMMMMMMMMMMMMMMMMMMMMMMMMmmmmmmmmmmMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMM  MMMMMMMMM  MM  MM      MM  MMMM  MMMM  MM.......MMM.......MMMMM...MMMMM.........MMMM......MMM
-    ## MMMM  MMMMMMM  MM  MM  MMMMMM  MMM    MMM  MM..MMMMMMMM..MMMMM..MMM..M..MMMM..MMMMMM..MM..MMMMMMMM
-    ## MMMMM  MMMMM  MM  MM  MMMMMM  MM  MM  MM  MM........MM..MMMMMMMMMM..MM..MMM..MMMMMM..MM..MMMMMMMMM
-    ## MMMMMM  MMM  MM  MM      MM  M  MMMM  M  MMMMMMMMM..MM..MMMMMMMMM.......MMM.........MM.......MMMMM
-    ## MMMMMMM  M  MM  MM  MMMMMM   MMMMMMM   MMM..MMMM...MM...MMMM..MM..MMMM..MMM..MMMMMMMM..MMMMMMMMMMM
-    ## MMMMMMMM   MM  MM      MM  MMMMMMMMM  MMM.........MMM........MM..MMMMM..MM..MMMMMMMM.......MMMMMMM
-    ## MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-    ## MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-
 ### 1.1 Compute single viewshed
 
     #Load in DSM
@@ -100,12 +58,12 @@ digital surface model (DSM) and a viewpoint.
     test_viewpoints <- sf::st_coordinates(test_viewpoints)
 
     # Compute viewsheds
-    # the output includes binary matrix and extent of viewshed 
     output <- viewscape::compute_viewshed(dsm = test_dsm, 
                                           viewpoints = test_viewpoints, 
                                           offset_viewpoint = 6, 
                                           multiviewpoints = TRUE,
-                                          raster=TRUE)
+                                          parallel = TRUE, 
+                                          workers = 8)
 
     # Use plot all viewsheds on DSM
     par(mfrow=c(3,3))
