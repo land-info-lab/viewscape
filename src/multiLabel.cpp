@@ -21,7 +21,7 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
   const int cols = dsm.cols();
   #ifdef _WIN32
     #pragma omp parallel num_threads(workers)
-    #pragma omp parallel for private(i)
+    #pragma omp for
   #endif
   for (int i = 0; i < vptnum; i++) {
     int vx = vpts(i,0);
