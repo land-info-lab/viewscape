@@ -73,7 +73,8 @@ output <- viewscape::compute_viewshed(dsm = test_dsm,
                                       viewpoints = test_viewpoints, 
                                       offset_viewpoint = 6, 
                                       multiviewpoints = TRUE,
-                                      parallel = TRUE)
+                                      parallel = TRUE, 
+                                      workers = 8)
 ```
 
 ```{r}
