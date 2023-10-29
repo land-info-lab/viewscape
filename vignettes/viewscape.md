@@ -65,7 +65,7 @@ digital surface model (DSM) and a viewpoint.
                                           parallel = TRUE, 
                                           workers = 8)
 
-    # Use plot all viewsheds on DSM
+    # plot all viewsheds on DSM
     par(mfrow=c(3,3))
     for(i in 1:length(output)) {
       each <- output[[i]]
