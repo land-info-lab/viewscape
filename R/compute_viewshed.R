@@ -144,7 +144,6 @@ compute_viewshed <- function(dsm,
                                          workers=workers)
         )
       }
-      doParallel::stopImplicitCluster()
     } else {
       for(i in 1:length(viewpoints[,1])){
         viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
