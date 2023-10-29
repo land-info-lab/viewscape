@@ -1,10 +1,12 @@
 #include <Rcpp.h>
 #include <iostream>
 #include <fstream>
+using namespace Rcpp;
 #ifdef _WIN32
   #include <omp.h>  // Include OpenMP for Windows
+  // [[Rcpp::plugins(openmp)]]
 #endif
-using namespace Rcpp;
+
 
 // [[Rcpp::export]]
 Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
