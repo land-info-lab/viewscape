@@ -5,8 +5,8 @@ get_depths <- function(px, py, x, y, num) {
     .Call(`_viewscape_get_depths`, px, py, x, y, num)
 }
 
-multiLabel <- function(vpts, dsm, max_dis, vpth, h, workers) {
-    .Call(`_viewscape_multiLabel`, vpts, dsm, max_dis, vpth, h, workers)
+multiLabel <- function(vpts, dsm_list, max_dis, vpth, h, workers) {
+    .Call(`_viewscape_multiLabel`, vpts, dsm_list, max_dis, vpth, h, workers)
 }
 
 visibleLabel <- function(viewpoint, dsm, h, max_dis) {

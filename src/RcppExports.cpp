@@ -26,18 +26,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // multiLabel
-Rcpp::List multiLabel(Rcpp::NumericMatrix& vpts, Rcpp::NumericMatrix& dsm, const int max_dis, const double vpth, const double h, const int workers);
-RcppExport SEXP _viewscape_multiLabel(SEXP vptsSEXP, SEXP dsmSEXP, SEXP max_disSEXP, SEXP vpthSEXP, SEXP hSEXP, SEXP workersSEXP) {
+Rcpp::List multiLabel(Rcpp::NumericMatrix& vpts, Rcpp::List& dsm_list, const int max_dis, const double vpth, const double h, const int workers);
+RcppExport SEXP _viewscape_multiLabel(SEXP vptsSEXP, SEXP dsm_listSEXP, SEXP max_disSEXP, SEXP vpthSEXP, SEXP hSEXP, SEXP workersSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type vpts(vptsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type dsm(dsmSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type dsm_list(dsm_listSEXP);
     Rcpp::traits::input_parameter< const int >::type max_dis(max_disSEXP);
     Rcpp::traits::input_parameter< const double >::type vpth(vpthSEXP);
     Rcpp::traits::input_parameter< const double >::type h(hSEXP);
     Rcpp::traits::input_parameter< const int >::type workers(workersSEXP);
-    rcpp_result_gen = Rcpp::wrap(multiLabel(vpts, dsm, max_dis, vpth, h, workers));
+    rcpp_result_gen = Rcpp::wrap(multiLabel(vpts, dsm_list, max_dis, vpth, h, workers));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -34,31 +34,40 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
 
 #' @noMd
 radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0, workers) {
-  output <- list()
+  output <- c()
+  dsm_list <- list()
+  ex <- list()
   resolution <- raster::res(dsm)
   projt <- raster::crs(dsm)
-  x <- raster::colFromX(dsm, viewPts[,1])
-  y <- raster::rowFromY(dsm, viewPts[,2])
+  x <- c()
+  y <- c()
   z <- raster::extract(dsm, viewPts)
+  distance <- round(r/resolution[1])
+  for (i in 1:length(z)) {
+    subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
+    subdsm <- raster::crop(dsm, raster::extent(subarea))
+    e <- raster::extent(subdsm)
+    ex[[i]] <- e
+    x <- c(x, raster::colFromX(subdsm, viewPts[i,1]))
+    y <- c(y, raster::rowFromY(subdsm, viewPts[i,2]))
+    dsm_list[[i]] <- raster::as.matrix(subdsm)
+  }
   vpts <- cbind(x, y)
   vpts <- cbind(vpts, z)
-  distance <- round(r/resolution[1])
-  dsm_matrix <- raster::as.matrix(dsm)
   label_matrix <- multiLabel(vpts=vpts,
-                             dsm=dsm_matrix,
+                             dsm=dsm_list,
                              max_dis=distance,
                              vpth=offset,
                              h=offset2,
                              workers=workers)
-  for(i in 1:length(label_matrix)) {
-    subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
-    subdsm <- raster::crop(dsm, raster::extent(subarea))
-    output[[i]] <- new("Viewshed",
-                       viewpoint = viewPts[i,],
-                       visible = label_matrix[[i]],
-                       resolution = resolution,
-                       extent = raster::extent(subdsm),
-                       crs = projt)
+  for(i in 1:length(z)) {
+    out <- new("Viewshed",
+               viewpoint = viewPts[i,],
+               visible = label_matrix[[i]],
+               resolution = resolution,
+               extent = ex[[i]],
+               crs = projt)
+    output <- c(output, out)
   }
   return(output)
 }
