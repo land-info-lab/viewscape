@@ -29,10 +29,6 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
     int vy = vpts(i,1);
     const double vz = vpts(i,2) + vpth;
 
-    Rcpp::NumericVector zl;
-    Rcpp::NumericVector xl;
-    Rcpp::NumericVector yl;
-
     const int sub_rows = sub_dsm.nrow();
     const int sub_cols = sub_dsm.ncol();
 
@@ -45,15 +41,15 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
         if (steps <= max_dis) {
           Rcpp::NumericVector sequence(steps);
           std::iota(sequence.begin(), sequence.end(), 1);
-          xl = vx + sequence * (k-vx)/steps;
-          yl = vy + sequence * (j-vy)/steps;
+          Rcpp::NumericVector xl = vx + sequence * (k-vx)/steps;
+          Rcpp::NumericVector yl = vy + sequence * (j-vy)/steps;
 
           if(vz<z) {
-            zl = vz + sequence/steps*fabs(vz-z);
+            Rcpp::NumericVector zl = vz + sequence/steps*fabs(vz-z);
           } else if (vz>z) {
-            zl = vz - sequence/steps*fabs(vz-z);
+            Rcpp::NumericVector zl = vz - sequence/steps*fabs(vz-z);
           } else if (vz==z) {
-            zl = vz + 0*sequence;
+            Rcpp::NumericVector zl = vz + 0*sequence;
           }
           int temp = 1;
           for (int p = 0; p < steps; p++) {
