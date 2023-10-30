@@ -3,7 +3,6 @@
 #include <string>
 #include <Rcpp.h>
 #include <algorithm>
-#include <chrono>
 
 using namespace Rcpp;
 
@@ -22,7 +21,6 @@ Rcpp::IntegerMatrix visibleLabel(
   int steps;
   Rcpp::IntegerMatrix visible(rows, cols);
 
-  auto start = std::chrono::system_clock::now();
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < cols; j++) {
       steps = sqrt((viewpoint[0]-j)*(viewpoint[0]-j) + (viewpoint[1]-i)*(viewpoint[1]-i));
@@ -54,9 +52,5 @@ Rcpp::IntegerMatrix visibleLabel(
       }
     }
   }
-  auto end = std::chrono::system_clock::now();
-  std::chrono::duration<double> elapsed_seconds = end-start;
-  std::cout << "elapsed time: " << elapsed_seconds.count() << "s"
-            << std::endl;
   return visible;
 }

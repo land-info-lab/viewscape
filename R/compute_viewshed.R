@@ -126,7 +126,7 @@ compute_viewshed <- function(dsm,
       if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
         bpparam <- BiocParallel::SnowParam(workers=workers, type="FORK")
       }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-        bpparam <- BiocParallel::SnowParam(workers=workers, type="SOCK")
+        bpparam <- BiocParallel::SnowParam(workers=1, type="SOCK")
       }
       suppressWarnings(
         viewsheds <- BiocParallel::bplapply(X = inputs,
