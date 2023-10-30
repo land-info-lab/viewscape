@@ -23,6 +23,11 @@
 #' @note The lidar_search function simplifies the process of searching for
 #' and working with LiDAR data via the TNMAccess API: https://tnmaccess.nationalmap.gov/api/v1/docs.
 #' @export
+#'
+#' @example
+#' bbox <- c(-83.742282,42.273389,-83.733442,42.278724)
+#' search_result <- viewscape::lidar_search(bbox = bbox,
+#'                                          preview = TRUE)
 
 lidar_search <- function(bbox, preview = FALSE, folder = NULL) {
   if (missing(bbox)) {

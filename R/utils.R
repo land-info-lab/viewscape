@@ -108,7 +108,7 @@ return_response <- function(bbox) {
   json <- httr2::request(paste0(api1, api2, api3)) %>% req_timeout(10000) %>%
     httr2::req_perform() %>%
     httr2::resp_body_json()
-  items <- json$total
+  items <- length(json$items)
   cat(paste0("Find ", items, " items", "\n"))
   titles <- c()
   sourceId <- c()
