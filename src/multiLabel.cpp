@@ -19,9 +19,9 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
   Rcpp::List output(vptnum);
   #ifdef _WIN32
   #ifdef _OPENMP
-    #pragma omp parallel for num_threads(workers)
+  #pragma omp parallel for num_threads(workers)
   #else
-    #pragma omp parallel for num_threads(1)
+  #pragma omp parallel for num_threads(1)
   #endif
   for (unsigned int i = 0; i < vptnum; i++) {
     const Rcpp::NumericMatrix sub_dsm = dsm_list[i];
