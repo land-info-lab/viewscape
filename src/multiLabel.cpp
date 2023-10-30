@@ -19,16 +19,8 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
   Rcpp::List output(vptnum);
   #ifdef _WIN32
   #ifdef _OPENMP
-    int main() {
-      std::cout << "OpenMP support is available" << std::endl;
-      return 0;
-    }
     #pragma omp parallel for num_threads(workers)
   #else
-    int main() {
-      std::cout << "OpenMP support is not available" << std::endl;
-      return 0;
-    }
     #pragma omp parallel for num_threads(1)
   #endif
   for (unsigned int i = 0; i < vptnum; i++) {
