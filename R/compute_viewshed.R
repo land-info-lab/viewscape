@@ -118,7 +118,6 @@ compute_viewshed <- function(dsm,
       return(output)
     }
   }else if (multiviewpoints){
-    #viewsheds <- c()
     if (parallel == TRUE){
       if (workers == 0) {
         stop("Please specify the number of CPU cores (workers)")
@@ -138,15 +137,19 @@ compute_viewshed <- function(dsm,
                                             BPPARAM = bpparam)
       )
     } else {
-      # for(i in 1:length(viewpoints[,1])){
-      #   viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
-      #   output <- radius_viewshed(dsm, r, viewpoint, offset_viewpoint)
-      #   viewsheds <- c(viewsheds, output)
-      # }
-      viewsheds <- radius_viewshed_m(dsm=dsm,
-                                     r=r,
-                                     viewPts=viewpoints,
-                                     offset=offset_viewpoint)
+      if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
+        viewsheds <- c()
+        for(i in 1:length(viewpoints[,1])){
+          viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
+          output <- radius_viewshed(dsm, r, viewpoint, offset_viewpoint)
+          viewsheds <- c(viewsheds, output)
+        }
+      } else {
+        viewsheds <- radius_viewshed_m(dsm=dsm,
+                                       r=r,
+                                       viewPts=viewpoints,
+                                       offset=offset_viewpoint)
+      }
     }
     return(viewsheds)
   }
