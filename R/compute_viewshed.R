@@ -118,38 +118,35 @@ compute_viewshed <- function(dsm,
       return(output)
     }
   }else if (multiviewpoints){
-    # set a new empty vector
-    viewsheds <- c()
+    #viewsheds <- c()
     if (parallel == TRUE){
       if (workers == 0) {
         stop("Please specify the number of CPU cores (workers)")
       }
+      inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
-        inputs <- split(viewpoints,seq(nrow(viewpoints)))
         bpparam <- BiocParallel::SnowParam(workers=workers, type="FORK")
-        suppressWarnings(
-          viewsheds <- BiocParallel::bplapply(X = inputs,
-                                              FUN = radius_viewshed,
-                                              dsm = dsm,
-                                              r = r,
-                                              offset = offset_viewpoint,
-                                              BPPARAM = bpparam)
-        )
       }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-        suppressWarnings(
-          viewsheds <- radius_viewshed_m(dsm=dsm,
-                                         r=r,
-                                         viewPts=viewpoints,
-                                         offset=offset_viewpoint,
-                                         workers=workers)
-        )
+        bpparam <- BiocParallel::SnowParam(workers=workers, type="SOCK")
       }
+      suppressWarnings(
+        viewsheds <- BiocParallel::bplapply(X = inputs,
+                                            FUN = radius_viewshed,
+                                            dsm = dsm,
+                                            r = r,
+                                            offset = offset_viewpoint,
+                                            BPPARAM = bpparam)
+      )
     } else {
-      for(i in 1:length(viewpoints[,1])){
-        viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
-        output <- radius_viewshed(dsm, r, viewpoint, offset_viewpoint)
-        viewsheds <- c(viewsheds, output)
-      }
+      # for(i in 1:length(viewpoints[,1])){
+      #   viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
+      #   output <- radius_viewshed(dsm, r, viewpoint, offset_viewpoint)
+      #   viewsheds <- c(viewsheds, output)
+      # }
+      viewsheds <- radius_viewshed_m(dsm=dsm,
+                                     r=r,
+                                     viewPts=viewpoints,
+                                     offset=offset_viewpoint)
     }
     return(viewsheds)
   }

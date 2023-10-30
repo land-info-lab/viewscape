@@ -33,7 +33,7 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
 }
 
 #' @noMd
-radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0, workers) {
+radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
   output <- c()
   dsm_list <- list()
   ex <- list()
@@ -58,8 +58,7 @@ radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0, workers) {
                              dsm=dsm_list,
                              max_dis=distance,
                              vpth=offset,
-                             h=offset2,
-                             workers=workers)
+                             h=offset2)
   for(i in 1:length(z)) {
     out <- new("Viewshed",
                viewpoint = viewPts[i,],
