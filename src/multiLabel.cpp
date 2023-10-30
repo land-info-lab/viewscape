@@ -20,10 +20,10 @@ Rcpp::List multiLabel(Rcpp::NumericMatrix &vpts,
   #ifdef _WIN32
   #ifdef _OPENMP
     #pragma omp parallel for num_threads(workers)
-    #pragma message("OpenMP support is available")
+    std::cout << "OpenMP support is available" << std::endl;
   #else
     #pragma omp parallel for num_threads(1)
-    #pragma message("OpenMP support is not available")
+    std::cout << "OpenMP support is not available" << std::endl;
   #endif
   for (unsigned int i = 0; i < vptnum; i++) {
     const Rcpp::NumericMatrix sub_dsm = dsm_list[i];
