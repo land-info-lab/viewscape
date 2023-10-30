@@ -137,7 +137,7 @@ compute_viewshed <- function(dsm,
                                             BPPARAM = bpparam)
       )
     } else {
-      if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
+      if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
         viewsheds <- c()
         for(i in 1:length(viewpoints[,1])){
           viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
