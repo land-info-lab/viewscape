@@ -62,7 +62,7 @@ lidar_search <- function(bbox,
     options(timeout=9999)
     for (i in 1:num) {
       destination <- paste0(folder, "/", title[i], ".laz")
-      download.file(download[i], destination)
+      try(download.file(download[i], destination))
     }
     options(timeout=original_timeout)
   }

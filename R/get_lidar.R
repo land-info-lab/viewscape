@@ -92,10 +92,10 @@ get_lidar <- function(x,
   for (i in 1:num) {
     destination <- paste0(folder, "/", title[i], ".laz")
     files <- c(files, destination)
-    download.file(download[i],
+    try(download.file(download[i],
                   destination,
                   method = m,
-                  quiet = TRUE)
+                  quiet = TRUE))
   }
   options(timeout=original_timeout)
   # clip and merge
