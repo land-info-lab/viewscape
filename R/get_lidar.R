@@ -11,6 +11,7 @@
 #' The maximum distance is 1000m (3281ft).
 #' If r > 1000m, it will be reset to 1000m.
 #' @param epsg numeric, the EPSG code specifying the coordinate reference system.
+#' @param max_return numeric, indicating the maximum of returns.
 #' @param folder string, indicating a path for downloading the LiDAR data
 #' @param plot logical (default is FALSE), enable or disable the plotting of
 #' the processed LiDAR data.
@@ -36,6 +37,7 @@ get_lidar <- function(x,
                       y,
                       r,
                       epsg,
+                      max_return,
                       folder,
                       plot = FALSE) {
   if (missing(x) || missing(y)) {
@@ -70,7 +72,7 @@ get_lidar <- function(x,
   pt_ <- sp::spTransform(pt_, CRSobj=longlat)
   bbox <- c(pt_@coords[1,1], pt_@coords[1,2], pt_@coords[2,1], pt_@coords[2,2])
   # get response using API
-  result <- return_response(bbox)
+  result <- return_response(bbox, max_return)
   # filter overlapping files
   lastYear <- max(result$startYear)
   result <- subset(result, startYear == lastYear)
@@ -79,6 +81,8 @@ get_lidar <- function(x,
   title <- result$titles
   download <- result$downloadLazURL
   # download data
+  original_timeout <- getOption('timeout')
+  options(timeout=9999)
   files <- c()
   if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
     m <- "curl"
@@ -93,6 +97,7 @@ get_lidar <- function(x,
                   method = m,
                   quiet = TRUE)
   }
+  options(timeout=original_timeout)
   # clip and merge
   lasc <- lidR::readLAScatalog(files, progress = FALSE)
   las <- lidR::clip_rectangle(lasc,

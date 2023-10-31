@@ -6,6 +6,7 @@
 #' further analysis.
 #' @param bbox vector, a bounding box defining the geographical area
 #' for the LiDAR data search.
+#' @param max_return numeric, indicating the maximum of returns.
 #' @param preview logical. If TRUE (default is FALSE), enable or disable
 #' previewing LiDAR graphics.
 #' @param folder string (optional), indicating an optional folder path
@@ -27,13 +28,17 @@
 #' @example
 #' bbox <- c(-83.742282,42.273389,-83.733442,42.278724)
 #' search_result <- viewscape::lidar_search(bbox = bbox,
+#'                                          max_return = 25,
 #'                                          preview = TRUE)
 
-lidar_search <- function(bbox, preview = FALSE, folder = NULL) {
+lidar_search <- function(bbox,
+                         max_return,
+                         preview = FALSE,
+                         folder = "") {
   if (missing(bbox)) {
     stop("Please define a bbox")
   }
-  result <- return_response(bbox)
+  result <- return_response(bbox, max_return)
   num <- length(result[,1])
   if (preview == TRUE) {
     url <- result$previewGraphicURL
@@ -50,13 +55,16 @@ lidar_search <- function(bbox, preview = FALSE, folder = NULL) {
       }
     }
   }
-  if (isTRUE(is.na(folder))) {
+  if (isTRUE(folder != "")) {
     title <- result$titles
     download <- result$downloadLazURL
+    original_timeout <- getOption('timeout')
+    options(timeout=9999)
     for (i in 1:num) {
       destination <- paste0(folder, "/", title[i], ".laz")
       download.file(download[i], destination)
     }
+    options(timeout=original_timeout)
   }
   return(result)
 }
