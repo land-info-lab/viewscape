@@ -39,7 +39,7 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   resolution <- viewshed@resolution[1]
   # extent - Total area of the viewshed
   extent <- pointnumber * resolution^2
-  output[[length(output)+1]] = extent
+  output[[length(output)+1]] <- extent
   # depth - Furthest visible distance given the viewscape
   # depths <- c()
   # for (i in 1:nrow(visiblepoints)) {
@@ -53,9 +53,9 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
                        y,
                        nrow(visiblepoints))
   # depth
-  output[[length(output)+1]] = max(depths)
+  output[[length(output)+1]] <- max(depths)
   # vdepth
-  output[[length(output)+1]] = sd(depths)
+  output[[length(output)+1]] <- sd(depths)
   names(output) <- c("extent", "depth", "vdepth")
   dsm <- raster::crop(dsm, viewshed@extent)
   # horizontal - Total visible horizontal or terrestrial area
@@ -70,9 +70,9 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
     z$delta <- z$dsm_z - z$dtm_z
     z <- subset(z, delta <= 0.1)
     # horizontal
-    output[[length(output)+1]] = length(z$delta) * resolution^2
+    output[[length(output)+1]] <- length(z$delta) * resolution^2
     # relief
-    output[[length(output)+1]] = sd(z$dtm_z)
+    output[[length(output)+1]] <- sd(z$dtm_z)
     names(output) <- c("extent", "depth", "vdepth", "horizontal", "relief")
   }
   # skyline - Variation of (Standard deviation) of the vertical viewscape
@@ -100,9 +100,13 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
     colnames(masks_2)[2] <- 'masks2'
     mask_df <- cbind(masks_1, masks_2)
     mask_df <- cbind(mask_df, dsm_z)
-    mask_df <- subset(mask_df, masks1 != 0 )
-    mask_df <- subset(mask_df, masks2 != 0)
-    output[[length(output)+1]] = sd(na.omit(mask_df$z))
+    mask_df$mask <- mask_df$mask1 + mask_df$mask2
+    mask_df <- subset(mask_df, masks != 0)
+    if (length(mask_df$z) > 1) {
+      output[[length(output)+1]] <- sd(na.omit(mask_df$z))
+    } else {
+      output[[length(output)+1]] <- 0
+    }
     names(output) <- c("extent",
                        "depth",
                        "vdepth",
