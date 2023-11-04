@@ -96,12 +96,12 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
     masks_1 <- raster::extract(masks_1, visiblepoints, df=TRUE)
     masks_2 <- raster::extract(masks_2, visiblepoints, df=TRUE)
     colnames(dsm_z)[2] <- 'z'
-    colnames(masks_1)[2] <- 'masks1'
-    colnames(masks_2)[2] <- 'masks2'
+    colnames(masks_1)[2] <- 'mask1'
+    colnames(masks_2)[2] <- 'mask2'
     mask_df <- cbind(masks_1, masks_2)
     mask_df <- cbind(mask_df, dsm_z)
     mask_df$mask <- mask_df$mask1 + mask_df$mask2
-    mask_df <- subset(mask_df, masks != 0)
+    mask_df <- subset(mask_df, mask != 0)
     if (length(mask_df$z) > 1) {
       output[[length(output)+1]] <- sd(na.omit(mask_df$z))
     } else {
