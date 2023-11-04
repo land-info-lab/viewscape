@@ -31,6 +31,12 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   if (missing(viewshed)) {
     stop("Viewshed object is missing")
   }
+  units <- sf::st_crs(viewshed@crs)$units
+  if (units == "ft") {
+    error <- 1.6
+  } else if (units == "m") {
+    error <- 0.5
+  }
   output <- list()
   visiblepoints <- filter_invisible(viewshed, FALSE)
   x <- visiblepoints[,1]
@@ -68,7 +74,7 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
     colnames(dsm_z)[2] <- 'dsm_z'
     z <- cbind(dtm_z, dsm_z)
     z$delta <- z$dsm_z - z$dtm_z
-    z <- subset(z, delta <= 0.1)
+    z <- subset(z, delta <= error)
     # horizontal
     output[[length(output)+1]] <- length(z$delta) * resolution^2
     # relief
