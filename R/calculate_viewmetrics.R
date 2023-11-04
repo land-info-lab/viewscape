@@ -102,7 +102,9 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
     mask_df <- cbind(mask_df, dsm_z)
     mask_df <- subset(mask_df, masks1 != 0 )
     mask_df <- subset(mask_df, masks2 != 0)
-    output[[length(output)+1]] = sd(mask_df$z)
+    elevation <- mask_df$z
+    elevation[!is.na(elevation)]
+    output[[length(output)+1]] = sd(elevation)
     names(output) <- c("extent",
                        "depth",
                        "vdepth",
