@@ -4,15 +4,7 @@
 \alias{calculate_feature}
 \title{calculate_feature}
 \usage{
-calculate_feature(
-  type,
-  raster,
-  dsm,
-  r,
-  viewpoint,
-  offset_viewpoint,
-  nodata = NULL
-)
+calculate_feature(type, feature, viewshed, exclude_value = 0)
 }
 \arguments{
 \item{type}{Numeric. The input type of canopy raster.
@@ -21,17 +13,18 @@ canopy area in each cell).
 type=2: binary raster (that only uses two values to represent whether
 canopy exists in each cell).}
 
-\item{raster}{Raster.}
+\item{feature}{Raster.}
 
-\item{dsm}{Raster. The digital surface model(DSM) that is used to
-compute viewshed.}
+\item{viewshed}{Viewshed object.}
 
-\item{nodata}{Numeric. If type = 2, it indicates the value of
-cells that are empty. (it is defaulted as NULL)}
+\item{exclude_value}{Numeric. If type = 2, it indicates the value of
+cells, where the feature doesn't exist.}
 }
 \value{
 Numeric. The canopy area in the viewshed.
 }
 \description{
-calculate_feature
+The calculate_feature function is designed to extract specific
+feature-related information within a viewshed. It allows you to compute
+the proportion of the feature that is present in the viewshed.
 }

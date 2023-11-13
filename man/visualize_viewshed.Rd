@@ -4,36 +4,36 @@
 \alias{visualize_viewshed}
 \title{visualize_viewshed}
 \usage{
-visualize_viewshed(
-  viewshed,
-  extent,
-  dsm = NULL,
-  plot = "polygon",
-  output = FALSE,
-  type = NULL
-)
+visualize_viewshed(viewshed, plottype = "", outputtype = "")
 }
 \arguments{
-\item{viewshed}{the viewshed dataset of a single viewpoint from
-function calculate viewshed}
+\item{viewshed}{Viewshed object}
 
-\item{dsm}{the raster layer of digital surface model that has been used
-to calcualte viewshed}
+\item{plottype}{String, specifying the type of visualization ("polygon,"
+"raster," or "3D").}
 
-\item{plot}{the type of visualization of a viewshed,
-including "polygon", "raster", and "3D".}
-
-\item{output}{if TRUE, the viewshed visualization will be returned.}
-
-\item{type}{the type of visualized viewshed format to be returned,
-including "raster" and "polygon".}
+\item{outputtype}{String, specifying the type of output object ("raster"
+or "polygon").}
 }
 \value{
-Raster or Polygon of a viewshed
+Visualized viewshed as either a raster or polygon object,
+depending on the outputtype specified.
 }
 \description{
-visualize_viewshed
+The visualize_viewshed function is designed for the visualization
+of a viewshed analysis, providing users with various options for visualizing
+the results. The function works with a viewshed object and offers multiple
+plotting and output types.
 }
 \examples{
-
+# Visualize the viewshed as polygons
+visualize_viewshed(viewshed, plottype = "polygon")
+# Visualize the viewshed as a raster
+visualize_viewshed(viewshed, plottype = "raster")
+# Visualize the viewshed in 3D
+visualize_viewshed(viewshed, plottype = "3D")
+# Get the visualized viewshed as a polygon object
+polygon_viewshed <- visualize_viewshed(viewshed,
+                                       plottype = "polygon",
+                                       outputtype = "polygon")
 }

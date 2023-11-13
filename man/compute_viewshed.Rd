@@ -12,54 +12,74 @@ compute_viewshed(
   r = NULL,
   multiviewpoints = FALSE,
   parallel = FALSE,
+  workers = 0,
   raster = FALSE,
   plot = FALSE
 )
 }
 \arguments{
-\item{dsm}{raster, the digital surface model/digital elevation model}
+\item{dsm}{Raster, the digital surface model/digital elevation model}
 
-\item{viewpoints}{vector, including x,y coordinates of a viewpoint
-or a matrix including several viewpoints with x,y coordinates (if multiviewpoints = TRUE)}
+\item{viewpoints}{Vector, including x,y coordinates of a viewpoint
+or a matrix including several viewpoints with x,y coordinates
+(if multiviewpoints = TRUE)}
 
-\item{offset_viewpoint}{numeric, setting the height of the viewpoint.}
+\item{offset_viewpoint}{numeric, setting the height of the viewpoint.
+(default is 1.7 meters).}
 
-\item{offset_height}{numeric, setting the height of positions that a given viewpoint will
-look at. The defaut is 0}
+\item{offset_height}{numeric, setting the height of positions that a given
+viewpoint will look at. (defaut is 0)}
 
-\item{r}{numeric, setting the radius for viewshed analysis. (it is defaulted as NULL)}
+\item{r}{Numeric (optional), setting the radius for viewshed analysis.
+(it is defaulted as NULL)}
 
-\item{multiviewpoints}{the radius for viewshed analysis. (it is defaulted as NULL)}
+\item{multiviewpoints}{the radius for viewshed analysis.
+(it is defaulted as NULL)}
 
-\item{parallel}{logical, indicating if parallel computing should be used to compute
-viewsheds of multiview points. The default is FALSE. When it is TRUE, arguements 'raster'
-and 'plot' are ignored}
+\item{parallel}{Logical, (default is FALSE) indicating if parallel computing
+should be used to compute viewsheds of multiview points. When it is TRUE,
+arguements 'raster' and 'plot' are ignored}
 
-\item{raster}{logical, if it is TRUE, the raster of viewshed will be returned.
+\item{workers}{Numeric, indicating the number of CPU cores that will be used
+for parallel computing. It is required if 'parallel' is 'TRUE'.}
+
+\item{raster}{Logical, (default is FALSE) if it is TRUE, the raster of
+viewshed will be returned.
 The default is FALSE}
 
-\item{plot}{logical, if it is TRUE, the raster of viewshed will be displayed}
+\item{plot}{Logical, (default is FALSE) if it is TRUE, the raster of
+viewshed will be displayed}
 }
 \value{
-Raster or list. If raster is TRUE, the output is a binary raster.
-Value 1 means visible while value 0 means invisible. The list includes a binary matrix,
-where Value 1 means visible while value 0 means invisible, and the extent of the vewshed.
-If parallel is TRUE, the output is the list and visualization is unavailable.
+Raster or list. For single-viewpoint analysis, the function returns
+either a raster (raster is TRUE) or a viewshed object. Value 1 means visible while
+value 0 means invisible. For multi-viewpoint analysis, a list of viewsheds
+is returned.
 }
 \description{
-Compute the viewshed based on a given spaial point or a set of points.
+The compute_viewshed function is designed for computing viewsheds,
+which are areas visible from specific viewpoints, based on a Digital Surface
+Model (DSM). It provides flexibility for single or multi-viewpoint analyses
+and allows options for parallel processing, raster output, and plotting.
 }
 \details{
 Parallel computing used the functions from BiocParallel package
 }
 \examples{
+test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+test_viewpoint <- sf::st_coordinates(test_viewpoint)
 test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
 #Compute viewshed
+dsm <- raster::raster(system.file("test_dsm.tif", package ="viewscape"))
 output <- compute_viewshed(dsm = dsm,
                            viewpoints = test_viewpoint,
                            offset_viewpoint = 6,
                            raster = TRUE,
                            plot = TRUE)
+
+# Calculate viewsheds for multiple viewpoints in parallel
+viewsheds <- compute_viewshed(dsm, multi_viewpoints, multiviewpoints = TRUE, parallel = TRUE)
+
 }
 \references{
 Martin Morgan, Jiefei Wang, Valerie Obenchain, Michel Lang,

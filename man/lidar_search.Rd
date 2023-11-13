@@ -4,21 +4,31 @@
 \alias{lidar_search}
 \title{lidar_search}
 \usage{
-lidar_search(bbox, preview = FALSE, folder = NULL)
+lidar_search(bbox, max_return, preview = FALSE, folder = "")
 }
 \arguments{
-\item{bbox}{vector, indicating the bounding box to search for data.}
+\item{bbox}{vector, a bounding box defining the geographical area
+for the LiDAR data search.}
 
-\item{preview}{logical. If TRUE, the image of the LiDAR data will
-be display for the preview purposes. The default is FALSE}
+\item{max_return}{numeric, indicating the maximum of returns.}
 
-\item{folder}{string, indicating a path for downloading the LiDAR data.
-If folder is set, All available data will be downloaded.}
+\item{preview}{logical. If TRUE (default is FALSE), enable or disable
+previewing LiDAR graphics.}
+
+\item{folder}{string (optional), indicating an optional folder path
+where downloaded LiDAR data files will be saved.}
 }
 \value{
 dataframe
 }
 \description{
-Search for data within a bounding box via
-the TNMAccess API: https://tnmaccess.nationalmap.gov/api/v1/docs
+The lidar_search function is designed to facilitate the retrieval
+and exploration of LiDAR (Light Detection and Ranging) data within a specified
+bounding box (bbox). This function enables users to search for LiDAR data,
+preview available graphics, and optionally download LiDAR data files for
+further analysis.
+}
+\note{
+The lidar_search function simplifies the process of searching for
+and working with LiDAR data via the TNMAccess API: https://tnmaccess.nationalmap.gov/api/v1/docs.
 }

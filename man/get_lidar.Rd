@@ -4,33 +4,35 @@
 \alias{get_lidar}
 \title{get_lidar}
 \usage{
-get_lidar(x, y, r, epsg, folder, plot = FALSE)
+get_lidar(x, y, r, epsg, max_return, folder, plot = FALSE)
 }
 \arguments{
 \item{x}{numeric, indicating Longtitude of the center point.}
 
 \item{y}{numeric, indicating latitude of the center point.}
 
-\item{r}{numeric, indicating searching distance.
-The maximum distance is 800m (2625ft).
-If r > 800m (2625ft), it will be reset to 800m (2625ft).}
+\item{r}{numeric, indicating search distance for LiDAR data.
+The maximum distance is 1000m (3281ft).
+If r > 1000m, it will be reset to 1000m.}
 
-\item{epsg}{numeric, indicating epsg code}
+\item{epsg}{numeric, the EPSG code specifying the coordinate reference system.}
+
+\item{max_return}{numeric, indicating the maximum of returns.}
 
 \item{folder}{string, indicating a path for downloading the LiDAR data}
 
-\item{plot}{logical, if it is TRUE, final data will be visualized as
-point cloud. The default is FALSE}
+\item{plot}{logical (default is FALSE), enable or disable the plotting of
+the processed LiDAR data.}
 }
 \value{
-.las data
+The function returns the processed LiDAR data as a lidR LAS object.
 }
 \description{
 Search for and download LiDAR data based on coordinates
 of a spatial point with a given distance. The maximum distance is 800m.
-Different dataset could be found and the function automatically
-To get more details of data on a larger scale,
-please use viewscape::lidar_search.
+Different dataset could be found and the function automatically downloads
+the latest dataset
+To get more details of data on a larger scale, please use viewscape::lidar_search.
 }
 \references{
 Jean-Romain Roussel and David Auty (2022).

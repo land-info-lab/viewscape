@@ -11,6 +11,12 @@ resolution, extent, and crs
 \section{Slots}{
 
 \describe{
-\item{\code{crs}}{}
+\item{\code{visible}}{matrix}
+
+\item{\code{resolution}}{vector}
+
+\item{\code{extent}}{Extent \link{package 'raster'}}
+
+\item{\code{crs}}{crs \link{package 'raster'}}
 }}
 
