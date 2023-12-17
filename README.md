@@ -1,10 +1,9 @@
 
 <!-- badges: start -->
-
-[![R-CMD-check](https://github.com/land-info-lab/viewscape/workflows/R-CMD-check/badge.svg)](https://github.com/land-info-lab/viewscape/actions/actions?workflow=R-CMD-check)
-[![Codecov test
-coverage](https://codecov.io/github/land-info-lab/viewscape/branch/master/graph/badge.svg)](https://codecov.io/github/land-info-lab/viewscape?branch=master)
+[![Codecov test coverage](https://codecov.io/github/land-info-lab/viewscape/branch/master/graph/badge.svg)](https://codecov.io/github/land-info-lab/viewscape?branch=master)
+[![R-CMD-check](https://github.com/land-info-lab/viewscape/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/land-info-lab/viewscape/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
+
 
 # Viewscape
 
@@ -23,11 +22,6 @@ github.
 
 ``` r
 library(devtools)
-
-# Install the package 'BiocParallel' for enabling paralell computing
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("BiocParallel")
 
 # load package
 install_github("land-info-lab/viewscape")
@@ -73,10 +67,6 @@ test_dsm <- raster::raster(system.file("test_dsm.tif",
 test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", 
                                           package = "viewscape"))
 
-#Transform viewpoint from shape file to coordinates 
-test_viewpoint <- sf::st_coordinates(test_viewpoint)
-test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
-
 #Compute viewshed
 output <- viewscape::compute_viewshed(dsm = test_dsm, 
                                       viewpoints = test_viewpoint, 
@@ -84,19 +74,19 @@ output <- viewscape::compute_viewshed(dsm = test_dsm,
                                       plot=TRUE)
 
 # Load DTM
-test_dtm <- raster::raster(system.file("test_dtm.tif", 
+test_dtm <- terra::rast(system.file("test_dtm.tif", 
                                        package ="viewscape"))
 
 # load landuse raster
-test_landcover <- raster::raster(system.file("test_landuse.tif",
+test_landcover <- terra::rast(system.file("test_landuse.tif",
                                            package ="viewscape"))
 
 # Load canopy raster
-test_canopy <- raster::raster(system.file("test_canopy.tif", 
+test_canopy <- terra::rast(system.file("test_canopy.tif", 
                                        package ="viewscape"))
 
 # Load building footprints raster
-test_building <- raster::raster(system.file("test_building.tif", 
+test_building <- terra::rast(system.file("test_building.tif", 
                                        package ="viewscape"))
 
 # calculate metrics given the viewshed
