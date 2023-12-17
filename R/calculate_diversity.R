@@ -12,7 +12,6 @@
 #' @return List. a list containing the Shannon Diversity Index (SDI) and,
 #' if the proportion parameter is set to TRUE, a table of class proportions
 #' within the viewshed.
-#' @import dplyr
 #' @import terra
 #' @import sp
 #' @importFrom(dplyr, count)
