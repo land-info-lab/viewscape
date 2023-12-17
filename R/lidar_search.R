@@ -13,7 +13,6 @@
 #' where downloaded LiDAR data files will be saved.
 #'
 #' @return dataframe
-#' @importFrom(imager, load.image)
 #'
 #' @example
 #' # Perform a LiDAR data search within a bounding box
@@ -41,6 +40,9 @@ lidar_search <- function(bbox,
   result <- return_response(bbox, max_return)
   num <- length(result[,1])
   if (preview == TRUE) {
+    if (!requireNamespace("imager", quietly = TRUE)) {
+      install.packages("imager")
+    }
     url <- result$previewGraphicURL
     if (num == 1) {
       imager::load.image(url) %>% plot()
