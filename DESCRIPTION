@@ -23,6 +23,7 @@ Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
+    BiocParallel,
     qpdf
 Config/testthat/edition: 3
 VignetteBuilder: knitr,
@@ -37,7 +38,6 @@ Imports:
     lidR,
     BiocManager,
     rasterVis,
-    BiocParallel,
     parallel,
     httr2,
     imager

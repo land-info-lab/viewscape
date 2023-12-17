@@ -147,4 +147,3 @@ find_year <- function(url) {
   date <- j$dates[[2]]$dateString %>% strsplit("-") %>% unlist()
   return(as.integer(date[1]))
 }
-

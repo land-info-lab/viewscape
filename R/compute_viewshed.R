@@ -5,7 +5,7 @@
 #' and allows options for parallel processing, raster output, and plotting.
 #'
 #' @param dsm Raster, the digital surface model/digital elevation model
-#' @param viewpoints Vector, including x,y coordinates of a viewpoint
+#' @param viewpoints sf point(s) or vector including x,y coordinates of a viewpoint
 #' or a matrix including several viewpoints with x,y coordinates
 #' (if multiviewpoints = TRUE)
 #' @param offset_viewpoint numeric, setting the height of the viewpoint.
@@ -13,8 +13,6 @@
 #' @param offset_height numeric, setting the height of positions that a given
 #' viewpoint will look at. (defaut is 0)
 #' @param r Numeric (optional), setting the radius for viewshed analysis.
-#' (it is defaulted as NULL)
-#' @param multiviewpoints the radius for viewshed analysis.
 #' (it is defaulted as NULL)
 #' @param parallel Logical, (default is FALSE) indicating if parallel computing
 #' should be used to compute viewsheds of multiview points. When it is TRUE,
@@ -48,8 +46,8 @@
 #'
 #' @examples
 #' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
-#' test_viewpoint <- sf::st_coordinates(test_viewpoint)
-#' test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
+#' # test_viewpoint <- sf::st_coordinates(test_viewpoint)
+#' # test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
 #' #Compute viewshed
 #' dsm <- raster::raster(system.file("test_dsm.tif", package ="viewscape"))
 #' output <- compute_viewshed(dsm = dsm,
@@ -67,11 +65,11 @@ compute_viewshed <- function(dsm,
                              offset_viewpoint=1.7,
                              offset_height = 0,
                              r = NULL,
-                             multiviewpoints = FALSE,
                              parallel = FALSE,
                              workers = 0,
                              raster = FALSE,
                              plot = FALSE){
+  multiviewpoints <- FALSE
   if (missing(dsm)) {
     stop("DSM is missing!")
   } else if (missing(viewpoints)) {
@@ -92,6 +90,18 @@ compute_viewshed <- function(dsm,
   }
   if (plot) {
     raster <- TRUE
+  }
+  if (isFALSE(!(class(viewpoints) == "numeric"))) {
+    if (class(viewpoints) == "sf") {
+      viewpoints <- sf::st_coordinates(viewpoints)
+      viewpoints <- c(viewpoints[,1], viewpoints[,2])
+    } else {
+      stop("If input viewpoints is not a vector or matrix, it has to be sf point(s)")
+    }
+
+  }
+  if (viewpoints[,1] > 1) {
+    multiviewpoints <- TRUE
   }
   if (multiviewpoints == FALSE){
     # compute viewshed
@@ -119,6 +129,9 @@ compute_viewshed <- function(dsm,
     }
   }else if (multiviewpoints){
     if (parallel == TRUE){
+      if (!require("BiocParallel", quietly = TRUE)) {
+        require("BiocParallel", quietly = TRUE)
+      }
       if (workers == 0) {
         stop("Please specify the number of CPU cores (workers)")
       }
