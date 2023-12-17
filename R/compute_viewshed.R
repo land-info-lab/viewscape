@@ -94,7 +94,6 @@ compute_viewshed <- function(dsm,
   if (isFALSE(!(class(viewpoints) == "numeric"))) {
     if (class(viewpoints) == "sf") {
       viewpoints <- sf::st_coordinates(viewpoints)
-      viewpoints <- c(viewpoints[,1], viewpoints[,2])
     } else {
       stop("If input viewpoints is not a vector or matrix, it has to be sf point(s)")
     }
