@@ -1,4 +1,3 @@
-#' @import raster
 #' @import sp
 #' @import sf
 #' @import httr2
@@ -7,6 +6,7 @@
 radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   resolution <- terra::res(dsm)
   distance <- round(r/resolution[1])
+  projection <- terra::crs(dsm, proj = TRUE)
   # create an extent to crop input raster
   subarea <- get_buffer(viewPt[1], viewPt[2], r)
   subdsm <- terra::crop(dsm, terra::ext(subarea))
@@ -14,13 +14,13 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   # setup the view point
   col <- terra::colFromX(dsm, viewPt[1])
   row <- terra::rowFromY(dsm, viewPt[2])
-  z_viewpoint = dsm[terra::cellFromXY(dsm,cbind(viewPt[1],viewPt[2]))]+offset
+  z_viewpoint = terra::extract(dsm,cbind(viewPt[1],viewPt[2]))[1,1]+offset
   viewpoint <- matrix(0,1,3)
   viewpoint[1,1] <- col
   viewpoint[1,2] <- row
   viewpoint[1,3] <- z_viewpoint
   # get raster information
-  dsm_matrix <- terra::as.matrix(dsm)
+  dsm_matrix <- terra::as.matrix(dsm, wide=TRUE)
   # compute viewshed
   label_matrix <- visibleLabel(viewpoint, dsm_matrix, offset2, distance)
   output <- new("Viewshed",
@@ -28,7 +28,7 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
                 visible = label_matrix,
                 resolution = resolution,
                 extent = terra::ext(dsm),
-                crs = terra::crs(dsm))
+                crs = projection)
   return(output)
 }
 
@@ -41,7 +41,7 @@ radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
   projt <- terra::crs(dsm)
   x <- c()
   y <- c()
-  z <- terra::extract(dsm, viewPts)
+  z <- terra::extract(dsm, viewPts)[,1]
   distance <- round(r/resolution[1])
   for (i in 1:length(z)) {
     subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
@@ -50,7 +50,7 @@ radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
     ex[[i]] <- e
     x <- c(x, terra::colFromX(subdsm, viewPts[i,1]))
     y <- c(y, terra::rowFromY(subdsm, viewPts[i,2]))
-    dsm_list[[i]] <- terra::as.matrix(subdsm)
+    dsm_list[[i]] <- terra::as.matrix(subdsm, wide=TRUE)
   }
   vpts <- cbind(x, y)
   vpts <- cbind(vpts, z)

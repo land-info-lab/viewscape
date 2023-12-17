@@ -24,6 +24,7 @@ Suggests:
     knitr,
     rmarkdown,
     BiocParallel,
+    BiocManager,
     qpdf
 Config/testthat/edition: 3
 VignetteBuilder: knitr,
@@ -34,11 +35,8 @@ Imports:
     dplyr,
     sf,
     sp,
-    raster,
     terra,
     lidR,
-    BiocManager,
     rasterVis,
-    parallel,
     httr2
 LinkingTo: Rcpp

@@ -9,16 +9,6 @@
     Rcpp::sourceCpp(system.file("extdata/multiLabel.cpp", package ="viewscape"),
                     env = asNamespace("viewscape"))
   )
-  suppressWarnings(
-    if (!requireNamespace("BiocManager", quietly = TRUE)) {
-      install.packages("BiocManager")
-    }
-  )
-  suppressWarnings(
-    if (!requireNamespace("BiocParallel", quietly = TRUE)) {
-      BiocManager::install("BiocParallel")
-    }
-  )
 
   # cat("████████████████████████████████████████████████████████████████████████████████████████████████████\n")
   # cat("████████████████████████████████████████████████████████████████████████████████████████████████████\n")

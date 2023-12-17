@@ -65,9 +65,8 @@ test_viewpoints <- sf::read_sf(system.file("test_viewpoints.shp",
 output <- viewscape::compute_viewshed(dsm = test_dsm, 
                                       viewpoints = test_viewpoints, 
                                       offset_viewpoint = 6, 
-                                      multiviewpoints = TRUE,
                                       parallel = TRUE, 
-                                      workers = 8)
+                                      workers = 2)
 ```
 
 ```{r}

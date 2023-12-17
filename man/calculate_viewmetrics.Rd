@@ -25,15 +25,15 @@ The calculate_viewmetrics function is designed to compute a set of
 configuration metrics based on a given viewshed object and optionally, digital surface
 models (DSM) and digital terrain models (DTM) for terrain analysis.
 The function calculates various metrics that describe the visibility characteristics
-of a landscape from a specific viewpoint.The metrics include:\n
+of a landscape from a specific viewpoint.The metrics include:
 \enumerate{
 \item Extent: The total area of the viewshed, calculated as the number of visible grid
-cells multiplied by the grid resolution.\n
-\item Depth: The furthest visible distance within the viewshed from the viewpoint.\n
+cells multiplied by the grid resolution.
+\item Depth: The furthest visible distance within the viewshed from the viewpoint.
 \item Vdepth: The standard deviation of distances to visible points,
-providing a measure of the variation in visible distances.\n
-\item Horizontal: The total visible horizontal or terrestrial area within the viewshed.\n
-\item Relief: The standard deviation of elevations of the visible ground surface.\n
+providing a measure of the variation in visible distances.
+\item Horizontal: The total visible horizontal or terrestrial area within the viewshed.
+\item Relief: The standard deviation of elevations of the visible ground surface.
 \item Skyline: The standard deviation of the vertical viewscape, including visible
 canopy and buildings, when specified.
 }

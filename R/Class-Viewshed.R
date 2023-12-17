@@ -15,7 +15,7 @@ setClass(
                  visible = "matrix",
                  resolution = "numeric",
                  extent = "SpatExtent",
-                 crs = "CRS")
+                 crs = "character")
 )
 
 setGeneric("filter_invisible", function(object, ifRaster){
@@ -25,9 +25,9 @@ setGeneric("filter_invisible", function(object, ifRaster){
 setMethod("filter_invisible", signature(object="Viewshed", ifRaster="logical"),
           function(object, ifRaster)
           {
-            raster_data <- terra::rast(object@visible)
-            terra::ext(raster_data) <- object@extent
-            terra::res(raster_data) <- object@resolution
+            raster_data <- terra::rast(object@visible,
+                                       crs = object@crs,
+                                       extent = object@extent)
             if (ifRaster) {
               return(raster_data)
             } else {

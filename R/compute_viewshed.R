@@ -57,7 +57,7 @@
 #'                            plot = TRUE)
 #'
 #' # Calculate viewsheds for multiple viewpoints in parallel
-#' viewsheds <- compute_viewshed(dsm, multi_viewpoints, parallel = TRUE, workers = 2)
+#' viewsheds <- compute_viewshed(dsm, viewpoints = test_viewpoint, parallel = TRUE, workers = 2)
 #'
 
 compute_viewshed <- function(dsm,
@@ -91,18 +91,18 @@ compute_viewshed <- function(dsm,
   if (plot) {
     raster <- TRUE
   }
-  if (isFALSE(!(class(viewpoints) == "numeric"))) {
-    if (class(viewpoints) == "sf") {
+  if (!(class(viewpoints)[1] == "numeric")) {
+    if (class(viewpoints)[1] == "sf") {
       viewpoints <- sf::st_coordinates(viewpoints)
     } else {
       stop("If input viewpoints is not a vector or matrix, it has to be sf point(s)")
     }
-
   }
-  if (viewpoints[,1] > 1) {
+  if (length(viewpoints[,1]) > 1) {
     multiviewpoints <- TRUE
   }
   if (multiviewpoints == FALSE){
+    viewpoints <- c(viewpoints[,1], viewpoints[,2])
     # compute viewshed
     output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint, offset_height)
     if (raster) {
@@ -128,17 +128,23 @@ compute_viewshed <- function(dsm,
     }
   }else if (multiviewpoints){
     if (parallel == TRUE){
-      if (!require("BiocParallel", quietly = TRUE)) {
-        require("BiocParallel", quietly = TRUE)
+      if (!requireNamespace("BiocManager", quietly = TRUE)) {
+        install.packages("BiocManager")
+      }
+      if (!requireNamespace("BiocParallel", quietly = TRUE)) {
+        BiocManager::install("BiocParallel")
       }
       if (workers == 0) {
         stop("Please specify the number of CPU cores (workers)")
       }
       inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
-        bpparam <- BiocParallel::SnowParam(workers=workers, type="FORK")
+        bpparam <- BiocParallel::MulticoreParam(workers=workers,
+                                                progressbar = TRUE)
       }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-        bpparam <- BiocParallel::SnowParam(workers=1, type="SOCK")
+        bpparam <- BiocParallel::SnowParam(workers=1,
+                                           type="SOCK",
+                                           progressbar = TRUE)
       }
       suppressWarnings(
         viewsheds <- BiocParallel::bplapply(X = inputs,
