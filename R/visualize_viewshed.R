@@ -37,18 +37,18 @@ visualize_viewshed <- function(viewshed,
   }
   # rasterize the viewshed
   vpt <- filter_invisible(viewshed, FALSE)
-  mask_v <- raster::mask(filter_invisible(viewshed, TRUE),
-                         sp::SpatialPoints(vpt))
+  mask_v <- terra::mask(filter_invisible(viewshed, TRUE),
+                        terra::vect(sp::SpatialPoints(vpt)))
 
   if (plottype == "polygon"){
-    polygon_v <- raster::rasterToPolygons(mask_v)
-    polygon_v <- raster::buffer(polygon_v, width = 0.0001, dissolve = TRUE)
-    raster::plot(polygon_v, col = rgb(0, 1, 0, 0.3), border = NA)
+    polygon_v <- terra::as.polygons(mask_v)
+    polygon_v <- terra::buffer(polygon_v, width = 0.0001)
+    terra::plot(terra::aggregate(polygon_v), col = rgb(0, 1, 0, 0.3), border = NA)
   }else if (plottype == "raster"){
-    raster::plot(mask_v)
+    terra::plot(mask_v)
   }else if (plottype == "3D"){
     if (require(rasterVis)==TRUE){
-      require(rasterVis)
+      require(rasterVis, quietly = TRUE)
     }else{
       install.packages("rasterVis")
     }
@@ -58,9 +58,9 @@ visualize_viewshed <- function(viewshed,
     if (outputtype == "raster"){
       out <- mask_v
     }else if (outputtype == "polygon"){
-      polygon_v <- raster::rasterToPolygons(mask_v)
-      polygon_v <- raster::buffer(polygon_v, width = 0.0001, dissolve = TRUE)
-      out <- polygon_v
+      polygon_v <- terra::as.polygons(mask_v)
+      polygon_v <- terra::buffer(polygon_v, width = 0.0001)
+      out <- terra::aggregate(polygon_v)
     }
     return(out)
   }

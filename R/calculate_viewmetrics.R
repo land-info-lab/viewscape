@@ -23,7 +23,7 @@
 #' @references Tabrizian, P., Baran, P.K., Berkel, D.B., Mitásová, H., & Meentemeyer, R.K. (2020).
 #' Modeling restorative potential of urban environments by coupling viewscape analysis of lidar
 #' data with experiments in immersive virtual environments. Landscape and Urban Planning, 195, 103704.
-#' @import raster
+#' @import terra
 #'
 #' @export
 
@@ -63,13 +63,13 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   # vdepth
   output[[length(output)+1]] <- sd(depths)
   names(output) <- c("extent", "depth", "vdepth")
-  dsm <- raster::crop(dsm, viewshed@extent)
+  dsm <- terra::crop(dsm, viewshed@extent)
   # horizontal - Total visible horizontal or terrestrial area
   # relief - Variation (Standard deviation) in elevation of the visible ground surface.
   if (isFALSE(missing(dsm)) && isFALSE(missing(dtm))) {
-    dtm <- raster::crop(dtm, viewshed@extent)
-    dtm_z <- raster::extract(dtm, visiblepoints, df=TRUE)
-    dsm_z <- raster::extract(dsm, visiblepoints, df=TRUE)
+    dtm <- terra::crop(dtm, viewshed@extent)
+    dtm_z <- terra::extract(dtm, visiblepoints, df=TRUE)
+    dsm_z <- terra::extract(dsm, visiblepoints, df=TRUE)
     colnames(dtm_z)[2] <- 'dtm_z'
     colnames(dsm_z)[2] <- 'dsm_z'
     z <- cbind(dtm_z, dsm_z)
@@ -84,23 +84,23 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   # skyline - Variation of (Standard deviation) of the vertical viewscape
   # (visible canopy and buildings)
   if (length(masks) == 2) {
-    if (isFALSE(raster::compareCRS(raster::crs(masks[[1]]), viewshed@crs))) {
+    if (terra::crs(masks[[1]]) == viewshed@crs) {
       cat("First input mask has different
         coordinate reference system from the viewshed\n")
       cat("Reprojetion will be processing ...\n")
-      masks[[1]] <- raster::projectRaster(masks[[1]], crs = viewshed@crs)
+      masks[[1]] <- terra::project(masks[[1]], crs = viewshed@crs)
     }
-    if (isFALSE(raster::compareCRS(raster::crs(masks[[2]]), viewshed@crs))) {
+    if (terra::crs(masks[[2]]) == viewshed@crs) {
       cat("Second input mask has different
         coordinate reference system from the viewshed\n")
       cat("Reprojetion will be processing ...\n")
-      masks[[2]] <- raster::projectRaster(masks[[2]], crs = viewshed@crs)
+      masks[[2]] <- terra::project(masks[[2]], crs = viewshed@crs)
     }
-    masks_1 <- raster::crop(masks[[1]], viewshed@extent)
-    masks_2 <- raster::crop(masks[[2]], viewshed@extent)
-    dsm_z <- raster::extract(dsm, visiblepoints, df=TRUE)
-    masks_1 <- raster::extract(masks_1, visiblepoints, df=TRUE)
-    masks_2 <- raster::extract(masks_2, visiblepoints, df=TRUE)
+    masks_1 <- terra::crop(masks[[1]], viewshed@extent)
+    masks_2 <- terra::crop(masks[[2]], viewshed@extent)
+    dsm_z <- terra::extract(dsm, visiblepoints, df=TRUE)
+    masks_1 <- terra::extract(masks_1, visiblepoints, df=TRUE)
+    masks_2 <- terra::extract(masks_2, visiblepoints, df=TRUE)
     colnames(dsm_z)[2] <- 'z'
     colnames(masks_1)[2] <- 'mask1'
     colnames(masks_2)[2] <- 'mask2'

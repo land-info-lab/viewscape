@@ -5,30 +5,30 @@
 
 #' @noMd
 radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
-  resolution <- raster::res(dsm)
+  resolution <- terra::res(dsm)
   distance <- round(r/resolution[1])
   # create an extent to crop input raster
   subarea <- get_buffer(viewPt[1], viewPt[2], r)
-  subdsm <- raster::crop(dsm, raster::extent(subarea))
+  subdsm <- terra::crop(dsm, terra::ext(subarea))
   dsm <- subdsm
   # setup the view point
-  col <- raster::colFromX(dsm, viewPt[1])
-  row <- raster::rowFromY(dsm, viewPt[2])
-  z_viewpoint = dsm[raster::cellFromXY(dsm,cbind(viewPt[1],viewPt[2]))]+offset
+  col <- terra::colFromX(dsm, viewPt[1])
+  row <- terra::rowFromY(dsm, viewPt[2])
+  z_viewpoint = dsm[terra::cellFromXY(dsm,cbind(viewPt[1],viewPt[2]))]+offset
   viewpoint <- matrix(0,1,3)
   viewpoint[1,1] <- col
   viewpoint[1,2] <- row
   viewpoint[1,3] <- z_viewpoint
   # get raster information
-  dsm_matrix <- raster::as.matrix(dsm)
+  dsm_matrix <- terra::as.matrix(dsm)
   # compute viewshed
   label_matrix <- visibleLabel(viewpoint, dsm_matrix, offset2, distance)
   output <- new("Viewshed",
                 viewpoint = viewPt,
                 visible = label_matrix,
                 resolution = resolution,
-                extent = raster::extent(dsm),
-                crs = raster::crs(dsm))
+                extent = terra::ext(dsm),
+                crs = terra::crs(dsm))
   return(output)
 }
 
@@ -37,20 +37,20 @@ radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
   output <- c()
   dsm_list <- list()
   ex <- list()
-  resolution <- raster::res(dsm)
-  projt <- raster::crs(dsm)
+  resolution <- terra::res(dsm)
+  projt <- terra::crs(dsm)
   x <- c()
   y <- c()
-  z <- raster::extract(dsm, viewPts)
+  z <- terra::extract(dsm, viewPts)
   distance <- round(r/resolution[1])
   for (i in 1:length(z)) {
     subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
-    subdsm <- raster::crop(dsm, raster::extent(subarea))
-    e <- raster::extent(subdsm)
+    subdsm <- terra::crop(dsm, terra::ext(subarea))
+    e <- terra::ext(subdsm)
     ex[[i]] <- e
-    x <- c(x, raster::colFromX(subdsm, viewPts[i,1]))
-    y <- c(y, raster::rowFromY(subdsm, viewPts[i,2]))
-    dsm_list[[i]] <- raster::as.matrix(subdsm)
+    x <- c(x, terra::colFromX(subdsm, viewPts[i,1]))
+    y <- c(y, terra::rowFromY(subdsm, viewPts[i,2]))
+    dsm_list[[i]] <- terra::as.matrix(subdsm)
   }
   vpts <- cbind(x, y)
   vpts <- cbind(vpts, z)

@@ -13,7 +13,7 @@
 #' where downloaded LiDAR data files will be saved.
 #'
 #' @return dataframe
-#' @import imager
+#' @importFrom(imager, load.image)
 #'
 #' @example
 #' # Perform a LiDAR data search within a bounding box

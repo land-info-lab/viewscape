@@ -13,9 +13,9 @@
 #' if the proportion parameter is set to TRUE, a table of class proportions
 #' within the viewshed.
 #' @import dplyr
-#' @import raster
+#' @import terra
 #' @import sp
-#'
+#' @importFrom(dplyr, count)
 #' @export
 #'
 #' @references
@@ -28,16 +28,17 @@
 calculate_diversity <- function(land,
                                 viewshed,
                                 proportion = FALSE){
-  if (isFALSE(raster::compareCRS(raster::crs(land), viewshed@crs))) {
+  if (terra::crs(land) == viewshed@crs) {
     cat("Your input (land) rasters have different
         coordinate reference system from the viewshed\n")
     cat("Reprojetion will be processing ...\n")
-    land <- raster::projectRaster(land, crs = viewshed@crs)
+    #land <- raster::projectRaster(land, crs = viewshed@crs)
+    land <- terra::project(land, crs = viewshed@crs)
   }
   pt <- filter_invisible(viewshed, FALSE)
-  land <- raster::crop(land, viewshed@extent)
+  land <- terra::crop(land, viewshed@extent)
   # calculate the proportion of each class
-  land_class <- raster::extract(land, pt, df=TRUE)
+  land_class <- terra::extract(land, pt, df=TRUE)
   colnames(land_class)[2] <- 'type'
   land_class <- dplyr::count(land_class, type)
   total <- sum(land_class$n)

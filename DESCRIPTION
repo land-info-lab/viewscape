@@ -35,6 +35,7 @@ Imports:
     sf,
     sp,
     raster,
+    terra,
     lidR,
     BiocManager,
     rasterVis,

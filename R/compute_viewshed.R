@@ -38,9 +38,9 @@
 #'
 #' @useDynLib viewscape
 #' @importFrom Rcpp sourceCpp
-#' @importFrom raster extent
-#' @importFrom raster res
-#' @importFrom raster plot
+#' @importFrom terra ext
+#' @importFrom terra res
+#' @importFrom terra plot
 #'
 #' @export
 #'
@@ -49,7 +49,7 @@
 #' # test_viewpoint <- sf::st_coordinates(test_viewpoint)
 #' # test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
 #' #Compute viewshed
-#' dsm <- raster::raster(system.file("test_dsm.tif", package ="viewscape"))
+#' dsm <- terra::raster(system.file("test_dsm.tif", package ="viewscape"))
 #' output <- compute_viewshed(dsm = dsm,
 #'                            viewpoints = test_viewpoint,
 #'                            offset_viewpoint = 6,
@@ -57,7 +57,7 @@
 #'                            plot = TRUE)
 #'
 #' # Calculate viewsheds for multiple viewpoints in parallel
-#' viewsheds <- compute_viewshed(dsm, multi_viewpoints, multiviewpoints = TRUE, parallel = TRUE)
+#' viewsheds <- compute_viewshed(dsm, multi_viewpoints, parallel = TRUE, workers = 2)
 #'
 
 compute_viewshed <- function(dsm,
@@ -109,19 +109,19 @@ compute_viewshed <- function(dsm,
     if (raster) {
       raster_data <- filter_invisible(output, raster)
       if (plot) {
-        raster::plot(raster_data,
+        terra::plot(raster_data,
                      axes=FALSE,
                      box=FALSE,
                      legend = FALSE)
         v<- matrix(0,1,3)
         v[1,1] <- viewpoints[1]
         v[1,2] <- viewpoints[2]
-        raster::plot(sp::SpatialPoints(v),
-                     add=TRUE,
-                     col="red",
-                     axes=FALSE,
-                     box=FALSE,
-                     legend=FALSE)
+        terra::plot(sp::SpatialPoints(v),
+                    add=TRUE,
+                    col="red",
+                    axes=FALSE,
+                    box=FALSE,
+                    legend=FALSE)
       }
       return(raster_data)
     } else {

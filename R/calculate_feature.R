@@ -23,14 +23,14 @@ calculate_feature <- function(type,
                               feature,
                               viewshed,
                               exclude_value=0){
-  if (isFALSE(raster::compareCRS(raster::crs(feature), viewshed@crs))) {
+  if (terra::crs(feature) == viewshed@crs) {
     cat("Your input (feature) rasters have different
         coordinate reference system from the viewshed\n")
     cat("Reprojetion will be processing ...\n")
-    feature <- raster::projectRaster(feature, crs = viewshed@crs)
+    feature <- terra::project(feature, crs = viewshed@crs)
   }
   pt <- filter_invisible(viewshed, FALSE)
-  feature_df <- raster::extract(feature, pt, df=TRUE)
+  feature_df <- terra::extract(feature, pt, df=TRUE)
   colnames(feature_df)[2] <- 'value'
   feature_df <- subset(feature_df, value != exclude_value)
   if(type == 1){
