@@ -3,14 +3,14 @@
 #' configuration metrics based on a given viewshed object and optionally, digital surface
 #' models (DSM) and digital terrain models (DTM) for terrain analysis.
 #' The function calculates various metrics that describe the visibility characteristics
-#' of a landscape from a specific viewpoint.The metrics include:\n
+#' of a landscape from a specific viewpoint.The metrics include:
 #' 1. Extent: The total area of the viewshed, calculated as the number of visible grid
-#' cells multiplied by the grid resolution.\n
-#' 2. Depth: The furthest visible distance within the viewshed from the viewpoint.\n
+#' cells multiplied by the grid resolution.
+#' 2. Depth: The furthest visible distance within the viewshed from the viewpoint.
 #' 3. Vdepth: The standard deviation of distances to visible points,
-#' providing a measure of the variation in visible distances.\n
-#' 4. Horizontal: The total visible horizontal or terrestrial area within the viewshed.\n
-#' 5. Relief: The standard deviation of elevations of the visible ground surface.\n
+#' providing a measure of the variation in visible distances.
+#' 4. Horizontal: The total visible horizontal or terrestrial area within the viewshed.
+#' 5. Relief: The standard deviation of elevations of the visible ground surface.
 #' 6. Skyline: The standard deviation of the vertical viewscape, including visible
 #' canopy and buildings, when specified.
 #' @param viewshed Viewshed object.
@@ -37,6 +37,18 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   } else if (units == "m") {
     error <- 0.5
   }
+  if (isFALSE(terra::crs(dsm, proj = TRUE) == viewshed@crs)) {
+    cat("First input dsm has different
+        coordinate reference system from the viewshed\n")
+    cat("Reprojetion will be processing ...\n")
+    dsm <- terra::project(dsm, y=terra::crs(viewshed@crs))
+  }
+  if (isFALSE(terra::crs(dtm, proj = TRUE) == viewshed@crs)) {
+    cat("First input dtm has different
+        coordinate reference system from the viewshed\n")
+    cat("Reprojetion will be processing ...\n")
+    dsm <- terra::project(dtm, y=terra::crs(viewshed@crs))
+  }
   output <- list()
   visiblepoints <- filter_invisible(viewshed, FALSE)
   x <- visiblepoints[,1]
@@ -47,12 +59,6 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   extent <- pointnumber * resolution^2
   output[[length(output)+1]] <- extent
   # depth - Furthest visible distance given the viewscape
-  # depths <- c()
-  # for (i in 1:nrow(visiblepoints)) {
-  #   distance <- sqrt((viewshed@viewpoint[1]-x[i])^2 +
-  #                      (viewshed@viewpoint[2]-y[i])^2)
-  #   depths <- c(depths, distance)
-  # }
   depths <- get_depths(viewshed@viewpoint[1],
                        viewshed@viewpoint[2],
                        x,
@@ -63,53 +69,46 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   # vdepth
   output[[length(output)+1]] <- sd(depths)
   names(output) <- c("extent", "depth", "vdepth")
-  dsm <- terra::crop(dsm, viewshed@extent)
+  dsm <- terra::crop(dsm, terra::ext(viewshed@extent, xy = TRUE))
   # horizontal - Total visible horizontal or terrestrial area
   # relief - Variation (Standard deviation) in elevation of the visible ground surface.
   if (isFALSE(missing(dsm)) && isFALSE(missing(dtm))) {
-    dtm <- terra::crop(dtm, viewshed@extent)
-    dtm_z <- terra::extract(dtm, visiblepoints, df=TRUE)
-    dsm_z <- terra::extract(dsm, visiblepoints, df=TRUE)
-    colnames(dtm_z)[2] <- 'dtm_z'
-    colnames(dsm_z)[2] <- 'dsm_z'
-    z <- cbind(dtm_z, dsm_z)
-    z$delta <- z$dsm_z - z$dtm_z
-    z <- subset(z, delta <= error)
+    dtm <- terra::crop(dtm, terra::ext(viewshed@extent, xy = TRUE))
+    dtm_z <- terra::extract(dtm, visiblepoints)[,1]
+    dsm_z <- terra::extract(dsm, visiblepoints)[,1]
+    delta_z <- dsm_z - dtm_z
+    z <- cbind(dtm_z, dsm_z, delta_z)
+    z <- z[which(z[,3]<=error),]
     # horizontal
-    output[[length(output)+1]] <- length(z$delta) * resolution^2
+    output[[length(output)+1]] <- length(dsm_z) * resolution^2
     # relief
-    output[[length(output)+1]] <- sd(z$dtm_z)
+    output[[length(output)+1]] <- sd(z[,2])
     names(output) <- c("extent", "depth", "vdepth", "horizontal", "relief")
   }
   # skyline - Variation of (Standard deviation) of the vertical viewscape
   # (visible canopy and buildings)
   if (length(masks) == 2) {
-    if (terra::crs(masks[[1]]) == viewshed@crs) {
+    if (isFALSE(terra::crs(masks[[1]], proj = TRUE) == viewshed@crs)) {
       cat("First input mask has different
         coordinate reference system from the viewshed\n")
       cat("Reprojetion will be processing ...\n")
-      masks[[1]] <- terra::project(masks[[1]], crs = viewshed@crs)
+      masks[[1]] <- terra::project(masks[[1]], y=terra::crs(viewshed@crs))
     }
-    if (terra::crs(masks[[2]]) == viewshed@crs) {
+    if (isFALSE(terra::crs(masks[[2]], proj = TRUE) == viewshed@crs)) {
       cat("Second input mask has different
         coordinate reference system from the viewshed\n")
       cat("Reprojetion will be processing ...\n")
-      masks[[2]] <- terra::project(masks[[2]], crs = viewshed@crs)
+      masks[[2]] <- terra::project(masks[[2]], y=terra::crs(viewshed@crs))
     }
-    masks_1 <- terra::crop(masks[[1]], viewshed@extent)
-    masks_2 <- terra::crop(masks[[2]], viewshed@extent)
-    dsm_z <- terra::extract(dsm, visiblepoints, df=TRUE)
-    masks_1 <- terra::extract(masks_1, visiblepoints, df=TRUE)
-    masks_2 <- terra::extract(masks_2, visiblepoints, df=TRUE)
-    colnames(dsm_z)[2] <- 'z'
-    colnames(masks_1)[2] <- 'mask1'
-    colnames(masks_2)[2] <- 'mask2'
-    mask_df <- cbind(masks_1, masks_2)
-    mask_df <- cbind(mask_df, dsm_z)
-    mask_df$mask <- mask_df$mask1 + mask_df$mask2
-    mask_df <- subset(mask_df, mask != 0)
-    if (length(mask_df$z) > 1) {
-      output[[length(output)+1]] <- sd(na.omit(mask_df$z))
+    masks_1 <- terra::crop(masks[[1]], terra::ext(viewshed@extent, xy = TRUE))
+    masks_2 <- terra::crop(masks[[2]], terra::ext(viewshed@extent, xy = TRUE))
+    dsm_z <- terra::extract(dsm, visiblepoints)[,1]
+    masks_1 <- terra::extract(masks_1, visiblepoints)[,1]
+    masks_2 <- terra::extract(masks_2, visiblepoints)[,1]
+    mask_df <- cbind(masks_1, masks_2, masks_1+masks_2, dsm_z)
+    mask_ <- mask_df[which(mask_df[,3] != 0),]
+    if (length(mask_df[,4]) > 1) {
+      output[[length(output)+1]] <- sd(na.omit(mask_df[,4]))
     } else {
       output[[length(output)+1]] <- 0
     }

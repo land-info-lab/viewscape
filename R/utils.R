@@ -27,7 +27,7 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
                 viewpoint = viewPt,
                 visible = label_matrix,
                 resolution = resolution,
-                extent = terra::ext(dsm),
+                extent = as.vector(sf::st_bbox(dsm)),
                 crs = projection)
   return(output)
 }

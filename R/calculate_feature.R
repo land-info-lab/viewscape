@@ -23,7 +23,7 @@ calculate_feature <- function(type,
                               feature,
                               viewshed,
                               exclude_value=0){
-  if (terra::crs(feature) == viewshed@crs) {
+  if (terra::crs(feature, proj = TRUE) == viewshed@crs) {
     cat("Your input (feature) rasters have different
         coordinate reference system from the viewshed\n")
     cat("Reprojetion will be processing ...\n")

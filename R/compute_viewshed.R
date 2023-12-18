@@ -109,9 +109,9 @@ compute_viewshed <- function(dsm,
       raster_data <- filter_invisible(output, raster)
       if (plot) {
         terra::plot(raster_data,
-                     axes=FALSE,
-                     box=FALSE,
-                     legend = FALSE)
+                    axes=FALSE,
+                    box=FALSE,
+                    legend = FALSE)
         v<- matrix(0,1,3)
         v[1,1] <- viewpoints[1]
         v[1,2] <- viewpoints[2]

@@ -38,8 +38,8 @@ visualize_viewshed <- function(viewshed,
   # rasterize the viewshed
   vpt <- filter_invisible(viewshed, FALSE)
   mask_v <- terra::mask(filter_invisible(viewshed, TRUE),
-                        terra::vect(sp::SpatialPoints(vpt)))
-
+                        terra::vect(sp::SpatialPoints(vpt),
+                                    crs=terra::crs(viewshed@crs)))
   if (plottype == "polygon"){
     polygon_v <- terra::as.polygons(mask_v)
     polygon_v <- terra::buffer(polygon_v, width = 0.0001)

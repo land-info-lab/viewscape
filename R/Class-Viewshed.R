@@ -14,7 +14,7 @@ setClass(
   representation(viewpoint = "numeric",
                  visible = "matrix",
                  resolution = "numeric",
-                 extent = "SpatExtent",
+                 extent = "numeric",
                  crs = "character")
 )
 
@@ -26,18 +26,18 @@ setMethod("filter_invisible", signature(object="Viewshed", ifRaster="logical"),
           function(object, ifRaster)
           {
             raster_data <- terra::rast(object@visible,
-                                       crs = object@crs,
-                                       extent = object@extent)
+                                       crs = terra::crs(object@crs),
+                                       extent = terra::ext(object@extent, xy = TRUE))
             if (ifRaster) {
               return(raster_data)
             } else {
               pointsData <- terra::as.points(raster_data)
               coords <- terra::geom(pointsData)
               #pt <- raster::rasterToPoints(raster_data)
-              x <- coords[, 1]
-              y <- coords[, 2]
-              z <- terra::values(pointsData)
-              p <- cbind(x, y, z)
+              x <- coords[,3]
+              y <- coords[,4]
+              z <- terra::values(pointsData)[,1]
+              pt <- cbind(x, y, z)
               pt <- pt[pt[,3] == 1,]
               pt <- pt[,-3]
               return(pt)

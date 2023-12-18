@@ -66,7 +66,7 @@ output <- viewscape::compute_viewshed(dsm = test_dsm,
                                       viewpoints = test_viewpoints, 
                                       offset_viewpoint = 6, 
                                       parallel = TRUE, 
-                                      workers = 2)
+                                      workers = 8)
 ```
 
 ```{r}
@@ -90,6 +90,9 @@ The function of extent analysis can calculate the total area of viewshed and nee
 The following function can calculate the area of ground surface and standard deviation of elevations within a viewshed. The function needs a DSM and a DEM/DTM to calculate the metrics.
 
 ```{r}
+#Load in DSM
+test_dsm <- terra::rast(system.file("test_dsm.tif", 
+                                       package ="viewscape"))
 # Load DTM
 test_dtm <- terra::rast(system.file("test_dtm.tif", 
                                        package ="viewscape"))
@@ -102,6 +105,9 @@ test_canopy <- terra::rast(system.file("test_canopy.tif",
 test_building <- terra::rast(system.file("test_building.tif", 
                                        package ="viewscape"))
 
+```
+
+```{r}
 terra::plot(test_dtm)
 ```
 

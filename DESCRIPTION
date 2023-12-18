@@ -37,6 +37,5 @@ Imports:
     sp,
     terra,
     lidR,
-    rasterVis,
     httr2
 LinkingTo: Rcpp
