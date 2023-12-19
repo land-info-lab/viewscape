@@ -193,7 +193,7 @@ las <- viewscape::get_lidar(x = -83.741289,
 ```{r}
 # Create DTM
 dtm_ <- lidR::rasterize_terrain(las, res = 5, lidR::tin())
-raster::plot(dtm_)
+terra::plot(dtm_)
 ```
 
 ```{r}

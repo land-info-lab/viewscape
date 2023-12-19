@@ -31,7 +31,7 @@
 #'                                          preview = TRUE)
 
 lidar_search <- function(bbox,
-                         max_return,
+                         max_return=500,
                          preview = FALSE,
                          folder = "") {
   if (missing(bbox)) {

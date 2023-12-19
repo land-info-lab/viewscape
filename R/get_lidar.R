@@ -37,7 +37,7 @@ get_lidar <- function(x,
                       y,
                       r,
                       epsg,
-                      max_return,
+                      max_return=500,
                       folder,
                       plot = FALSE) {
   if (missing(x) || missing(y)) {
