@@ -1,14 +1,14 @@
 #' @import Rcpp
 
 .onLoad <- function(libname, pkgname) {
-  suppressWarnings(
-    Rcpp::sourceCpp(system.file("extdata/visibleLabel.cpp", package ="viewscape"),
-                    env = asNamespace("viewscape"))
-  )
-  suppressWarnings(
-    Rcpp::sourceCpp(system.file("extdata/multiLabel.cpp", package ="viewscape"),
-                    env = asNamespace("viewscape"))
-  )
+  # suppressWarnings(
+  #   Rcpp::sourceCpp(system.file("extdata/visibleLabel.cpp", package ="viewscape"),
+  #                   env = asNamespace("viewscape"))
+  # )
+  # suppressWarnings(
+  #   Rcpp::sourceCpp(system.file("extdata/multiLabel.cpp", package ="viewscape"),
+  #                   env = asNamespace("viewscape"))
+  # )
 
   # cat("████████████████████████████████████████████████████████████████████████████████████████████████████\n")
   # cat("████████████████████████████████████████████████████████████████████████████████████████████████████\n")
