@@ -65,7 +65,7 @@ output <- viewscape::compute_viewshed(dsm = test_dsm,
                                       viewpoints = test_viewpoints, 
                                       offset_viewpoint = 6, 
                                       parallel = TRUE, 
-                                      workers = 8)
+                                      workers = 2)
 ```
 
 ```{r}
@@ -152,10 +152,10 @@ test_diversity
 calculate_feature is to calculate the proportion of a feature (including trees, buildings, parking, and roads) within the viewshed. This function can be applied to 
 
 ```{r eval=FALSE}
-# load landuse raster
+# load canopy raster
 test_canopy <- terra::rast(system.file("test_canopy.tif",
                                           package ="viewscape"))
-# calculate the percentage of each type of land use  
+# calculate the percentage of canopy coverage  
 test_canopy_proportion <- viewscape::calculate_feature(type = 2, 
                                                        feature = test_canopy,
                                                        viewshed = output[[1]])
@@ -166,7 +166,7 @@ test_canopy_proportion
 
 ### 3.1 Get LiDAR data information via API 
 
-```{r}
+```{r eval = FALSE}
 # search for lidar data information using bbox
 search_result <- viewscape::lidar_search(bbox = c(-83.742282,
                                                   42.273389,

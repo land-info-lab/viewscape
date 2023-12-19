@@ -91,6 +91,23 @@ get_buffer <- function(x, y, r) {
 }
 
 #' @noMd
+# get patches
+get_patch <- function(viewshed){
+  vpt <- filter_invisible(viewshed, FALSE)
+  m <- terra::vect(sp::SpatialPoints(vpt))
+  terra::crs(m) <- viewshed@crs
+  mask_ <- terra::mask(filter_invisible(viewshed, TRUE), m)
+  return(mask_)
+}
+
+#' @noMd
+# get patches parameter
+patch_p <- function(m){
+  ptc <- terra::as.polygons(m)
+}
+
+
+#' @noMd
 # create a request of the TNMAccess API
 return_response <- function(bbox, max_return) {
   api1 <- 'https://tnmaccess.nationalmap.gov/api/v1/products?bbox='

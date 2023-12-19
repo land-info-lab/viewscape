@@ -24,8 +24,8 @@
 #'
 #' @example
 #' \dontrun{
-#' las <- get_lidar(-83.741289, 42.270146, 1000, 2253, 'path/to/folder')
-#' raster::plot(lidR::rasterize_canopy(las, 10, dsmtin()))
+#' #las <- get_lidar(-83.741289, 42.270146, 1000, 2253, 'path/to/folder')
+#' #terra::plot(lidR::rasterize_canopy(las, 10, dsmtin()))
 #' }
 #'
 #' @import sp
@@ -48,72 +48,73 @@ get_lidar <- function(x,
     stop("r is missing. Please indicate distance for searching the LiDAR data")
   } else if (missing(epsg)) {
     stop("epsg is missing. Please set epsg code")
-  } else if (missing(folder)) {
-    stop("folder is missng. Please set path for downloading the LiDAR data")
   }
-
-  proj <- sp::CRS(paste0("+init=epsg:", epsg))
-  longlat <- sp::CRS("+proj=longlat")
-  # check searching distance
-  unit <- sub(".no_defs", "", sub(".*=", "", proj@projargs))
-  if (r > 1000 && unit == "m ") {
-    r <- 1000
-  } else if (r > 3281 && unit == "us-ft " ) {
-    r <- 3281
+  if (missing(folder)) {
+    message("folder is missng. Please set path for downloading the LiDAR data")
+  } else {
+    proj <- sp::CRS(paste0("+init=epsg:", epsg))
+    longlat <- sp::CRS("+proj=longlat")
+    # check searching distance
+    unit <- sub(".no_defs", "", sub(".*=", "", proj@projargs))
+    if (r > 1000 && unit == "m ") {
+      r <- 1000
+    } else if (r > 3281 && unit == "us-ft " ) {
+      r <- 3281
+    }
+    # create bbox
+    coor <- data.frame(lon=x, lat=y)
+    pt <- sp::SpatialPoints(coor, proj4string=longlat)
+    pt <- sp::spTransform(pt, proj)
+    xmin <- pt@coords[1,1] - r
+    xmax <- pt@coords[1,1] + r
+    ymin <- pt@coords[1,2] - r
+    ymax <- pt@coords[1,2] + r
+    coor_ <- data.frame(lon=c(xmin, xmax), lat=c(ymin, ymax))
+    pt_ <- sp::SpatialPoints(coor_, proj)
+    pt_ <- sp::spTransform(pt_, CRSobj=longlat)
+    bbox <- c(pt_@coords[1,1], pt_@coords[1,2], pt_@coords[2,1], pt_@coords[2,2])
+    # get response using API
+    result <- return_response(bbox, max_return)
+    # filter overlapping files
+    lastYear <- max(result$startYear)
+    result <- subset(result, startYear == lastYear)
+    num <- length(result[,1])
+    cat(paste0("Downloading ", num," file(s)...\n"))
+    title <- result$titles
+    download <- result$downloadLazURL
+    # download data
+    original_timeout <- getOption('timeout')
+    options(timeout=9999)
+    files <- c()
+    if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
+      m <- "curl"
+    }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
+      m <- "wininet"
+    }
+    for (i in 1:num) {
+      destination <- paste0(folder, "/", title[i], ".laz")
+      files <- c(files, destination)
+      try(download.file(download[i],
+                        destination,
+                        method = m,
+                        quiet = TRUE))
+    }
+    options(timeout=original_timeout)
+    # clip and merge
+    lasc <- lidR::readLAScatalog(files, progress = FALSE)
+    las <- lidR::clip_rectangle(lasc,
+                                xleft = xmin,
+                                xright = xmax,
+                                ybottom = ymin,
+                                ytop = ymax)
+    # save
+    lidR::writeLAS(las, paste0(folder, "/", Sys.time(), ".laz"))
+    rm(lasc)
+    # delete other laz data
+    unlink(files)
+    if (plot) {
+      plot(las)
+    }
+    return(las)
   }
-  # create bbox
-  coor <- data.frame(lon=x, lat=y)
-  pt <- sp::SpatialPoints(coor, proj4string=longlat)
-  pt <- sp::spTransform(pt, proj)
-  xmin <- pt@coords[1,1] - r
-  xmax <- pt@coords[1,1] + r
-  ymin <- pt@coords[1,2] - r
-  ymax <- pt@coords[1,2] + r
-  coor_ <- data.frame(lon=c(xmin, xmax), lat=c(ymin, ymax))
-  pt_ <- sp::SpatialPoints(coor_, proj)
-  pt_ <- sp::spTransform(pt_, CRSobj=longlat)
-  bbox <- c(pt_@coords[1,1], pt_@coords[1,2], pt_@coords[2,1], pt_@coords[2,2])
-  # get response using API
-  result <- return_response(bbox, max_return)
-  # filter overlapping files
-  lastYear <- max(result$startYear)
-  result <- subset(result, startYear == lastYear)
-  num <- length(result[,1])
-  cat(paste0("Downloading ", num," file(s)...\n"))
-  title <- result$titles
-  download <- result$downloadLazURL
-  # download data
-  original_timeout <- getOption('timeout')
-  options(timeout=9999)
-  files <- c()
-  if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
-    m <- "curl"
-  }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-    m <- "wininet"
-  }
-  for (i in 1:num) {
-    destination <- paste0(folder, "/", title[i], ".laz")
-    files <- c(files, destination)
-    try(download.file(download[i],
-                  destination,
-                  method = m,
-                  quiet = TRUE))
-  }
-  options(timeout=original_timeout)
-  # clip and merge
-  lasc <- lidR::readLAScatalog(files, progress = FALSE)
-  las <- lidR::clip_rectangle(lasc,
-                              xleft = xmin,
-                              xright = xmax,
-                              ybottom = ymin,
-                              ytop = ymax)
-  # save
-  lidR::writeLAS(las, paste0(folder, "/", Sys.time(), ".laz"))
-  rm(lasc)
-  # delete other laz data
-  unlink(files)
-  if (plot) {
-    plot(las)
-  }
-  return(las)
 }

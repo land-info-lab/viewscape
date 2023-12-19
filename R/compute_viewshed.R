@@ -46,17 +46,17 @@
 #'
 #' @examples
 #' \dontrun{
-#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+#' #test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
 #' #Compute viewshed
-#' dsm <- terra::raster(system.file("test_dsm.tif", package ="viewscape"))
-#' output <- compute_viewshed(dsm = dsm,
-#'                            viewpoints = test_viewpoint,
-#'                            offset_viewpoint = 6,
-#'                            raster = TRUE,
-#'                            plot = TRUE)
+#' #dsm <- terra::raster(system.file("test_dsm.tif", package ="viewscape"))
+#' #output <- compute_viewshed(dsm = dsm,
+#' #                           viewpoints = test_viewpoint,
+#' #                           offset_viewpoint = 6,
+#' #                           raster = TRUE,
+#' #                           plot = TRUE)
 #'
 #' # Calculate viewsheds for multiple viewpoints in parallel
-#' viewsheds <- compute_viewshed(dsm, viewpoints = test_viewpoint, parallel = TRUE, workers = 2)
+#' #viewsheds <- compute_viewshed(dsm, viewpoints = test_viewpoint, parallel = TRUE, workers = 2)
 #'}
 
 compute_viewshed <- function(dsm,
@@ -134,7 +134,9 @@ compute_viewshed <- function(dsm,
         BiocManager::install("BiocParallel")
       }
       if (workers == 0) {
-        stop("Please specify the number of CPU cores (workers)")
+        workers <- 2
+        message("the number of CPU cores (workers) is not specified")
+        message("the default setting (workers = 2) will be used")
       }
       inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == FALSE){

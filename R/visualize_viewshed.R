@@ -17,15 +17,15 @@
 #' @examples
 #' \dontrun{
 #' # Visualize the viewshed as polygons
-#' visualize_viewshed(viewshed, plottype = "polygon")
+#' #visualize_viewshed(viewshed, plottype = "polygon")
 #' # Visualize the viewshed as a raster
-#' visualize_viewshed(viewshed, plottype = "raster")
+#' #visualize_viewshed(viewshed, plottype = "raster")
 #' # Visualize the viewshed in 3D
-#' visualize_viewshed(viewshed, plottype = "3D")
+#' #visualize_viewshed(viewshed, plottype = "3D")
 #' # Get the visualized viewshed as a polygon object
-#' polygon_viewshed <- visualize_viewshed(viewshed,
-#'                                        plottype = "polygon",
-#'                                        outputtype = "polygon")
+#' #polygon_viewshed <- visualize_viewshed(viewshed,
+#' #                                       plottype = "polygon",
+#' #                                       outputtype = "polygon")
 #'}
 
 
@@ -37,11 +37,8 @@ visualize_viewshed <- function(viewshed,
   if (missing(viewshed)){
     stop("Viewshed object is missing")
   }
-  # rasterize the viewshed
-  vpt <- filter_invisible(viewshed, FALSE)
-  mask_v <- terra::mask(filter_invisible(viewshed, TRUE),
-                        terra::vect(sp::SpatialPoints(vpt),
-                                    crs=terra::crs(viewshed@crs)))
+  # vectorize the viewshed
+  mask_v <- get_patch(viewshed)
   if (plottype == "polygon"){
     polygon_v <- terra::as.polygons(mask_v)
     polygon_v <- terra::buffer(polygon_v, width = 0.0001)

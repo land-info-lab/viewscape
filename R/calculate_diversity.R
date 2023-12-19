@@ -21,9 +21,9 @@
 #'
 #' @examples
 #' \dontrun{
-#' diversity_metrics <- calculate_diversity(land_cover_raster,
-#'                                          viewshed_object,
-#'                                          proportion = TRUE)
+#' #diversity_metrics <- calculate_diversity(land_cover_raster,
+#' #                                         viewshed_object,
+#' #                                         proportion = TRUE)
 #'}
 
 calculate_diversity <- function(land,
