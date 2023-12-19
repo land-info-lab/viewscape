@@ -41,8 +41,8 @@ visualize_viewshed <- function(viewshed,
   mask_v <- get_patch(viewshed)
   if (plottype == "polygon"){
     polygon_v <- terra::as.polygons(mask_v)
-    polygon_v <- terra::buffer(polygon_v, width = 0.0001)
-    terra::plot(terra::aggregate(polygon_v), col = rgb(0, 1, 0, 0.3), border = NA)
+    #polygon_v <- terra::buffer(polygon_v, width = 0.0001)
+    terra::plot(polygon_v, col = rgb(0, 1, 0, 0.3), border = NA)
   }else if (plottype == "raster"){
     terra::plot(mask_v)
   }else if (plottype == "3D"){

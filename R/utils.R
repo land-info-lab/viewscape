@@ -103,7 +103,12 @@ get_patch <- function(viewshed){
 #' @noMd
 # get patches parameter
 patch_p <- function(m){
-  ptc <- terra::as.polygons(m)
+  clusters <- terra::patches(m, directions=4)
+  ptc <- terra::as.polygons(clusters)
+  perimeters <- terra::perim(ptc)
+  areas <- terra::expanse(ptc)
+  # Mean shape index
+  MSI <- mean(perimeters/areas)
 }
 
 

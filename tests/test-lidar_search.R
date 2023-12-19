@@ -1,4 +1,4 @@
-test_that("runs correctly", {
+testthat::test_that("runs correctly", {
 
   # search for lidar data information using bbox
   search_result <- viewscape::lidar_search(bbox = c(-83.742282,

@@ -1,4 +1,4 @@
 library(testthat)
 library(viewscape)
 
-test_check("viewscape")
+testthat::test_check("viewscape")

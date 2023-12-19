@@ -1,4 +1,4 @@
-test_that("runs correctly", {
+testthat::test_that("runs correctly", {
 
   #Load in DSM
   test_dsm <- terra::rast(system.file("test_dsm.tif",

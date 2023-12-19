@@ -1,4 +1,4 @@
-test_that("runs correctly", {
+testthat::test_that("runs correctly", {
 
   las <- viewscape::get_lidar(x = -83.741289,
                               y = 42.270146,
