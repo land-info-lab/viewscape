@@ -27,12 +27,12 @@
 calculate_diversity <- function(land,
                                 viewshed,
                                 proportion = FALSE){
-  if (terra::crs(land, proj = TRUE) == viewshed@crs) {
+  if (isFALSE(terra::crs(land, proj = TRUE) == viewshed@crs)) {
     cat("Your input (land) rasters have different
         coordinate reference system from the viewshed\n")
     cat("Reprojetion will be processing ...\n")
     #land <- raster::projectRaster(land, crs = viewshed@crs)
-    land <- terra::project(land, crs = terra::crs(viewshed@crs))
+    land <- terra::project(land, y=terra::crs(viewshed@crs))
   }
   pt <- filter_invisible(viewshed, FALSE)
   land <- terra::crop(land, terra::ext(viewshed@extent, xy = TRUE))
