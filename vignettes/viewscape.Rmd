@@ -173,7 +173,7 @@ search_result <- viewscape::lidar_search(bbox = c(-83.742282,
                                                   42.273389,
                                                   -83.733442,
                                                   42.278724), 
-                                         preview = TRUE)
+                                         preview = FALSE)
 search_result
 ```
 
