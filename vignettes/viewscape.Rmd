@@ -1,7 +1,7 @@
 ---
 title: "viewscape"
 author: "Xiaohao Yang"
-date: "2023-10-20"
+date: "2023-12-18"
 output: md_document
 vignette: >
   %\VignetteIndexEntry{viewscape}
@@ -179,7 +179,7 @@ search_result
 
 ### 3.2 Download LiDAR data with a given point and searching distance
 
-```{r}
+```{r eval = FALSE, include = FALSE}
 # try coordinates -83.741289,42.270146 (in south Michigan, USA)
 # radius is 1000ft
 las <- viewscape::get_lidar(x = -83.741289,
@@ -190,13 +190,13 @@ las <- viewscape::get_lidar(x = -83.741289,
                             plot = FALSE)
 ```
 
-```{r}
+```{r eval = FALSE, include = FALSE}
 # Create DTM
 dtm_ <- lidR::rasterize_terrain(las, res = 5, lidR::tin())
 terra::plot(dtm_)
 ```
 
-```{r}
+```{r eval = FALSE, include = FALSE}
 # Create DSM
 dsm_ <- lidR::rasterize_canopy(las, res = 5, lidR::dsmtin())
 raster::plot(dsm_)
