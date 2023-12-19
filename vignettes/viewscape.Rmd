@@ -140,7 +140,7 @@ terra::plot(test_landcover, axes=FALSE)
 ```
 
 ```{r}
-i# the Shannon Diversity Index (SDI)
+# the Shannon Diversity Index (SDI)
 test_diversity <- viewscape::calculate_diversity(test_landcover, 
                                                  output[[1]], 
                                                  proportion = TRUE)
