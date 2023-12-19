@@ -53,6 +53,11 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   visiblepoints <- filter_invisible(viewshed, FALSE)
   x <- visiblepoints[,1]
   y <- visiblepoints[,2]
+  # viewshed raster
+  m <- terra::vect(sp::SpatialPoints(visiblepoints))
+  terra::crs(m) <- viewshed@crs
+  mask_ <- terra::mask(filter_invisible(viewshed, TRUE), m)
+
   pointnumber <- length(x)
   resolution <- viewshed@resolution[1]
   # extent - Total area of the viewshed

@@ -109,6 +109,12 @@ patch_p <- function(m){
   areas <- terra::expanse(ptc)
   # Mean shape index
   MSI <- mean(perimeters/areas)
+  # Edge density
+  ED <- sum(perimeters)/sum(length(areas))
+  # Patch size
+  PS <- sum(areas)/length(areas)
+  # Number of patches
+  Nump <- length(areas)
 }
 
 
