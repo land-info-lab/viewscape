@@ -13,6 +13,6 @@ testthat::test_that("runs correctly", {
                                         viewpoints = test_viewpoint,
                                         offset_viewpoint = 6,
                                         plot=FALSE)
-  expect_type(output, "S4")
+  testthat::expect_type(output, "S4")
 
 })

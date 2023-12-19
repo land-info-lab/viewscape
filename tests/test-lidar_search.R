@@ -7,5 +7,5 @@ testthat::test_that("runs correctly", {
                                                     42.278724),
                                            preview = FALSE)
 
-  expect_type(search_result, "list")
+  testthat::expect_type(search_result, "list")
 })

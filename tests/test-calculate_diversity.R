@@ -23,6 +23,6 @@ testthat::test_that("runs correctly", {
                                                    output[[1]],
                                                    proportion = TRUE)
 
-  expect_type(test_diversity[[1]], "double")
+  testthat::expect_type(test_diversity[[1]], "double")
 
 })

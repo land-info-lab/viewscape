@@ -23,6 +23,6 @@ testthat::test_that("runs correctly", {
                                                          feature = test_canopy,
                                                          viewshed = output[[1]])
 
-  expect_type(test_canopy_proportion, "double")
+  testthat::expect_type(test_canopy_proportion, "double")
 
 })
