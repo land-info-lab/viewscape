@@ -2,7 +2,6 @@
 title: "viewscape"
 author: "Xiaohao Yang"
 date: "2023-12-18"
-output: md_document
 vignette: >
   %\VignetteIndexEntry{viewscape}
   %\VignetteEngine{knitr::rmarkdown}
