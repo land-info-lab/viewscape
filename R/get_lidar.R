@@ -23,13 +23,15 @@
 #' Forestry Applications. R package version 4.0.1. https://cran.r-project.org/package=lidR
 #'
 #' @example
+#' \dontrun{
 #' las <- get_lidar(-83.741289, 42.270146, 1000, 2253, 'path/to/folder')
 #' raster::plot(lidR::rasterize_canopy(las, 10, dsmtin()))
+#' }
 #'
 #' @import sp
 #' @import httr2
 #' @import lidR
-#' @importFrom(dplyr, "%>%")
+#' @importFrom dplyr "%>%"
 #'
 #' @export
 

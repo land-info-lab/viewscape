@@ -15,6 +15,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Visualize the viewshed as polygons
 #' visualize_viewshed(viewshed, plottype = "polygon")
 #' # Visualize the viewshed as a raster
@@ -25,6 +26,7 @@
 #' polygon_viewshed <- visualize_viewshed(viewshed,
 #'                                        plottype = "polygon",
 #'                                        outputtype = "polygon")
+#'}
 
 
 

@@ -45,9 +45,8 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
-#' # test_viewpoint <- sf::st_coordinates(test_viewpoint)
-#' # test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
 #' #Compute viewshed
 #' dsm <- terra::raster(system.file("test_dsm.tif", package ="viewscape"))
 #' output <- compute_viewshed(dsm = dsm,
@@ -58,7 +57,7 @@
 #'
 #' # Calculate viewsheds for multiple viewpoints in parallel
 #' viewsheds <- compute_viewshed(dsm, viewpoints = test_viewpoint, parallel = TRUE, workers = 2)
-#'
+#'}
 
 compute_viewshed <- function(dsm,
                              viewpoints,
