@@ -46,9 +46,7 @@ visualize_viewshed <- function(viewshed,
   }else if (plottype == "raster"){
     terra::plot(mask_v)
   }else if (plottype == "3D"){
-    if (require(rasterVis)==TRUE){
-      require(rasterVis, quietly = TRUE)
-    }else{
+    if (!requireNamespace("rasterVis", quietly = TRUE)){
       install.packages("rasterVis")
     }
     rasterVis::plot3D(mask_v)

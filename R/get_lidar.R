@@ -45,6 +45,7 @@ get_lidar <- function(x,
                       max_return=500,
                       folder,
                       plot = FALSE) {
+  utils::globalVariables("startYear")
   if (missing(x) || missing(y)) {
     stop("x or y is missing. Please indicate the coordinates of centroid")
   } else if (missing(r) == TRUE) {

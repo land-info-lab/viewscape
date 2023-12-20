@@ -10,7 +10,7 @@ calculate_diversity(land, viewshed, proportion = FALSE)
 \item{land}{Raster. The raster of land use/land cover representing different
 land use/cover classes.}
 
-\item{viewshed}{Viewshed object \link{package "viewscape"}.}
+\item{viewshed}{Viewshed object.}
 
 \item{proportion}{logical (Optional), indicating whether to return class
 proportions along with the Shannon Diversity Index (SDI). (default is FALSE).}
@@ -32,4 +32,5 @@ parameter to compute class proportions.
 #                                         viewshed_object,
 #                                         proportion = TRUE)
 }
+
 }

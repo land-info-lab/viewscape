@@ -12,7 +12,7 @@ Description: A collection of functions to make R a more effective viewscape anal
     tool for calculating viewscape metrics based on computing the viewable area for 
     given a point/multiple viewpoints and a digital elevation model.
 Depends: R (>= 4.1)
-License: GPL-3
+License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -25,6 +25,8 @@ Suggests:
     rmarkdown,
     BiocParallel,
     BiocManager,
+    imager,
+    rasterVis,
     qpdf
 Config/testthat/edition: 3
 VignetteBuilder: knitr,

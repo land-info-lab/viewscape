@@ -15,8 +15,8 @@ resolution, extent, and crs
 
 \item{\code{resolution}}{vector}
 
-\item{\code{extent}}{Extent \link{package 'raster'}}
+\item{\code{extent}}{numeric}
 
-\item{\code{crs}}{crs \link{package 'raster'}}
+\item{\code{crs}}{character}
 }}
 

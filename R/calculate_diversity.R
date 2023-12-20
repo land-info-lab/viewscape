@@ -23,10 +23,12 @@
 #' #                                         viewshed_object,
 #' #                                         proportion = TRUE)
 #'}
+#'
 
 calculate_diversity <- function(land,
                                 viewshed,
                                 proportion = FALSE){
+  utils::globalVariables("type")
   if (isFALSE(terra::crs(land, proj = TRUE) == viewshed@crs)) {
     cat("Your input (land) rasters have different
         coordinate reference system from the viewshed\n")
@@ -38,7 +40,7 @@ calculate_diversity <- function(land,
   # calculate the proportion of each class
   land_class <- terra::extract(land, pt)[,1]
   land_class <- as.data.frame(land_class)
-  colnames(land_class)[1] <- 'type'
+  colnames(land_class)[1] <- "type"
   land_class <- dplyr::count(land_class, type)
   total <- sum(land_class$n)
   land_class$proportion <- land_class$n/total
