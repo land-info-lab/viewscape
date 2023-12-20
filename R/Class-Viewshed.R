@@ -4,9 +4,9 @@
 #' resolution, extent, and crs
 #' @slot visible matrix
 #' @slot resolution vector
-#' @slot extent Extent [package 'raster']
-#' @slot crs crs [package 'raster']
-#'
+#' @slot extent numeric
+#' @slot crs character
+#' @import methods
 #' @md
 
 setClass(
@@ -33,7 +33,6 @@ setMethod("filter_invisible", signature(object="Viewshed", ifRaster="logical"),
             } else {
               pointsData <- terra::as.points(raster_data)
               coords <- terra::geom(pointsData)
-              #pt <- raster::rasterToPoints(raster_data)
               x <- coords[,3]
               y <- coords[,4]
               z <- terra::values(pointsData)[,1]

@@ -32,6 +32,7 @@ VignetteBuilder: knitr,
 biocViews:
 Imports: 
     Rcpp,
+    methods,
     dplyr,
     sf,
     sp,

@@ -1,4 +1,10 @@
 #' @import sf
+#' @importFrom graphics par
+#' @importFrom grDevices rgb
+#' @importFrom methods new
+#' @importFrom stats sd
+#' @importFrom utils download.file
+#' @importFrom utils install.packages
 
 #' @noMd
 radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {

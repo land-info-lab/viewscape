@@ -6,7 +6,7 @@
 #'
 #' @param land Raster. The raster of land use/land cover representing different
 #' land use/cover classes.
-#' @param viewshed Viewshed object [package "viewscape"].
+#' @param viewshed Viewshed object.
 #' @param proportion logical (Optional), indicating whether to return class
 #' proportions along with the Shannon Diversity Index (SDI). (default is FALSE).
 #' @return List. a list containing the Shannon Diversity Index (SDI) and,
@@ -31,7 +31,6 @@ calculate_diversity <- function(land,
     cat("Your input (land) rasters have different
         coordinate reference system from the viewshed\n")
     cat("Reprojetion will be processing ...\n")
-    #land <- raster::projectRaster(land, crs = viewshed@crs)
     land <- terra::project(land, y=terra::crs(viewshed@crs))
   }
   pt <- filter_invisible(viewshed, FALSE)
