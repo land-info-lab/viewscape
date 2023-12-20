@@ -1,11 +1,12 @@
 
 <!-- badges: start -->
+![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
 [![Codecov test coverage](https://codecov.io/github/land-info-lab/viewscape/branch/master/graph/badge.svg)](https://codecov.io/github/land-info-lab/viewscape?branch=master)
 [![R-CMD-check](https://github.com/land-info-lab/viewscape/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/land-info-lab/viewscape/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 
-# Viewscape
+# viewscape
 
 <p align="left">
 
@@ -42,6 +43,14 @@ using `calculate_viewmetrics`, `calculate_diversity`, and
 
 The metrics are including:
 
+-   Number of patches: Visible fragmentation measured by total visible patches
+    with the viewscape.
+-   Mean shape index: Visible patchiness based on average perimeter-to-area ratio
+    for all viewscape patches. 
+-   Edge density: A measure of visible complexity based on the length of
+    patch edges per unit area.
+-   Patch size: Total average size of a patches over the entire viewscape area.
+-   Patch density: Visible landscape granularity based on measuring patch density.
 -   Extent: The total area of the viewshed, calculated as the number of
     visible grid cells multiplied by the grid resolution.
 -   Depth: The furthest visible distance within the viewshed from the
