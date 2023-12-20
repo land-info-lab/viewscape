@@ -4,7 +4,7 @@
 \alias{get_lidar}
 \title{get_lidar}
 \usage{
-get_lidar(x, y, r, epsg, max_return, folder, plot = FALSE)
+get_lidar(x, y, r, epsg, max_return = 500, folder, plot = FALSE)
 }
 \arguments{
 \item{x}{numeric, indicating Longtitude of the center point.}
@@ -33,6 +33,13 @@ of a spatial point with a given distance. The maximum distance is 800m.
 Different dataset could be found and the function automatically downloads
 the latest dataset
 To get more details of data on a larger scale, please use viewscape::lidar_search.
+}
+\examples{
+\dontrun{
+#las <- get_lidar(-83.741289, 42.270146, 1000, 2253, 'path/to/folder')
+#terra::plot(lidR::rasterize_canopy(las, 10, dsmtin()))
+}
+
 }
 \references{
 Jean-Romain Roussel and David Auty (2022).

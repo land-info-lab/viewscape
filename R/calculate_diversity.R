@@ -13,11 +13,9 @@
 #' if the proportion parameter is set to TRUE, a table of class proportions
 #' within the viewshed.
 #' @import terra
-#' @import sp
 #' @importFrom dplyr count
-#' @export
 #'
-#' @references
+#' @export
 #'
 #' @examples
 #' \dontrun{

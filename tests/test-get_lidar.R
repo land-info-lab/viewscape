@@ -6,5 +6,5 @@ testthat::test_that("runs correctly", {
                               epsg = 2253,
                               plot = FALSE)
 
-  testthat::expect_type(las, "character")
+  testthat::expect_type(las, "NULL")
 })

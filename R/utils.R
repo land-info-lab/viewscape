@@ -1,6 +1,4 @@
-#' @import sp
 #' @import sf
-#' @import httr2
 
 #' @noMd
 radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
@@ -105,16 +103,33 @@ get_patch <- function(viewshed){
 patch_p <- function(m){
   clusters <- terra::patches(m, directions=4)
   ptc <- terra::as.polygons(clusters)
+  ptc_lines <- m %>%
+    terra::as.polygons() %>%
+    terra::as.lines() %>%
+    sf::st_as_sf()
   perimeters <- terra::perim(ptc)
   areas <- terra::expanse(ptc)
+  total_perimeters <- sum(perimeters)
+  total_areas <- sum(areas)
+  if (sf::st_crs(m)$units == "ft") {
+    num_pt <- round(total_perimeters/3.281)
+  } else {
+    num_pt <- round(total_perimeters)
+  }
+  # Number of patches
+  Nump <- length(areas)
   # Mean shape index
   MSI <- mean(perimeters/areas)
   # Edge density
-  ED <- sum(perimeters)/sum(length(areas))
+  ED <- total_perimeters/total_areas
   # Patch size
-  PS <- sum(areas)/length(areas)
-  # Number of patches
-  Nump <- length(areas)
+  PS <- total_areas/Nump
+  # sample points along the edge of patches
+  samples <- sf::st_sample(sf::st_cast(ptc_lines$geometry,
+                                       "MULTILINESTRING"),
+                           num_pt)
+  samples <- sf::st_coordinates(samples)[,-3]
+  return(list(Nump, MSI, ED, PS, samples))
 }
 
 
@@ -129,7 +144,8 @@ return_response <- function(bbox, max_return) {
   api3 <- paste0('&datasets=Lidar%20Point%20Cloud%20(LPC)&max=',
                  max_return,
                  '&prodFormats=LAS,LAZ')
-  json <- httr2::request(paste0(api1, api2, api3)) %>% req_timeout(10000) %>%
+  json <- httr2::request(paste0(api1, api2, api3)) %>%
+    httr2::req_timeout(10000) %>%
     httr2::req_perform() %>%
     httr2::resp_body_json()
   items <- length(json$items)
@@ -169,7 +185,8 @@ return_response <- function(bbox, max_return) {
 #' @noMd
 # find year
 find_year <- function(url) {
-  j <- httr2::request(url) %>% req_timeout(10) %>%
+  j <- httr2::request(url) %>%
+    httr2::req_timeout(10000) %>%
     httr2::req_perform() %>%
     httr2::resp_body_json()
   date <- j$dates[[2]]$dateString %>% strsplit("-") %>% unlist()

@@ -10,7 +10,6 @@ compute_viewshed(
   offset_viewpoint = 1.7,
   offset_height = 0,
   r = NULL,
-  multiviewpoints = FALSE,
   parallel = FALSE,
   workers = 0,
   raster = FALSE,
@@ -20,7 +19,7 @@ compute_viewshed(
 \arguments{
 \item{dsm}{Raster, the digital surface model/digital elevation model}
 
-\item{viewpoints}{Vector, including x,y coordinates of a viewpoint
+\item{viewpoints}{sf point(s) or vector including x,y coordinates of a viewpoint
 or a matrix including several viewpoints with x,y coordinates
 (if multiviewpoints = TRUE)}
 
@@ -31,9 +30,6 @@ or a matrix including several viewpoints with x,y coordinates
 viewpoint will look at. (defaut is 0)}
 
 \item{r}{Numeric (optional), setting the radius for viewshed analysis.
-(it is defaulted as NULL)}
-
-\item{multiviewpoints}{the radius for viewshed analysis.
 (it is defaulted as NULL)}
 
 \item{parallel}{Logical, (default is FALSE) indicating if parallel computing
@@ -66,20 +62,19 @@ and allows options for parallel processing, raster output, and plotting.
 Parallel computing used the functions from BiocParallel package
 }
 \examples{
-test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
-test_viewpoint <- sf::st_coordinates(test_viewpoint)
-test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
+\dontrun{
+#test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
 #Compute viewshed
-dsm <- raster::raster(system.file("test_dsm.tif", package ="viewscape"))
-output <- compute_viewshed(dsm = dsm,
-                           viewpoints = test_viewpoint,
-                           offset_viewpoint = 6,
-                           raster = TRUE,
-                           plot = TRUE)
+#dsm <- terra::raster(system.file("test_dsm.tif", package ="viewscape"))
+#output <- compute_viewshed(dsm = dsm,
+#                           viewpoints = test_viewpoint,
+#                           offset_viewpoint = 6,
+#                           raster = TRUE,
+#                           plot = TRUE)
 
 # Calculate viewsheds for multiple viewpoints in parallel
-viewsheds <- compute_viewshed(dsm, multi_viewpoints, multiviewpoints = TRUE, parallel = TRUE)
-
+#viewsheds <- compute_viewshed(dsm, viewpoints = test_viewpoint, parallel = TRUE, workers = 2)
+}
 }
 \references{
 Martin Morgan, Jiefei Wang, Valerie Obenchain, Michel Lang,

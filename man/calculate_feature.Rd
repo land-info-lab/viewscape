@@ -28,3 +28,14 @@ The calculate_feature function is designed to extract specific
 feature-related information within a viewshed. It allows you to compute
 the proportion of the feature that is present in the viewshed.
 }
+\examples{
+\dontrun{
+# load canopy raster
+# test_canopy <- terra::rast(system.file("test_canopy.tif",
+#                                      package ="viewscape"))
+# calculate the percentage of canopy coverage
+# test_canopy_proportion <- viewscape::calculate_feature(type = 2,
+#                                                       feature = test_canopy,
+#                                                       viewshed = viewshed)
+}
+}

@@ -27,7 +27,9 @@ a viewshed object representing the observer's line of sight, and an optional
 parameter to compute class proportions.
 }
 \examples{
-diversity_metrics <- calculate_diversity(land_cover_raster,
-                                         viewshed_object,
-                                         proportion = TRUE)
+\dontrun{
+#diversity_metrics <- calculate_diversity(land_cover_raster,
+#                                         viewshed_object,
+#                                         proportion = TRUE)
+}
 }

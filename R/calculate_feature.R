@@ -17,7 +17,15 @@
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
+#' # load canopy raster
+#' # test_canopy <- terra::rast(system.file("test_canopy.tif",
+#' #                                      package ="viewscape"))
+#' # calculate the percentage of canopy coverage
+#' # test_canopy_proportion <- viewscape::calculate_feature(type = 2,
+#' #                                                       feature = test_canopy,
+#' #                                                       viewshed = viewshed)
+#' }
 
 calculate_feature <- function(type,
                               feature,

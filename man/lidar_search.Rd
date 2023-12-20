@@ -4,7 +4,7 @@
 \alias{lidar_search}
 \title{lidar_search}
 \usage{
-lidar_search(bbox, max_return, preview = FALSE, folder = "")
+lidar_search(bbox, max_return = 500, preview = FALSE, folder = "")
 }
 \arguments{
 \item{bbox}{vector, a bounding box defining the geographical area
@@ -31,4 +31,12 @@ further analysis.
 \note{
 The lidar_search function simplifies the process of searching for
 and working with LiDAR data via the TNMAccess API: https://tnmaccess.nationalmap.gov/api/v1/docs.
+}
+\examples{
+\dontrun{
+#bbox <- c(-83.742282,42.273389,-83.733442,42.278724)
+#search_result <- viewscape::lidar_search(bbox = bbox,
+#                                         max_return = 25,
+#                                         preview = TRUE)
+}
 }

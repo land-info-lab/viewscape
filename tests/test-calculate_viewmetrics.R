@@ -31,6 +31,6 @@ testthat::test_that("runs correctly", {
                                                    test_dsm,
                                                    test_dtm,
                                                    list(test_canopy, test_building))
-  testthat::expect_type(test_metrics[[1]], "double")
+  testthat::expect_type(test_metrics, "list")
 
 })

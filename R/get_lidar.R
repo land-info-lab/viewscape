@@ -22,16 +22,19 @@
 #' Airborne LiDAR Data Manipulation and Visualization for
 #' Forestry Applications. R package version 4.0.1. https://cran.r-project.org/package=lidR
 #'
-#' @example
+#' @examples
 #' \dontrun{
 #' #las <- get_lidar(-83.741289, 42.270146, 1000, 2253, 'path/to/folder')
 #' #terra::plot(lidR::rasterize_canopy(las, 10, dsmtin()))
 #' }
 #'
-#' @import sp
-#' @import httr2
-#' @import lidR
 #' @importFrom dplyr "%>%"
+#' @importFrom lidR readLAScatalog
+#' @importFrom lidR clip_rectangle
+#' @importFrom lidR writeLAS
+#' @importFrom sp SpatialPoints
+#' @importFrom sp CRS
+#' @importFrom sp spTransform
 #'
 #' @export
 

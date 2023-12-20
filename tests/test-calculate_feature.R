@@ -21,7 +21,7 @@ testthat::test_that("runs correctly", {
   # calculate the percentage of canopy coverage
   test_canopy_proportion <- viewscape::calculate_feature(type = 2,
                                                          feature = test_canopy,
-                                                         viewshed = output[[1]])
+                                                         viewshed = output)
 
   testthat::expect_type(test_canopy_proportion, "double")
 

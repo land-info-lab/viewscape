@@ -36,7 +36,49 @@ providing a measure of the variation in visible distances.
 \item Relief: The standard deviation of elevations of the visible ground surface.
 \item Skyline: The standard deviation of the vertical viewscape, including visible
 canopy and buildings, when specified.
+\item Number of patches: Visible fragmentation measured by total visible patches
+with the viewscape.
+\item Mean shape index: Visible patchiness based on average perimeter-to-area ratio
+for all viewscape patches.
+\item Edge density: A measure of visible complexity based on the length of
+patch edges per unit area.
+\item Patch size: Total average size of a patches over the entire viewscape area.
+\item Patch density: Visible landscape granularity based on measuring patch density.
 }
+}
+\examples{
+\dontrun{
+#Load in DSM
+#test_dsm <- terra::rast(system.file("test_dsm.tif",
+#                                    package ="viewscape"))
+## Load DTM
+#test_dtm <- terra::rast(system.file("test_dtm.tif",
+#                                    package ="viewscape"))
+
+## Load canopy raster
+#test_canopy <- terra::rast(system.file("test_canopy.tif",
+#                                       package ="viewscape"))
+
+## Load building footprints raster
+#test_building <- terra::rast(system.file("test_building.tif",
+#                                         package ="viewscape"))
+
+##Load in the viewpoint
+#test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp",
+#                                          package = "viewscape"))
+
+##Compute viewshed
+#output <- viewscape::compute_viewshed(dsm = test_dsm,
+#                                    viewpoints = test_viewpoint,
+#                                      offset_viewpoint = 6)
+
+# calculate metrics given the viewshed, canopy, and building footprints
+# test_metrics <- viewscape::calculate_viewmetrics(output,
+#                                                 test_dsm,
+#                                                 test_dtm,
+#                                                 list(test_canopy, test_building))
+}
+
 }
 \references{
 Tabrizian, P., Baran, P.K., Berkel, D.B., Mitásová, H., & Meentemeyer, R.K. (2020).

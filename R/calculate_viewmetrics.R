@@ -13,6 +13,15 @@
 #' 5. Relief: The standard deviation of elevations of the visible ground surface.
 #' 6. Skyline: The standard deviation of the vertical viewscape, including visible
 #' canopy and buildings, when specified.
+#' 7. Number of patches: Visible fragmentation measured by total visible patches
+#' with the viewscape.
+#' 8. Mean shape index: Visible patchiness based on average perimeter-to-area ratio
+#' for all viewscape patches.
+#' 9. Edge density: A measure of visible complexity based on the length of
+#' patch edges per unit area.
+#' 10. Patch size: Total average size of a patches over the entire viewscape area.
+#' 11. Patch density: Visible landscape granularity based on measuring patch density.
+#'
 #' @param viewshed Viewshed object.
 #' @param dsm Raster, Digital Surface Model for the calculation of
 #' @param dtm Raster, Digital Terrain Model
@@ -24,6 +33,39 @@
 #' Modeling restorative potential of urban environments by coupling viewscape analysis of lidar
 #' data with experiments in immersive virtual environments. Landscape and Urban Planning, 195, 103704.
 #' @import terra
+#'
+#' @examples
+#' \dontrun{
+#' #Load in DSM
+#' #test_dsm <- terra::rast(system.file("test_dsm.tif",
+#' #                                    package ="viewscape"))
+#' ## Load DTM
+#' #test_dtm <- terra::rast(system.file("test_dtm.tif",
+#' #                                    package ="viewscape"))
+#'
+#' ## Load canopy raster
+#' #test_canopy <- terra::rast(system.file("test_canopy.tif",
+#' #                                       package ="viewscape"))
+#'
+#' ## Load building footprints raster
+#' #test_building <- terra::rast(system.file("test_building.tif",
+#' #                                         package ="viewscape"))
+#'
+#' ##Load in the viewpoint
+#' #test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp",
+#' #                                          package = "viewscape"))
+#'
+#' ##Compute viewshed
+#' #output <- viewscape::compute_viewshed(dsm = test_dsm,
+#' #                                    viewpoints = test_viewpoint,
+#' #                                      offset_viewpoint = 6)
+#'
+#' # calculate metrics given the viewshed, canopy, and building footprints
+#' # test_metrics <- viewscape::calculate_viewmetrics(output,
+#' #                                                 test_dsm,
+#' #                                                 test_dtm,
+#' #                                                 list(test_canopy, test_building))
+#' }
 #'
 #' @export
 
@@ -51,15 +93,24 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   }
   output <- list()
   visiblepoints <- filter_invisible(viewshed, FALSE)
-  x <- visiblepoints[,1]
-  y <- visiblepoints[,2]
   # viewshed raster
   m <- terra::vect(sp::SpatialPoints(visiblepoints))
   terra::crs(m) <- viewshed@crs
   mask_ <- terra::mask(filter_invisible(viewshed, TRUE), m)
-
+  # viewshed patch parameters
+  patch_paras <- patch_p(mask_)
+  x <- patch_paras[[5]][,1]
+  y <- patch_paras[[5]][,2]
   pointnumber <- length(x)
   resolution <- viewshed@resolution[1]
+  # Number of patches
+  # Mean shape index
+  # Edge density
+  # Patch size
+  for (i in 1:4) {
+    output[[length(output)+1]] <- patch_paras[[i]]
+  }
+  names(output) <- c("Nump", "MSI", "ED", "PS")
   # extent - Total area of the viewshed
   extent <- pointnumber * resolution^2
   output[[length(output)+1]] <- extent
@@ -68,12 +119,14 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
                        viewshed@viewpoint[2],
                        x,
                        y,
-                       nrow(visiblepoints))
+                       length(x))
+  depths <- depths[!is.na(depths)]
   # depth
   output[[length(output)+1]] <- max(depths)
   # vdepth
   output[[length(output)+1]] <- sd(depths)
-  names(output) <- c("extent", "depth", "vdepth")
+  names(output) <- c("Nump", "MSI", "ED", "PS",
+                     "extent", "depth", "vdepth")
   dsm <- terra::crop(dsm, terra::ext(viewshed@extent, xy = TRUE))
   # horizontal - Total visible horizontal or terrestrial area
   # relief - Variation (Standard deviation) in elevation of the visible ground surface.
@@ -88,7 +141,9 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
     output[[length(output)+1]] <- length(dsm_z) * resolution^2
     # relief
     output[[length(output)+1]] <- sd(z[,2])
-    names(output) <- c("extent", "depth", "vdepth", "horizontal", "relief")
+    names(output) <- c("Nump", "MSI", "ED", "PS",
+                       "extent", "depth", "vdepth",
+                       "horizontal", "relief")
   }
   # skyline - Variation of (Standard deviation) of the vertical viewscape
   # (visible canopy and buildings)
@@ -117,12 +172,9 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
     } else {
       output[[length(output)+1]] <- 0
     }
-    names(output) <- c("extent",
-                       "depth",
-                       "vdepth",
-                       "horizontal",
-                       "relief",
-                       "skyline")
+    names(output) <- c("Nump", "MSI", "ED", "PS",
+                       "extent", "depth", "vdepth",
+                       "horizontal", "relief", "skyline")
   }
   return(output)
 }

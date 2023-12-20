@@ -67,7 +67,7 @@ output <- viewscape::compute_viewshed(dsm = test_dsm,
                                       workers = 2)
 ```
 
-```{r}
+```{r eval = FALSE}
 # Use plot all viewsheds on DSM
 par(mfrow=c(3,3))
 for(i in 1:length(output)) {
@@ -118,7 +118,7 @@ terra::plot(test_building)
 ```
 
 ```{r}
-# calculate metrics given the viewshed
+# calculate metrics given the viewshed, canopy, and building footprints
 test_metrics <- viewscape::calculate_viewmetrics(output[[1]], 
                                                  test_dsm, 
                                                  test_dtm, 

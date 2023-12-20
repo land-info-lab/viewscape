@@ -20,7 +20,7 @@ testthat::test_that("runs correctly", {
 
   # the Shannon Diversity Index (SDI)
   test_diversity <- viewscape::calculate_diversity(test_landcover,
-                                                   output[[1]],
+                                                   output,
                                                    proportion = TRUE)
 
   testthat::expect_type(test_diversity[[1]], "double")
