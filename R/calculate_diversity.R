@@ -28,7 +28,6 @@
 calculate_diversity <- function(land,
                                 viewshed,
                                 proportion = FALSE){
-  utils::globalVariables("type")
   if (isFALSE(terra::crs(land, proj = TRUE) == viewshed@crs)) {
     cat("Your input (land) rasters have different
         coordinate reference system from the viewshed\n")

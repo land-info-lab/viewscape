@@ -45,7 +45,6 @@ get_lidar <- function(x,
                       max_return=500,
                       folder,
                       plot = FALSE) {
-  utils::globalVariables("startYear")
   if (missing(x) || missing(y)) {
     stop("x or y is missing. Please indicate the coordinates of centroid")
   } else if (missing(r) == TRUE) {
@@ -81,7 +80,7 @@ get_lidar <- function(x,
     result <- return_response(bbox, max_return)
     # filter overlapping files
     lastYear <- max(result$startYear)
-    result <- subset(result, startYear == lastYear)
+    result <- result[which(result$startYear == lastYear),]
     num <- length(result[,1])
     cat(paste0("Downloading ", num," file(s)...\n"))
     title <- result$titles
