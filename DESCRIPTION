@@ -26,8 +26,7 @@ Suggests:
     BiocParallel,
     BiocManager,
     imager,
-    rasterVis,
-    qpdf
+    rasterVis
 Config/testthat/edition: 3
 VignetteBuilder: knitr,
                  rmarkdown
