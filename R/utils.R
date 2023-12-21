@@ -198,3 +198,27 @@ find_year <- function(url) {
   date <- j$dates[[2]]$dateString %>% strsplit("-") %>% unlist()
   return(as.integer(date[1]))
 }
+
+#' @noMd
+paral_nix <- function(X, dsm, r, offset, workers){
+  results <- pbmcapply::pbmclapply(X = X,
+                                   FUN=radius_viewshed,
+                                   dsm=dsm,
+                                   r=r,
+                                   offset=offset,
+                                   mc.cores=workers)
+  return(results)
+}
+
+#' @noMd
+paral_win <- function(X, dsm, r, offset, workers){
+  cl <- parallel::makeCluster(workers)
+  results <- parallel::parLapply(cl = cl,
+                                 X = X,
+                                 FUN=radius_viewshed,
+                                 dsm=dsm,
+                                 r=r,
+                                 offset=offset)
+  parallel::stopCluster(cl)
+  return(results)
+}

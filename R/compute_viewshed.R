@@ -37,10 +37,15 @@
 #' https://github.com/Bioconductor/BiocParallel
 #'
 #' @useDynLib viewscape
+#' @import pbmcapply
 #' @importFrom Rcpp sourceCpp
 #' @importFrom terra ext
 #' @importFrom terra res
 #' @importFrom terra plot
+#' @importFrom parallel detectCores
+#' @importFrom parallel makeCluster
+#' @importFrom parallel parLapply
+#' @importFrom parallel stopCluster
 #'
 #' @export
 #'
@@ -127,34 +132,53 @@ compute_viewshed <- function(dsm,
     }
   }else if (multiviewpoints){
     if (parallel == TRUE){
-      if (!requireNamespace("BiocManager", quietly = TRUE)) {
-        install.packages("BiocManager")
-      }
-      if (!requireNamespace("BiocParallel", quietly = TRUE)) {
-        BiocManager::install("BiocParallel")
-      }
+      # if (!requireNamespace("BiocManager", quietly = TRUE)) {
+      #   install.packages("BiocManager")
+      # }
+      # if (!requireNamespace("BiocParallel", quietly = TRUE)) {
+      #   BiocManager::install("BiocParallel")
+      # }
       if (workers == 0) {
         workers <- 2
-        message("the number of CPU cores (workers) is not specified")
+        message("the specified number of CPU cores (workers) is not specified")
         message("the default setting (workers = 2) will be used")
+      } else if (workers > parallel::detectCores()) {
+        workers <- parallel::detectCores()
+        message("the specified number of CPU cores (workers) is greater than actual number")
+        message(paste0("the actual available CPU cores (",
+                       workers,
+                       ") will be used"))
       }
       inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
-        bpparam <- BiocParallel::MulticoreParam(workers=workers,
-                                                progressbar = TRUE)
+        # bpparam <- BiocParallel::MulticoreParam(workers=workers,
+        #                                         progressbar = TRUE)
+        suppressWarnings(
+          viewsheds <- paral_nix(X = inputs,
+                                 dsm = dsm,
+                                 r = r,
+                                 offset = offset_viewpoint,
+                                 workers = workers)
+        )
+
       }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-        bpparam <- BiocParallel::SnowParam(workers=1,
-                                           type="SOCK",
-                                           progressbar = TRUE)
+        # bpparam <- BiocParallel::SnowParam(workers=1,
+        #                                    type="SOCK",
+        #                                    progressbar = TRUE)
+        viewsheds <- paral_win(X = inputs,
+                               dsm = dsm,
+                               r = r,
+                               offset = offset_viewpoint,
+                               workers = workers)
       }
-      suppressWarnings(
-        viewsheds <- BiocParallel::bplapply(X = inputs,
-                                            FUN = radius_viewshed,
-                                            dsm = dsm,
-                                            r = r,
-                                            offset = offset_viewpoint,
-                                            BPPARAM = bpparam)
-      )
+      # suppressWarnings(
+      #   viewsheds <- BiocParallel::bplapply(X = inputs,
+      #                                       FUN = radius_viewshed,
+      #                                       dsm = dsm,
+      #                                       r = r,
+      #                                       offset = offset_viewpoint,
+      #                                       BPPARAM = bpparam)
+      # )
     } else {
       if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
         viewsheds <- c()
