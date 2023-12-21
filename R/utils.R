@@ -215,7 +215,7 @@ paral_win <- function(X, dsm, r, offset, workers){
   cl <- parallel::makeCluster(workers)
   results <- parallel::parLapply(cl = cl,
                                  X = X,
-                                 FUN=radius_viewshed,
+                                 fun=radius_viewshed,
                                  dsm=dsm,
                                  r=r,
                                  offset=offset)

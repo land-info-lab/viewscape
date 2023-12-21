@@ -20,8 +20,7 @@ compute_viewshed(
 \item{dsm}{Raster, the digital surface model/digital elevation model}
 
 \item{viewpoints}{sf point(s) or vector including x,y coordinates of a viewpoint
-or a matrix including several viewpoints with x,y coordinates
-(if multiviewpoints = TRUE)}
+or a matrix including several viewpoints with x,y coordinates}
 
 \item{offset_viewpoint}{numeric, setting the height of the viewpoint.
 (default is 1.7 meters).}

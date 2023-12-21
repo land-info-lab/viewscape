@@ -7,7 +7,6 @@
 #' @param dsm Raster, the digital surface model/digital elevation model
 #' @param viewpoints sf point(s) or vector including x,y coordinates of a viewpoint
 #' or a matrix including several viewpoints with x,y coordinates
-#' (if multiviewpoints = TRUE)
 #' @param offset_viewpoint numeric, setting the height of the viewpoint.
 #' (default is 1.7 meters).
 #' @param offset_height numeric, setting the height of positions that a given
@@ -165,11 +164,13 @@ compute_viewshed <- function(dsm,
         # bpparam <- BiocParallel::SnowParam(workers=1,
         #                                    type="SOCK",
         #                                    progressbar = TRUE)
-        viewsheds <- paral_win(X = inputs,
-                               dsm = dsm,
-                               r = r,
-                               offset = offset_viewpoint,
-                               workers = workers)
+        suppressWarnings(
+          viewsheds <- paral_win(X = inputs,
+                                 dsm = dsm,
+                                 r = r,
+                                 offset = offset_viewpoint,
+                                 workers = workers)
+        )
       }
       # suppressWarnings(
       #   viewsheds <- BiocParallel::bplapply(X = inputs,
