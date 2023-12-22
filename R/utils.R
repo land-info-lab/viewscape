@@ -213,7 +213,7 @@ paral_nix <- function(X, dsm, r, offset, workers){
 #' @noMd
 paral_win <- function(X, dsm, r, offset, workers){
   cl <- parallel::makeCluster(workers)
-  parallel::clusterEvalQ(cl, {Rcpp::sourceCpp("visibleLabel.cpp")})
+  parallel::clusterEvalQ(cl, "radius_viewshed")
   results <- parallel::parLapply(cl = cl,
                                  X = X,
                                  fun=radius_viewshed,
