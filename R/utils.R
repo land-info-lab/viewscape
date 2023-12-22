@@ -232,8 +232,12 @@ paral_win <- function(dsm, r, viewPts, offset, offset2 = 0, workers){
     subList[[length(subList)+1]] <- viewPts[1,]
     inputs[[length(inputs)+1]] <- subList
   }
-  func <- function(viewpoint, dsm_matrix, offset, distance) {
-    return(visibleLabel(viewpoint, dsm_matrix, offset, distance))
+  # Rcpp::sourceCpp(system.file("extdata/multiLabel.cpp", package ="viewscape"),
+  #                 env = asNamespace("viewscape"))
+  func <- function(viewpoint, dsm, h, max_dis) {
+    .Call('_viewscape_visibleLabel',
+          PACKAGE = 'viewscape',
+          viewpoint, dsm, h, max_dis)
   }
   cl <- parallel::makeCluster(workers)
   parallel::clusterExport(cl=cl,

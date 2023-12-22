@@ -37,6 +37,8 @@
 #'
 #' @useDynLib viewscape
 #' @import pbmcapply
+#' @importFrom Rcpp sourceCpp
+#' @importFrom Rcpp evalCpp
 #' @importFrom terra ext
 #' @importFrom terra res
 #' @importFrom terra plot
