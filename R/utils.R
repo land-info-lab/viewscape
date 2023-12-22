@@ -42,15 +42,15 @@ radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
   dsm_list <- list()
   ex <- list()
   resolution <- terra::res(dsm)
-  projt <- terra::crs(dsm)
+  projt <- terra::crs(dsm, proj = TRUE)
   x <- c()
   y <- c()
-  z <- terra::extract(dsm, viewPts)[,1]
+  z <- terra::extract(dsm, viewPts)[,1] + offset
   distance <- round(r/resolution[1])
   for (i in 1:length(z)) {
     subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
     subdsm <- terra::crop(dsm, terra::ext(subarea))
-    e <- terra::ext(subdsm)
+    e <- as.vector(sf::st_bbox(subdsm))
     ex[[i]] <- e
     x <- c(x, terra::colFromX(subdsm, viewPts[i,1]))
     y <- c(y, terra::rowFromY(subdsm, viewPts[i,2]))
@@ -211,14 +211,44 @@ paral_nix <- function(X, dsm, r, offset, workers){
 }
 
 #' @noMd
-paral_win <- function(vpt, dsm, r, offset, workers){
+paral_win <- function(dsm, r, viewPts, offset, offset2 = 0, workers){
+  inputs <- list()
+  resolution <- terra::res(dsm)
+  projt <- terra::crs(dsm, proj = TRUE)
+  z <- terra::extract(dsm, viewPts)[,1] + offset
+  distance <- round(r/resolution[1])
+  for (i in 1:length(z)) {
+    subList <- list()
+    subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
+    subdsm <- terra::crop(dsm, terra::ext(subarea))
+    e <- as.vector(sf::st_bbox(subdsm))
+    subList[[length(subList)+1]] <- e
+    x_ <- terra::colFromX(subdsm, viewPts[i,1])
+    y_ <- terra::rowFromY(subdsm, viewPts[i,2])
+    subList[[length(subList)+1]] <- cbind(x_, y_, z[i])
+    subList[[length(subList)+1]] <- terra::as.matrix(subdsm, wide=TRUE)
+    subList[[length(subList)+1]] <- offset2
+    subList[[length(subList)+1]] <- distance
+    subList[[length(subList)+1]] <- viewPts[1,]
+    inputs[[length(inputs)+1]] <- subList
+  }
+
   cl <- parallel::makeCluster(workers)
+  parallel::clusterExport(cl=cl,
+                          varlist=c("projt", "resolution"),
+                          envir=environment())
   results <- parallel::parLapply(cl = cl,
-                                 X = seq(length(vpt[,1])),
-                                 function(i){
-                                   viewpoint <- c(vpt[i,1],vpt[i,2])
-                                   out <- radius_viewshed(dsm, r, viewpoint, offset)
-                                   return(out)
+                                 X = inputs,
+                                 function(x){
+                                   label_matrix <- visibleLabel(x[[2]], x[[3]],
+                                                                x[[4]], x[[5]])
+                                   output <- new("Viewshed",
+                                                 viewpoint = x[[6]],
+                                                 visible = label_matrix,
+                                                 resolution = resolution,
+                                                 extent = x[[1]],
+                                                 crs = projt)
+                                   return(output)
                                  }
                                  )
   parallel::stopCluster(cl)
