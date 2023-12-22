@@ -232,16 +232,18 @@ paral_win <- function(dsm, r, viewPts, offset, offset2 = 0, workers){
     subList[[length(subList)+1]] <- viewPts[1,]
     inputs[[length(inputs)+1]] <- subList
   }
-
+  func <- function(viewpoint, dsm_matrix, offset, distance) {
+    return(visibleLabel(viewpoint, dsm_matrix, offset, distance))
+  }
   cl <- parallel::makeCluster(workers)
   parallel::clusterExport(cl=cl,
-                          varlist=c("projt", "resolution"),
+                          varlist=c("projt", "resolution", "func"),
                           envir=environment())
   results <- parallel::parLapply(cl = cl,
                                  X = inputs,
                                  function(x){
-                                   label_matrix <- visibleLabel(x[[2]], x[[3]],
-                                                                x[[4]], x[[5]])
+                                   label_matrix <- func(x[[2]], x[[3]],
+                                                        x[[4]], x[[5]])
                                    output <- new("Viewshed",
                                                  viewpoint = x[[6]],
                                                  visible = label_matrix,
