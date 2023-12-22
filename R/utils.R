@@ -234,21 +234,24 @@ paral_win <- function(dsm, r, viewPts, offset, offset2 = 0, workers){
   }
   # Rcpp::sourceCpp(system.file("extdata/multiLabel.cpp", package ="viewscape"),
   #                 env = asNamespace("viewscape"))
-  func <- function(viewpoint, dsm, h, max_dis) {
-    .Call('_viewscape_visibleLabel',
-          PACKAGE = 'viewscape',
-          viewpoint, dsm, h, max_dis)
-  }
+  # func <- function(viewpoint, dsm, h, max_dis) {
+  #   .Call('_viewscape_visibleLabel',
+  #         PACKAGE = 'viewscape',
+  #         viewpoint, dsm, h, max_dis)
+  # }
   cl <- parallel::makeCluster(workers)
-  parallel::clusterEvalQ(cl=cl, {requireNamespace("viewscape", quietly = TRUE)})
+  parallel::clusterEvalQ(cl=cl, {loadNamespace("viewscape")})
   parallel::clusterExport(cl=cl,
-                          varlist=c("projt", "resolution", "func"),
+                          varlist=c("projt", "resolution"),
                           envir=environment())
   results <- parallel::parLapply(cl = cl,
                                  X = inputs,
                                  function(x){
-                                   label_matrix <- func(x[[2]], x[[3]],
-                                                        x[[4]], x[[5]])
+                                   # label_matrix <- func(x[[2]], x[[3]],
+                                   #                      x[[4]], x[[5]])
+                                   label_matrix <- .Call('_viewscape_visibleLabel',
+                                                         PACKAGE = 'viewscape',
+                                                         x[[2]], x[[3]],x[[4]],x[[5]])
                                    output <- new("Viewshed",
                                                  viewpoint = x[[6]],
                                                  visible = label_matrix,
