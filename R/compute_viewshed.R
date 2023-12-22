@@ -150,28 +150,19 @@ compute_viewshed <- function(dsm,
                        ") will be used"))
       }
       inputs <- split(viewpoints,seq(nrow(viewpoints)))
-      if (isTRUE(Sys.info()[1]=="Windows") == FALSE){
-        # bpparam <- BiocParallel::MulticoreParam(workers=workers,
-        #                                         progressbar = TRUE)
-        suppressWarnings(
-          viewsheds <- paral_nix(X = inputs,
-                                 dsm = dsm,
-                                 r = r,
-                                 offset = offset_viewpoint,
-                                 workers = workers)
-        )
 
-      }else if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
+      if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
         # bpparam <- BiocParallel::SnowParam(workers=1,
         #                                    type="SOCK",
         #                                    progressbar = TRUE)
-        suppressWarnings(
-          viewsheds <- paral_win(dsm=dsm,
-                                 r=r,
-                                 viewPts=viewpoints,
-                                 offset=offset_viewpoint,
-                                 workers = workers)
-        )
+        # suppressWarnings(
+        #   viewsheds <- paral_win(dsm=dsm,
+        #                          r=r,
+        #                          viewPts=viewpoints,
+        #                          offset=offset_viewpoint,
+        #                          workers = workers)
+        # )
+        workers = 1
       }
       # suppressWarnings(
       #   viewsheds <- BiocParallel::bplapply(X = inputs,
@@ -181,6 +172,13 @@ compute_viewshed <- function(dsm,
       #                                       offset = offset_viewpoint,
       #                                       BPPARAM = bpparam)
       # )
+      suppressWarnings(
+        viewsheds <- paral_nix(X = inputs,
+                               dsm = dsm,
+                               r = r,
+                               offset = offset_viewpoint,
+                               workers = workers)
+      )
     } else {
       if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
         viewsheds <- c()

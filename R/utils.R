@@ -210,57 +210,57 @@ paral_nix <- function(X, dsm, r, offset, workers){
   return(results)
 }
 
-#' @noMd
-paral_win <- function(dsm, r, viewPts, offset, offset2 = 0, workers){
-  inputs <- list()
-  resolution <- terra::res(dsm)
-  projt <- terra::crs(dsm, proj = TRUE)
-  z <- terra::extract(dsm, viewPts)[,1] + offset
-  distance <- round(r/resolution[1])
-  for (i in 1:length(z)) {
-    subList <- list()
-    subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
-    subdsm <- terra::crop(dsm, terra::ext(subarea))
-    e <- as.vector(sf::st_bbox(subdsm))
-    subList[[length(subList)+1]] <- e
-    x_ <- terra::colFromX(subdsm, viewPts[i,1])
-    y_ <- terra::rowFromY(subdsm, viewPts[i,2])
-    subList[[length(subList)+1]] <- cbind(x_, y_, z[i])
-    subList[[length(subList)+1]] <- terra::as.matrix(subdsm, wide=TRUE)
-    subList[[length(subList)+1]] <- offset2
-    subList[[length(subList)+1]] <- distance
-    subList[[length(subList)+1]] <- viewPts[1,]
-    inputs[[length(inputs)+1]] <- subList
-  }
-  # Rcpp::sourceCpp(system.file("extdata/multiLabel.cpp", package ="viewscape"),
-  #                 env = asNamespace("viewscape"))
-  # func <- function(viewpoint, dsm, h, max_dis) {
-  #   .Call('_viewscape_visibleLabel',
-  #         PACKAGE = 'viewscape',
-  #         viewpoint, dsm, h, max_dis)
-  # }
-  cl <- parallel::makeCluster(workers)
-  parallel::clusterEvalQ(cl=cl, {loadNamespace("viewscape")})
-  parallel::clusterExport(cl=cl,
-                          varlist=c("projt", "resolution"),
-                          envir=environment())
-  results <- parallel::parLapply(cl = cl,
-                                 X = inputs,
-                                 function(x){
-                                   # label_matrix <- func(x[[2]], x[[3]],
-                                   #                      x[[4]], x[[5]])
-                                   label_matrix <- .Call('_viewscape_visibleLabel',
-                                                         PACKAGE = 'viewscape',
-                                                         x[[2]], x[[3]],x[[4]],x[[5]])
-                                   output <- new("Viewshed",
-                                                 viewpoint = x[[6]],
-                                                 visible = label_matrix,
-                                                 resolution = resolution,
-                                                 extent = x[[1]],
-                                                 crs = projt)
-                                   return(output)
-                                 }
-                                 )
-  parallel::stopCluster(cl)
-  return(results)
-}
+#' #' @noMd
+#' paral_win <- function(dsm, r, viewPts, offset, offset2 = 0, workers){
+#'   inputs <- list()
+#'   resolution <- terra::res(dsm)
+#'   projt <- terra::crs(dsm, proj = TRUE)
+#'   z <- terra::extract(dsm, viewPts)[,1] + offset
+#'   distance <- round(r/resolution[1])
+#'   for (i in 1:length(z)) {
+#'     subList <- list()
+#'     subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
+#'     subdsm <- terra::crop(dsm, terra::ext(subarea))
+#'     e <- as.vector(sf::st_bbox(subdsm))
+#'     subList[[length(subList)+1]] <- e
+#'     x_ <- terra::colFromX(subdsm, viewPts[i,1])
+#'     y_ <- terra::rowFromY(subdsm, viewPts[i,2])
+#'     subList[[length(subList)+1]] <- cbind(x_, y_, z[i])
+#'     subList[[length(subList)+1]] <- terra::as.matrix(subdsm, wide=TRUE)
+#'     subList[[length(subList)+1]] <- offset2
+#'     subList[[length(subList)+1]] <- distance
+#'     subList[[length(subList)+1]] <- viewPts[1,]
+#'     inputs[[length(inputs)+1]] <- subList
+#'   }
+#'   # Rcpp::sourceCpp(system.file("extdata/multiLabel.cpp", package ="viewscape"),
+#'   #                 env = asNamespace("viewscape"))
+#'   # func <- function(viewpoint, dsm, h, max_dis) {
+#'   #   .Call('_viewscape_visibleLabel',
+#'   #         PACKAGE = 'viewscape',
+#'   #         viewpoint, dsm, h, max_dis)
+#'   # }
+#'   cl <- parallel::makeCluster(workers)
+#'   parallel::clusterEvalQ(cl=cl, {loadNamespace("viewscape")})
+#'   parallel::clusterExport(cl=cl,
+#'                           varlist=c("projt", "resolution"),
+#'                           envir=environment())
+#'   results <- parallel::parLapply(cl = cl,
+#'                                  X = inputs,
+#'                                  function(x){
+#'                                    # label_matrix <- func(x[[2]], x[[3]],
+#'                                    #                      x[[4]], x[[5]])
+#'                                    label_matrix <- .Call('_viewscape_visibleLabel',
+#'                                                          PACKAGE = 'viewscape',
+#'                                                          x[[2]], x[[3]],x[[4]],x[[5]])
+#'                                    output <- new("Viewshed",
+#'                                                  viewpoint = x[[6]],
+#'                                                  visible = label_matrix,
+#'                                                  resolution = resolution,
+#'                                                  extent = x[[1]],
+#'                                                  crs = projt)
+#'                                    return(output)
+#'                                  }
+#'                                  )
+#'   parallel::stopCluster(cl)
+#'   return(results)
+#' }
