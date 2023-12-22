@@ -236,9 +236,11 @@ paral_win <- function(dsm, r, viewPts, offset, offset2 = 0, workers){
   #                 env = asNamespace("viewscape"))
   func <- function(viewpoint, dsm, h, max_dis) {
     .Call('_viewscape_visibleLabel',
+          PACKAGE = 'viewscape',
           viewpoint, dsm, h, max_dis)
   }
   cl <- parallel::makeCluster(workers)
+  parallel::clusterEvalQ(cl=cl, {requireNamespace("viewscape", quietly = TRUE)})
   parallel::clusterExport(cl=cl,
                           varlist=c("projt", "resolution", "func"),
                           envir=environment())
