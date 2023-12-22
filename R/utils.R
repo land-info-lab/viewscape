@@ -220,8 +220,7 @@ paral_win <- function(X, dsm, r, offset, workers){
                                    out <- radius_viewshed(dsm, r, viewpoint, offset)
                                    return(out)
                                  },
-                                 radius_viewshed,
-                                 MoreArgs = list(X,dsm,r,offset)
+                                 radius_viewshed
                                  )
   parallel::stopCluster(cl)
   return(results)
