@@ -168,9 +168,9 @@ compute_viewshed <- function(dsm,
         #                                    progressbar = TRUE)
         suppressWarnings(
           viewsheds <- paral_win(X = inputs,
-                                 dsm_ = dsm,
-                                 r_ = r,
-                                 offset_ = offset_viewpoint,
+                                 dsm = dsm,
+                                 r = r,
+                                 offset = offset_viewpoint,
                                  workers = workers)
         )
       }

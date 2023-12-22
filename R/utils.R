@@ -211,8 +211,11 @@ paral_nix <- function(X, dsm, r, offset, workers){
 }
 
 #' @noMd
-paral_win <- function(X, dsm_, r_, offset_, workers){
+paral_win <- function(X, dsm, r, offset, workers){
   cl <- parallel::makeCluster(workers)
+  dsm_ <- dsm
+  r_ <- r
+  offset_ <- offset
   parallel::clusterExport(cl, c("dsm_","r_","offset_"
                                 ))
   results <- parallel::parLapply(cl = cl,
