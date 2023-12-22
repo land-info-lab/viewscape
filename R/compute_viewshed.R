@@ -46,7 +46,7 @@
 #' @importFrom parallel makeCluster
 #' @importFrom parallel parLapply
 #' @importFrom parallel stopCluster
-#' @importFrom parallel clusterExport
+#' @importFrom parallel clusterEvalQ
 #'
 #' @export
 #'
