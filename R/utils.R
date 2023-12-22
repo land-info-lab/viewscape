@@ -211,15 +211,16 @@ paral_nix <- function(X, dsm, r, offset, workers){
 }
 
 #' @noMd
-paral_win <- function(X, dsm, r, offset, workers){
+paral_win <- function(X, dsm_, r_, offset_, workers){
   cl <- parallel::makeCluster(workers)
-  parallel::clusterEvalQ(cl, "radius_viewshed")
+  parallel::clusterExport(cl, c("radius_viewshed",
+                                "dsm_","r_","offset_"
+                                ))
   results <- parallel::parLapply(cl = cl,
                                  X = X,
-                                 fun=radius_viewshed,
-                                 dsm=dsm,
-                                 r=r,
-                                 offset=offset)
+                                 function(x) radius_viewshed(dsm_,
+                                                             r_, x,
+                                                             offset_))
   parallel::stopCluster(cl)
   return(results)
 }

@@ -46,7 +46,7 @@
 #' @importFrom parallel makeCluster
 #' @importFrom parallel parLapply
 #' @importFrom parallel stopCluster
-#' @importFrom parallel clusterEvalQ
+#' @importFrom parallel clusterExport
 #'
 #' @export
 #'
@@ -168,9 +168,9 @@ compute_viewshed <- function(dsm,
         #                                    progressbar = TRUE)
         suppressWarnings(
           viewsheds <- paral_win(X = inputs,
-                                 dsm = dsm,
-                                 r = r,
-                                 offset = offset_viewpoint,
+                                 dsm_ = dsm,
+                                 r_ = r,
+                                 offset_ = offset_viewpoint,
                                  workers = workers)
         )
       }
