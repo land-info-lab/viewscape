@@ -37,8 +37,6 @@
 #'
 #' @useDynLib viewscape
 #' @import pbmcapply
-#' @importFrom Rcpp sourceCpp
-#' @importFrom Rcpp evalCpp
 #' @importFrom terra ext
 #' @importFrom terra res
 #' @importFrom terra plot
@@ -46,7 +44,6 @@
 #' @importFrom parallel makeCluster
 #' @importFrom parallel parLapply
 #' @importFrom parallel stopCluster
-#' @importFrom parallel clusterEvalQ
 #'
 #' @export
 #'
@@ -167,7 +164,7 @@ compute_viewshed <- function(dsm,
         #                                    type="SOCK",
         #                                    progressbar = TRUE)
         suppressWarnings(
-          viewsheds <- paral_win(X = inputs,
+          viewsheds <- paral_win(X = viewpoints,
                                  dsm = dsm,
                                  r = r,
                                  offset = offset_viewpoint,
