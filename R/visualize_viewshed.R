@@ -56,8 +56,7 @@ visualize_viewshed <- function(viewshed,
       out <- mask_v
     }else if (outputtype == "polygon"){
       polygon_v <- terra::as.polygons(mask_v)
-      polygon_v <- terra::buffer(polygon_v, width = 0.0001)
-      out <- terra::aggregate(polygon_v)
+      out <- sf::st_as_sf(polygon_v)
     }
     return(out)
   }
