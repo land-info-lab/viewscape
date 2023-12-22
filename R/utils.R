@@ -215,7 +215,7 @@ paral_win <- function(vpt, dsm, r, offset, workers){
   cl <- parallel::makeCluster(workers)
   results <- parallel::parLapply(cl = cl,
                                  X = seq(length(vpt[,1])),
-                                 function(i,vpt,dsm,r,offset){
+                                 function(i){
                                    viewpoint <- c(vpt[i,1],vpt[i,2])
                                    out <- radius_viewshed(dsm, r, viewpoint, offset)
                                    return(out)
