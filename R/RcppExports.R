@@ -9,6 +9,10 @@ multiLabel <- function(vpts, dsm, max_dis, vpth, h) {
     .Call('_viewscape_multiLabel', PACKAGE = 'viewscape', vpts, dsm, max_dis, vpth, h)
 }
 
+multiLabelParallel <- function(vpts, dsm, max_dis, vpth, h) {
+    .Call('_viewscape_multiLabelParallel', PACKAGE = 'viewscape', vpts, dsm, max_dis, vpth, h)
+}
+
 visibleLabel <- function(viewpoint, dsm, h, max_dis) {
     .Call('_viewscape_visibleLabel', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis)
 }

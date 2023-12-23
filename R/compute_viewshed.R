@@ -39,6 +39,7 @@
 #' @import pbmcapply
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
+#' @importFrom RcppParallel RcppParallelLibs
 #' @importFrom terra ext
 #' @importFrom terra res
 #' @importFrom terra plot
@@ -131,13 +132,8 @@ compute_viewshed <- function(dsm,
       return(output)
     }
   }else if (multiviewpoints){
+    inputs <- split(viewpoints,seq(nrow(viewpoints)))
     if (parallel == TRUE){
-      # if (!requireNamespace("BiocManager", quietly = TRUE)) {
-      #   install.packages("BiocManager")
-      # }
-      # if (!requireNamespace("BiocParallel", quietly = TRUE)) {
-      #   BiocManager::install("BiocParallel")
-      # }
       if (workers == 0) {
         workers <- 2
         message("the specified number of CPU cores (workers) is not specified")
@@ -149,12 +145,8 @@ compute_viewshed <- function(dsm,
                        workers,
                        ") will be used"))
       }
-      inputs <- split(viewpoints,seq(nrow(viewpoints)))
-
+      # inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-        # bpparam <- BiocParallel::SnowParam(workers=1,
-        #                                    type="SOCK",
-        #                                    progressbar = TRUE)
         # suppressWarnings(
         #   viewsheds <- paral_win(dsm=dsm,
         #                          r=r,
@@ -162,37 +154,42 @@ compute_viewshed <- function(dsm,
         #                          offset=offset_viewpoint,
         #                          workers = workers)
         # )
-        workers = 1
+        #workers = 1
+        viewsheds <- radius_viewshed_m(dsm=dsm,
+                                       r=r,
+                                       viewPts=viewpoints,
+                                       offset=offset_viewpoint)
+      } else {
+        suppressWarnings(
+          viewsheds <- paral_nix(X = inputs,
+                                 dsm = dsm,
+                                 r = r,
+                                 offset = offset_viewpoint,
+                                 workers = workers)
+        )
       }
-      # suppressWarnings(
-      #   viewsheds <- BiocParallel::bplapply(X = inputs,
-      #                                       FUN = radius_viewshed,
-      #                                       dsm = dsm,
-      #                                       r = r,
-      #                                       offset = offset_viewpoint,
-      #                                       BPPARAM = bpparam)
-      # )
+
+    } else {
+      # if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
+      #   viewsheds <- c()
+      #   for(i in 1:length(viewpoints[,1])){
+      #     viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
+      #     output <- radius_viewshed(dsm, r, viewpoint, offset_viewpoint)
+      #     viewsheds <- c(viewsheds, output)
+      #   }
+      # } else {
+      #   viewsheds <- radius_viewshed_m(dsm=dsm,
+      #                                  r=r,
+      #                                  viewPts=viewpoints,
+      #                                  offset=offset_viewpoint)
+      # }
       suppressWarnings(
         viewsheds <- paral_nix(X = inputs,
                                dsm = dsm,
                                r = r,
                                offset = offset_viewpoint,
-                               workers = workers)
+                               workers = 1)
       )
-    } else {
-      if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-        viewsheds <- c()
-        for(i in 1:length(viewpoints[,1])){
-          viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
-          output <- radius_viewshed(dsm, r, viewpoint, offset_viewpoint)
-          viewsheds <- c(viewsheds, output)
-        }
-      } else {
-        viewsheds <- radius_viewshed_m(dsm=dsm,
-                                       r=r,
-                                       viewPts=viewpoints,
-                                       offset=offset_viewpoint)
-      }
     }
     return(viewsheds)
   }

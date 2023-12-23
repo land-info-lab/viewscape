@@ -58,7 +58,7 @@ radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
   }
   vpts <- cbind(x, y)
   vpts <- cbind(vpts, z)
-  label_matrix <- multiLabel(vpts=vpts,
+  label_matrix <- multiLabelParallel(vpts=vpts,
                              dsm=dsm_list,
                              max_dis=distance,
                              vpth=offset,

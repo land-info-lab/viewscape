@@ -31,6 +31,7 @@ VignetteBuilder: knitr,
 biocViews:
 Imports: 
     Rcpp,
+    RcppParallel,
     methods,
     dplyr,
     sf,
@@ -40,4 +41,6 @@ Imports:
     parallel,
     pbmcapply,
     httr2
-LinkingTo: Rcpp
+LinkingTo:
+    Rcpp,
+    RcppParallel
