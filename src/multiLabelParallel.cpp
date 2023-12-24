@@ -36,7 +36,7 @@ public:
 
   void operator()(std::size_t begin, std::size_t end) override {
     // Process viewpoints from 'begin' to 'end'
-    for (std::size_t i = begin; i < end; i++) {
+    for (std::size_t i = startIdx; i < endIdx; i++) {
       Rcpp::NumericMatrix sub_dsm = Rcpp::as<Rcpp::NumericMatrix>(dsm[i]);
       Rcpp::NumericVector zl;
       Rcpp::NumericVector xl;
@@ -111,6 +111,9 @@ Rcpp::List multiLabelParallel(Rcpp::NumericMatrix& vpts,
     // Execute each worker
     RcppParallel::parallelFor(0, vptnum, *workers[i]);
   }
+  // for (size_t i = 0; i < workers.size(); ++i) {
+  //   (*workers[i])();
+  // }
 
   // Combine results from all workers
   for (size_t i = 0; i < Labelworkers.size(); ++i) {
