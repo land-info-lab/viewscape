@@ -2,6 +2,8 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+#include <thread>
+#include <memory>
 using namespace Rcpp;
 // [[Rcpp::depends(RcppParallel)]]
 #include <RcppParallel.h>
@@ -14,21 +16,28 @@ private:
   Rcpp::List dsm;
   const int max_dis;
   const double vpth, h;
-  Rcpp::List output;
+  size_t startIdx, endIdx;
+  Rcpp::List localOutput;
 
 public:
-  MultiLabelWorker(Rcpp::NumericMatrix vpts,
-                   Rcpp::List dsm,
+  MultiLabelWorker(const Rcpp::NumericMatrix& vptsSubset,
+                   const Rcpp::List& dsm,
                    int max_dis,
                    double vpth,
-                   double h,
-                   Rcpp::List &output)
-    : vpts(vpts), dsm(dsm), max_dis(max_dis), vpth(vpth), h(h), output(output) {}
+                   double h)
+    : vpts(vptsSubset), dsm(dsm), max_dis(max_dis), vpth(vpth), h(h) {
+    localOutput = Rcpp::List(vptsSubset.rows());
+  }
 
-  void operator()(std::size_t begin, std::size_t end) {
+  void setRange(size_t start, size_t end) {
+    startIdx = start;
+    endIdx = end;
+  }
+
+  void operator()(std::size_t begin, std::size_t end) override {
     // Process viewpoints from 'begin' to 'end'
     for (std::size_t i = begin; i < end; i++) {
-      Rcpp::NumericMatrix sub_dsm = dsm[i];
+      Rcpp::NumericMatrix sub_dsm = Rcpp::as<Rcpp::NumericMatrix>(dsm[i]);
       Rcpp::NumericVector zl;
       Rcpp::NumericVector xl;
       Rcpp::NumericVector yl;
@@ -64,8 +73,12 @@ public:
           }
         }
       }
-      output(i) = visible;
+      localOutput[i - begin] = visible;
     }
+  }
+
+  Rcpp::List getResults() const {
+    return localOutput;
   }
 };
 
@@ -78,12 +91,34 @@ Rcpp::List multiLabelParallel(Rcpp::NumericMatrix& vpts,
 
   const int vptnum = vpts.rows();
   Rcpp::List output(vptnum);
+  std::vector<MultiLabelWorker> Labelworkers;
+  int numWorkers = std::thread::hardware_concurrency();
+  int segments = vptnum / numWorkers;
+  // Create and initialize workers
+  std::vector<std::unique_ptr<MultiLabelWorker>> workers;
+  for (int i = 0; i < numWorkers; ++i) {
+    int start = i * segments;
+    int end = (i == numWorkers - 1) ? vptnum : (i + 1) * segments;
+    workers.push_back(std::make_unique<MultiLabelWorker>(vpts(Range(start, end - 1), _),
+                                       dsm,
+                                       max_dis,
+                                       vpth,
+                                       h));
+    workers[i]->setRange(start, end);
+  }
 
-  // Create the worker
-  MultiLabelWorker Label(vpts, dsm, max_dis, vpth, h, output);
+  for (size_t i = 0; i < numWorkers; ++i) {
+    // Execute each worker
+    RcppParallel::parallelFor(0, vptnum, *workers[i]);
+  }
 
-  // Call parallel
-  RcppParallel::parallelFor(0, vptnum, Label);
+  // Combine results from all workers
+  for (size_t i = 0; i < Labelworkers.size(); ++i) {
+    Rcpp::List workerResults = Labelworkers[i].getResults();
+    for (size_t j = 0; j < workerResults.size(); ++j) {
+      output[i * segments + j] = workerResults[j];
+    }
+  }
 
   return output;
 }
