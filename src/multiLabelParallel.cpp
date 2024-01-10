@@ -34,7 +34,7 @@ public:
     endIdx = end;
   }
 
-  void operator()(std::size_t begin, std::size_t end) override {
+  void operator()() {
     // Process viewpoints from 'begin' to 'end'
     for (std::size_t i = startIdx; i < endIdx; i++) {
       Rcpp::NumericMatrix sub_dsm = Rcpp::as<Rcpp::NumericMatrix>(dsm[i]);
@@ -73,7 +73,7 @@ public:
           }
         }
       }
-      localOutput[i - begin] = visible;
+      localOutput[i - startIdx] = visible;
     }
   }
 
@@ -107,13 +107,13 @@ Rcpp::List multiLabelParallel(Rcpp::NumericMatrix& vpts,
     workers[i]->setRange(start, end);
   }
 
-  for (size_t i = 0; i < numWorkers; ++i) {
-    // Execute each worker
-    RcppParallel::parallelFor(0, vptnum, *workers[i]);
-  }
-  // for (size_t i = 0; i < workers.size(); ++i) {
-  //   (*workers[i])();
+  // for (size_t i = 0; i < numWorkers; ++i) {
+  //   // Execute each worker
+  //   RcppParallel::parallelFor(0, vptnum, *workers[i]);
   // }
+  for (size_t i = 0; i < workers.size(); ++i) {
+    (*workers[i])();
+  }
 
   // Combine results from all workers
   for (size_t i = 0; i < Labelworkers.size(); ++i) {
@@ -122,6 +122,5 @@ Rcpp::List multiLabelParallel(Rcpp::NumericMatrix& vpts,
       output[i * segments + j] = workerResults[j];
     }
   }
-
   return output;
 }

@@ -133,6 +133,12 @@ website](https://land-info-lab.github.io/viewscape/). For more
 information and examples of the functions check out the [package
 vignette](https://github.com/land-info-lab/viewscape/blob/master/vignettes/viewscape.md).
 
+## Note
+
+The package currently does not support multi-core processing on Windows system. 
+The function 'compute_viewshed' with 'parallel = TRUE' will automatically work
+on single worker.
+
 ## Issues and bugs
 
 This package may take a long time to run if using spatially large or
