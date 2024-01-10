@@ -76,8 +76,10 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   units <- sf::st_crs(viewshed@crs)$units
   if (units == "ft") {
     error <- 1.6
+    minHeight <- 10
   } else if (units == "m") {
     error <- 0.5
+    minHeight <- 3
   }
   if (isFALSE(terra::crs(dsm, proj = TRUE) == viewshed@crs)) {
     cat("First input dsm has different
@@ -97,20 +99,31 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   m <- terra::vect(sp::SpatialPoints(visiblepoints))
   terra::crs(m) <- viewshed@crs
   mask_ <- terra::mask(filter_invisible(viewshed, TRUE), m)
+  # get subdsm
+  subdsm <- terra::crop(dsm, terra::ext(mask_))
+  ttops <- ForestTools::vwf(CHM = subdsm,
+                            winFun = function(x){x * 0.05 + 0.6},
+                            minHeight = minHeight)
+  crowns <- ForestTools::mcws(treetops = ttops,
+                              CHM = subdsm,
+                              minHeight = minHeight,
+                              format = "polygons")
+  #crowns <- as(crowns, "Spatial")
+  crowns <- terra::vect(crowns)
   # viewshed patch parameters
-  patch_paras <- patch_p(mask_)
-  x <- patch_paras[[5]][,1]
-  y <- patch_paras[[5]][,2]
+  patch_paras <- patch_p(mask_, crowns)
+  x <- patch_paras[[6]][,1]
+  y <- patch_paras[[6]][,2]
   pointnumber <- length(x)
   resolution <- viewshed@resolution[1]
   # Number of patches
   # Mean shape index
   # Edge density
   # Patch size
-  for (i in 1:4) {
+  for (i in 1:5) {
     output[[length(output)+1]] <- patch_paras[[i]]
   }
-  names(output) <- c("Nump", "MSI", "ED", "PS")
+  names(output) <- c("Nump", "MSI", "ED", "PS", "PD")
   # extent - Total area of the viewshed
   extent <- pointnumber * resolution^2
   output[[length(output)+1]] <- extent
@@ -125,7 +138,7 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   output[[length(output)+1]] <- max(depths)
   # vdepth
   output[[length(output)+1]] <- sd(depths)
-  names(output) <- c("Nump", "MSI", "ED", "PS",
+  names(output) <- c("Nump", "MSI", "ED", "PS", "PD",
                      "extent", "depth", "vdepth")
   dsm <- terra::crop(dsm, terra::ext(viewshed@extent, xy = TRUE))
   # horizontal - Total visible horizontal or terrestrial area
@@ -141,7 +154,7 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
     output[[length(output)+1]] <- length(dsm_z) * resolution^2
     # relief
     output[[length(output)+1]] <- sd(z[,2])
-    names(output) <- c("Nump", "MSI", "ED", "PS",
+    names(output) <- c("Nump", "MSI", "ED", "PS", "PD",
                        "extent", "depth", "vdepth",
                        "horizontal", "relief")
   }
@@ -172,7 +185,7 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
     } else {
       output[[length(output)+1]] <- 0
     }
-    names(output) <- c("Nump", "MSI", "ED", "PS",
+    names(output) <- c("Nump", "MSI", "ED", "PS", "PD",
                        "extent", "depth", "vdepth",
                        "horizontal", "relief", "skyline")
   }

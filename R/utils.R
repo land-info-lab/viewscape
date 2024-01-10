@@ -36,44 +36,44 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   return(output)
 }
 
-#' @noMd
-radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
-  output <- c()
-  dsm_list <- list()
-  ex <- list()
-  resolution <- terra::res(dsm)
-  projt <- terra::crs(dsm, proj = TRUE)
-  x <- c()
-  y <- c()
-  z <- terra::extract(dsm, viewPts)[,1] + offset
-  distance <- round(r/resolution[1])
-  for (i in 1:length(z)) {
-    subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
-    subdsm <- terra::crop(dsm, terra::ext(subarea))
-    e <- as.vector(sf::st_bbox(subdsm))
-    ex[[i]] <- e
-    x <- c(x, terra::colFromX(subdsm, viewPts[i,1]))
-    y <- c(y, terra::rowFromY(subdsm, viewPts[i,2]))
-    dsm_list[[i]] <- terra::as.matrix(subdsm, wide=TRUE)
-  }
-  vpts <- cbind(x, y)
-  vpts <- cbind(vpts, z)
-  label_matrix <- multiLabelParallel(vpts=vpts,
-                             dsm=dsm_list,
-                             max_dis=distance,
-                             vpth=offset,
-                             h=offset2)
-  for(i in 1:length(z)) {
-    out <- new("Viewshed",
-               viewpoint = viewPts[i,],
-               visible = label_matrix[[i]],
-               resolution = resolution,
-               extent = ex[[i]],
-               crs = projt)
-    output <- c(output, out)
-  }
-  return(output)
-}
+#' #' @noMd
+#' radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
+#'   output <- c()
+#'   dsm_list <- list()
+#'   ex <- list()
+#'   resolution <- terra::res(dsm)
+#'   projt <- terra::crs(dsm, proj = TRUE)
+#'   x <- c()
+#'   y <- c()
+#'   z <- terra::extract(dsm, viewPts)[,1] + offset
+#'   distance <- round(r/resolution[1])
+#'   for (i in 1:length(z)) {
+#'     subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
+#'     subdsm <- terra::crop(dsm, terra::ext(subarea))
+#'     e <- as.vector(sf::st_bbox(subdsm))
+#'     ex[[i]] <- e
+#'     x <- c(x, terra::colFromX(subdsm, viewPts[i,1]))
+#'     y <- c(y, terra::rowFromY(subdsm, viewPts[i,2]))
+#'     dsm_list[[i]] <- terra::as.matrix(subdsm, wide=TRUE)
+#'   }
+#'   vpts <- cbind(x, y)
+#'   vpts <- cbind(vpts, z)
+#'   label_matrix <- multiLabelParallel(vpts=vpts,
+#'                              dsm=dsm_list,
+#'                              max_dis=distance,
+#'                              vpth=offset,
+#'                              h=offset2)
+#'   for(i in 1:length(z)) {
+#'     out <- new("Viewshed",
+#'                viewpoint = viewPts[i,],
+#'                visible = label_matrix[[i]],
+#'                resolution = resolution,
+#'                extent = ex[[i]],
+#'                crs = projt)
+#'     output <- c(output, out)
+#'   }
+#'   return(output)
+#' }
 
 #' @noMd
 # H=−∑[(pi)×ln(pi)]
@@ -106,17 +106,20 @@ get_patch <- function(viewshed){
 
 #' @noMd
 # get patches parameter
-patch_p <- function(m){
+patch_p <- function(m, patchpoly){
   clusters <- terra::patches(m, directions=4)
   ptc <- terra::as.polygons(clusters)
+  patchpoly <- terra::mask(patchpoly, ptc)
   ptc_lines <- m %>%
     terra::as.polygons() %>%
     terra::as.lines() %>%
     sf::st_as_sf()
-  perimeters <- terra::perim(ptc)
-  areas <- terra::expanse(ptc)
+  perimeters <- terra::perim(patchpoly)
+  viewshed_areas <- terra::expanse(ptc)
+  areas <- terra::expanse(patchpoly)
   total_perimeters <- sum(perimeters)
   total_areas <- sum(areas)
+  total_viewshed_areas <- sum(viewshed_areas)
   if (sf::st_crs(m)$units == "ft") {
     num_pt <- round(total_perimeters/3.281)
   } else {
@@ -127,15 +130,17 @@ patch_p <- function(m){
   # Mean shape index
   MSI <- mean(perimeters/areas)
   # Edge density
-  ED <- total_perimeters/total_areas
+  ED <- total_perimeters/total_viewshed_areas
   # Patch size
   PS <- total_areas/Nump
+  # Patch density
+  PD <- Nump/total_viewshed_areas
   # sample points along the edge of patches
   samples <- sf::st_sample(sf::st_cast(ptc_lines$geometry,
                                        "MULTILINESTRING"),
                            num_pt)
   samples <- sf::st_coordinates(samples)[,-3]
-  return(list(Nump, MSI, ED, PS, samples))
+  return(list(Nump, MSI, ED, PS, PD, samples))
 }
 
 
