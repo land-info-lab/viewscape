@@ -105,18 +105,6 @@ test_building <- terra::rast(system.file("test_building.tif",
 
 ```
 
-```{r eval=FALSE}
-terra::plot(test_dtm)
-```
-
-```{r eval=FALSE}
-terra::plot(test_canopy)
-```
-
-```{r eval=FALSE}
-terra::plot(test_building)
-```
-
 ```{r}
 # calculate metrics given the viewshed, canopy, and building footprints
 test_metrics <- viewscape::calculate_viewmetrics(output[[1]], 
