@@ -22,10 +22,9 @@ R environment. The viewscape R pacakge can currently be downloaded via
 github.
 
 ``` r
-library(devtools)
 
-# load package
-install_github("land-info-lab/viewscape")
+# download the package
+devtools::install_github("land-info-lab/viewscape", dependencies=TRUE)
 
 # Load the package
 library(viewscape)
