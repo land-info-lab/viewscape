@@ -1,13 +1,13 @@
-#include <Rcpp.h>
-#include <cmath>
-#include <iostream>
-#include <algorithm>
-#include <thread>
-#include <memory>
-using namespace Rcpp;
-// [[Rcpp::depends(RcppParallel)]]
-#include <RcppParallel.h>
-using namespace RcppParallel;
+// #include <Rcpp.h>
+// #include <cmath>
+// #include <iostream>
+// #include <algorithm>
+// #include <thread>
+// #include <memory>
+// using namespace Rcpp;
+// // [[Rcpp::depends(RcppParallel)]]
+// #include <RcppParallel.h>
+// using namespace RcppParallel;
 
 
 // struct MultiLabelWorker : public RcppParallel::Worker {
