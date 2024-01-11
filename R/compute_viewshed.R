@@ -39,7 +39,6 @@
 #' @import pbmcapply
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
-#' @importFrom RcppParallel RcppParallelLibs
 #' @importFrom terra ext
 #' @importFrom terra res
 #' @importFrom terra plot
