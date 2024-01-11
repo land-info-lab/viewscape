@@ -33,6 +33,12 @@
 #' Modeling restorative potential of urban environments by coupling viewscape analysis of lidar
 #' data with experiments in immersive virtual environments. Landscape and Urban Planning, 195, 103704.
 #' @import terra
+#' @importFrom terra patches
+#' @importFrom terra as.polygons
+#' @importFrom terra mask
+#' @importFrom terra crop
+#' @importFrom ForestTools vwf
+#' @importFrom ForestTools mcws
 #'
 #' @examples
 #' \dontrun{
@@ -73,6 +79,9 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   if (missing(viewshed)) {
     stop("Viewshed object is missing")
   }
+  if (missing(dsm) || missing(dtm)) {
+    stop("DSM or DTM is missing")
+  }
   units <- sf::st_crs(viewshed@crs)$units
   if (units == "ft") {
     error <- 1.6
@@ -99,22 +108,23 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   m <- terra::vect(sp::SpatialPoints(visiblepoints))
   terra::crs(m) <- viewshed@crs
   mask_ <- terra::mask(filter_invisible(viewshed, TRUE), m)
-  # get subdsm
+  # get subdsm/dtm
   subdsm <- terra::crop(dsm, terra::ext(mask_))
-  ttops <- ForestTools::vwf(CHM = subdsm,
+  subdtm <- terra::crop(dtm, terra::ext(mask_))
+  submodel <- subdsm - subdtm
+  ttops <- ForestTools::vwf(CHM = submodel,
                             winFun = function(x){x * 0.05 + 0.6},
                             minHeight = minHeight)
   crowns <- ForestTools::mcws(treetops = ttops,
-                              CHM = subdsm,
-                              minHeight = minHeight,
-                              format = "polygons")
-  #crowns <- as(crowns, "Spatial")
-  crowns <- terra::vect(crowns)
+                              CHM = submodel,
+                              minHeight = minHeight)
+  crowns <- terra::patches(crowns, directions=4)
+  crowns <- terra::as.polygons(crowns)
   # viewshed patch parameters
   patch_paras <- patch_p(mask_, crowns)
   x <- patch_paras[[6]][,1]
   y <- patch_paras[[6]][,2]
-  pointnumber <- length(x)
+  pointnumber <- length(visiblepoints[,1])
   resolution <- viewshed@resolution[1]
   # Number of patches
   # Mean shape index
@@ -140,24 +150,22 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   output[[length(output)+1]] <- sd(depths)
   names(output) <- c("Nump", "MSI", "ED", "PS", "PD",
                      "extent", "depth", "vdepth")
-  dsm <- terra::crop(dsm, terra::ext(viewshed@extent, xy = TRUE))
   # horizontal - Total visible horizontal or terrestrial area
   # relief - Variation (Standard deviation) in elevation of the visible ground surface.
-  if (isFALSE(missing(dsm)) && isFALSE(missing(dtm))) {
-    dtm <- terra::crop(dtm, terra::ext(viewshed@extent, xy = TRUE))
-    dtm_z <- terra::extract(dtm, visiblepoints)[,1]
-    dsm_z <- terra::extract(dsm, visiblepoints)[,1]
-    delta_z <- dsm_z - dtm_z
-    z <- cbind(dtm_z, dsm_z, delta_z)
-    z <- z[which(z[,3]<=error),]
-    # horizontal
-    output[[length(output)+1]] <- length(dsm_z) * resolution^2
-    # relief
-    output[[length(output)+1]] <- sd(z[,2])
-    names(output) <- c("Nump", "MSI", "ED", "PS", "PD",
-                       "extent", "depth", "vdepth",
-                       "horizontal", "relief")
-  }
+  # dsm <- terra::crop(subdsm, terra::ext(viewshed@extent, xy = TRUE))
+  # dtm <- terra::crop(subdtm, terra::ext(viewshed@extent, xy = TRUE))
+  dtm_z <- terra::extract(subdtm, visiblepoints)[,1]
+  dsm_z <- terra::extract(subdsm, visiblepoints)[,1]
+  delta_z <- dsm_z - dtm_z
+  z <- cbind(dtm_z, dsm_z, delta_z)
+  z <- z[which(z[,3]<=error),]
+  # horizontal
+  output[[length(output)+1]] <- length(z[,3]) * resolution^2
+  # relief
+  output[[length(output)+1]] <- sd(z[,1])
+  names(output) <- c("Nump", "MSI", "ED", "PS", "PD",
+                     "extent", "depth", "vdepth",
+                     "horizontal", "relief")
   # skyline - Variation of (Standard deviation) of the vertical viewscape
   # (visible canopy and buildings)
   if (length(masks) == 2) {

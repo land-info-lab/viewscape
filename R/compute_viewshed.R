@@ -44,10 +44,6 @@
 #' @importFrom terra res
 #' @importFrom terra plot
 #' @importFrom parallel detectCores
-#' @importFrom parallel makeCluster
-#' @importFrom parallel parLapply
-#' @importFrom parallel stopCluster
-#' @importFrom parallel clusterExport
 #' @export
 #'
 #' @examples
