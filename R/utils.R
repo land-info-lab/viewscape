@@ -214,3 +214,17 @@ paral_nix <- function(X, dsm, r, offset, workers){
                                    mc.cores=workers)
   return(results)
 }
+
+#' @noMd
+paral_win <- function(X, dsm, r, offset, workers){
+  cl <- parallel::makeCluster(workers)
+  results <- pbapply::pblapply(cl = cl,
+                               X = X,
+                                 FUN=radius_viewshed,
+                                 dsm=dsm,
+                                 r=r,
+                                 offset=offset)
+  parallel::stopCluster(cl)
+  return(results)
+}
+
