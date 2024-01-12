@@ -40,7 +40,6 @@ Imports:
     ForestTools,
     parallel,
     pbmcapply,
-    pbapply,
     httr2
 LinkingTo:
     Rcpp
