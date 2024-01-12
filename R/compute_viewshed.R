@@ -44,7 +44,7 @@
 #' @importFrom terra plot
 #' @importFrom parallel detectCores
 #' @importFrom parallel makeCluster
-#' @importFrom parallel closeCluster
+#' @importFrom parallel stopCluster
 #' @importFrom pbapply pblapply
 #' @export
 #'
