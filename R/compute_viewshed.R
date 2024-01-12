@@ -43,9 +43,6 @@
 #' @importFrom terra res
 #' @importFrom terra plot
 #' @importFrom parallel detectCores
-#' @importFrom parallel makeCluster
-#' @importFrom parallel stopCluster
-#' @importFrom pbapply pblapply
 #' @export
 #'
 #' @examples
@@ -146,29 +143,18 @@ compute_viewshed <- function(dsm,
       # inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
         workers = 1
-        suppressWarnings(
-          viewsheds <- paral_win(X = inputs,
-                                 dsm = dsm,
-                                 r = r,
-                                 offset = offset_viewpoint,
-                                 workers = workers)
-        )
-      } else {
-        suppressWarnings(
-          viewsheds <- paral_nix(X = inputs,
-                                 dsm = dsm,
-                                 r = r,
-                                 offset = offset_viewpoint,
-                                 workers = workers)
-        )
+        # viewsheds <- radius_viewshed_m(dsm=dsm,
+        #                                r=r,
+        #                                viewPts=viewpoints,
+        #                                offset=offset_viewpoint)
       }
-      # suppressWarnings(
-      #   viewsheds <- paral_nix(X = inputs,
-      #                          dsm = dsm,
-      #                          r = r,
-      #                          offset = offset_viewpoint,
-      #                          workers = workers)
-      # )
+      suppressWarnings(
+        viewsheds <- paral_nix(X = inputs,
+                               dsm = dsm,
+                               r = r,
+                               offset = offset_viewpoint,
+                               workers = workers)
+      )
     } else {
       # if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
       #   viewsheds <- c()
