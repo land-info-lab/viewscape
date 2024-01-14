@@ -5,22 +5,24 @@
 #' The function calculates various metrics that describe the visibility characteristics
 #' of a landscape from a specific viewpoint.The metrics include:
 #' 1. Extent: The total area of the viewshed, calculated as the number of visible grid
-#' cells multiplied by the grid resolution.
-#' 2. Depth: The furthest visible distance within the viewshed from the viewpoint.
+#' cells multiplied by the grid resolution
+#' 2. Depth: The furthest visible distance within the viewshed from the viewpoint
 #' 3. Vdepth: The standard deviation of distances to visible points,
-#' providing a measure of the variation in visible distances.
-#' 4. Horizontal: The total visible horizontal or terrestrial area within the viewshed.
-#' 5. Relief: The standard deviation of elevations of the visible ground surface.
+#' providing a measure of the variation in visible distances
+#' 4. Horizontal: The total visible horizontal or terrestrial area within the viewshed
+#' 5. Relief: The standard deviation of elevations of the visible ground surface
 #' 6. Skyline: The standard deviation of the vertical viewscape, including visible
-#' canopy and buildings, when specified.
+#' canopy and buildings, when specified
 #' 7. Number of patches: Visible fragmentation measured by total visible patches
-#' with the viewscape.
+#' with the viewscape
 #' 8. Mean shape index: Visible patchiness based on average perimeter-to-area ratio
-#' for all viewscape patches.
+#' for all viewscape patches (vegetation and building)
 #' 9. Edge density: A measure of visible complexity based on the length of
-#' patch edges per unit area.
-#' 10. Patch size: Total average size of a patches over the entire viewscape area.
-#' 11. Patch density: Visible landscape granularity based on measuring patch density.
+#' patch edges per unit area
+#' 10. Patch size: Total average size of a patches over the entire viewscape area
+#' 11. Patch density: Visible landscape granularity based on measuring patch density
+#' 12. Shannon diversity index: The abundance and evenness of land cover/use in a viewshed
+#' 13. Proportion of object: Proportion of a single type of land use or cover in a viewshed
 #'
 #' @param viewshed Viewshed object.
 #' @param dsm Raster, Digital Surface Model for the calculation of

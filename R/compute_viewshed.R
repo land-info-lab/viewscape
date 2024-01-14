@@ -28,12 +28,7 @@
 #' either a raster (raster is TRUE) or a viewshed object. Value 1 means visible while
 #' value 0 means invisible. For multi-viewpoint analysis, a list of viewsheds
 #' is returned.
-#' @details Parallel computing used the functions from BiocParallel package
 #'
-#' @references Martin Morgan, Jiefei Wang, Valerie Obenchain, Michel Lang,
-#' Ryan Thompson and Nitesh Turaga (2021). BiocParallel: Bioconductor facilities
-#' for parallel evaluation. R package version 1.28.3.
-#' https://github.com/Bioconductor/BiocParallel
 #'
 #' @useDynLib viewscape
 #' @import pbmcapply
@@ -83,11 +78,11 @@ compute_viewshed <- function(dsm,
       r <- 1000
     }
   }
-  if (dsm_units == "ft" && r > 3281) {
-    r <- 3281
-  } else if (dsm_units == "m" && r > 1000) {
-    r <- 1000
-  }
+  # if (dsm_units == "ft" && r > 3281) {
+  #   r <- 3281
+  # } else if (dsm_units == "m" && r > 1000) {
+  #   r <- 1000
+  # }
   if (plot) {
     raster <- TRUE
   }
@@ -98,8 +93,14 @@ compute_viewshed <- function(dsm,
       stop("If input viewpoints is not a vector or matrix, it has to be sf point(s)")
     }
   }
-  if (length(viewpoints[,1]) > 1) {
-    multiviewpoints <- TRUE
+  if (is.vector(viewpoints)){
+    viewpoints <- matrix(data = viewpoints,
+                         nrow = 1,
+                         ncol = 2)
+  } else {
+    if (length(viewpoints[,1]) > 1) {
+      multiviewpoints <- TRUE
+    }
   }
   if (multiviewpoints == FALSE){
     viewpoints <- c(viewpoints[,1], viewpoints[,2])

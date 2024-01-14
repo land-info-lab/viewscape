@@ -4,21 +4,21 @@
 \alias{calculate_feature}
 \title{calculate_feature}
 \usage{
-calculate_feature(type, feature, viewshed, exclude_value = 0)
+calculate_feature(type, feature, viewshed, exclude_value)
 }
 \arguments{
-\item{type}{Numeric. The input type of canopy raster.
+\item{type}{Numeric. The input type of land cover raster.
 type=1: percentage raster (that represents the percentage of
-canopy area in each cell).
+area in each cell).
 type=2: binary raster (that only uses two values to represent whether
-canopy exists in each cell).}
+the feature exists in each cell).}
 
-\item{feature}{Raster.}
+\item{feature}{Raster. Land cover or land use}
 
 \item{viewshed}{Viewshed object.}
 
-\item{exclude_value}{Numeric. If type = 2, it indicates the value of
-cells, where the feature doesn't exist.}
+\item{exclude_value}{Numeric. the value of those cells need to be excluded
+in the analysis. If type = 2, exclude_value is reqired.}
 }
 \value{
 Numeric. The canopy area in the viewshed.
@@ -36,6 +36,7 @@ the proportion of the feature that is present in the viewshed.
 # calculate the percentage of canopy coverage
 # test_canopy_proportion <- viewscape::calculate_feature(type = 2,
 #                                                       feature = test_canopy,
-#                                                       viewshed = viewshed)
+#                                                       viewshed = viewshed
+#                                                       exclude_value = 0)
 }
 }

@@ -28,22 +28,24 @@ The function calculates various metrics that describe the visibility characteris
 of a landscape from a specific viewpoint.The metrics include:
 \enumerate{
 \item Extent: The total area of the viewshed, calculated as the number of visible grid
-cells multiplied by the grid resolution.
-\item Depth: The furthest visible distance within the viewshed from the viewpoint.
+cells multiplied by the grid resolution
+\item Depth: The furthest visible distance within the viewshed from the viewpoint
 \item Vdepth: The standard deviation of distances to visible points,
-providing a measure of the variation in visible distances.
-\item Horizontal: The total visible horizontal or terrestrial area within the viewshed.
-\item Relief: The standard deviation of elevations of the visible ground surface.
+providing a measure of the variation in visible distances
+\item Horizontal: The total visible horizontal or terrestrial area within the viewshed
+\item Relief: The standard deviation of elevations of the visible ground surface
 \item Skyline: The standard deviation of the vertical viewscape, including visible
-canopy and buildings, when specified.
+canopy and buildings, when specified
 \item Number of patches: Visible fragmentation measured by total visible patches
-with the viewscape.
+with the viewscape
 \item Mean shape index: Visible patchiness based on average perimeter-to-area ratio
-for all viewscape patches.
+for all viewscape patches (vegetation and building)
 \item Edge density: A measure of visible complexity based on the length of
-patch edges per unit area.
-\item Patch size: Total average size of a patches over the entire viewscape area.
-\item Patch density: Visible landscape granularity based on measuring patch density.
+patch edges per unit area
+\item Patch size: Total average size of a patches over the entire viewscape area
+\item Patch density: Visible landscape granularity based on measuring patch density
+\item Shannon diversity index: The abundance and evenness of land cover/use in a viewshed
+\item Proportion of object: Proportion of a single type of land use or cover in a viewshed
 }
 }
 \examples{

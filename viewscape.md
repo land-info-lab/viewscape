@@ -21,15 +21,10 @@ digital surface model (DSM) and a viewpoint.
     test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", 
                                               package = "viewscape"))
 
-    #Transform viewpoint from shape file to coordinates 
-    test_viewpoint <- sf::st_coordinates(test_viewpoint)
-    test_viewpoint <- c(test_viewpoint[,1], test_viewpoint[,2])
-
     #Compute viewshed
     output <- viewscape::compute_viewshed(dsm = test_dsm, 
                                           viewpoints = test_viewpoint, 
-                                          offset_viewpoint = 6, 
-                                          plot=TRUE)
+                                          offset_viewpoint = 6)
 
 ![](/private/var/folders/8t/yvsjl1wd01z9y49tb6zbyszw0000gn/T/RtmpCIg1Uj/preview-ed46e4fdb6d.dir/viewscape_files/figure-markdown_strict/unnamed-chunk-2-1.png)
 
@@ -54,14 +49,10 @@ digital surface model (DSM) and a viewpoint.
     test_viewpoints <- sf::read_sf(system.file("test_viewpoints.shp", 
                                                package = "viewscape"))
 
-    #Transform viewpoint from shape file to coordinates 
-    test_viewpoints <- sf::st_coordinates(test_viewpoints)
-
     # Compute viewsheds
     output <- viewscape::compute_viewshed(dsm = test_dsm, 
                                           viewpoints = test_viewpoints, 
                                           offset_viewpoint = 6, 
-                                          multiviewpoints = TRUE,
                                           parallel = TRUE, 
                                           workers = 8)
 
@@ -80,18 +71,11 @@ digital surface model (DSM) and a viewpoint.
 
 ### 2.1 Calculate the metrics of viewshed
 
-The function of view depth analysis can calculate two different metrics:
-the furthest distance and standard deviation of distances. To calculate
-view depth, there are two needed objects: the DSM that was used to get
-viewshed and result from viewshed analysis.
-
-The function of extent analysis can calculate the total area of viewshed
-and needs the DSM that was used to get viewshed and result from viewshed
-analysis.
-
-The following function can calculate the area of ground surface and
-standard deviation of elevations within a viewshed. The function needs a
-DSM and a DEM/DTM to calculate the metrics.
+The calculate_viewmetrics function is designed to compute a set of
+configuration metrics based on a given viewshed object and optionally, digital surface
+models (DSM) and digital terrain models (DTM) for terrain analysis.
+The function calculates various metrics that describe the visibility characteristics
+of a landscape from a specific viewpoint.
 
     # Load DTM
     test_dtm <- raster::raster(system.file("test_dtm.tif", 
@@ -105,15 +89,6 @@ DSM and a DEM/DTM to calculate the metrics.
     test_building <- raster::raster(system.file("test_building.tif", 
                                            package ="viewscape"))
 
-    raster::plot(test_dtm)
-
-![](/private/var/folders/8t/yvsjl1wd01z9y49tb6zbyszw0000gn/T/RtmpCIg1Uj/preview-ed46e4fdb6d.dir/viewscape_files/figure-markdown_strict/unnamed-chunk-6-1.png)
-
-    raster::plot(test_canopy)
-
-![](/private/var/folders/8t/yvsjl1wd01z9y49tb6zbyszw0000gn/T/RtmpCIg1Uj/preview-ed46e4fdb6d.dir/viewscape_files/figure-markdown_strict/unnamed-chunk-7-1.png)
-
-    raster::plot(test_building)
 
 ![](/private/var/folders/8t/yvsjl1wd01z9y49tb6zbyszw0000gn/T/RtmpCIg1Uj/preview-ed46e4fdb6d.dir/viewscape_files/figure-markdown_strict/unnamed-chunk-8-1.png)
 
@@ -124,24 +99,6 @@ DSM and a DEM/DTM to calculate the metrics.
                                                      list(test_canopy, test_building))
     test_metrics
 
-    ## $extent
-    ## [1] 61347.37
-    ## 
-    ## $depth
-    ## [1] 1018.219
-    ## 
-    ## $vdepth
-    ## [1] 237.4841
-    ## 
-    ## $horizontal
-    ## [1] 42701.88
-    ## 
-    ## $relief
-    ## [1] 0.675813
-    ## 
-    ## $skyline
-    ## [1] 3.760434
-
 ### 2.2 Calculate land use/cover diversity
 
 calculate\_diversity() calculates the proportion of each type of land
@@ -150,7 +107,6 @@ use/ cover within a viewshed to get the Shannon Diversity Index.
     # load landuse raster
     test_landcover <- raster::raster(system.file("test_landuse.tif",
                                                package ="viewscape"))
-    raster::plot(test_landcover, axes=FALSE)
 
 ![](/private/var/folders/8t/yvsjl1wd01z9y49tb6zbyszw0000gn/T/RtmpCIg1Uj/preview-ed46e4fdb6d.dir/viewscape_files/figure-markdown_strict/unnamed-chunk-10-1.png)
 

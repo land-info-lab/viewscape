@@ -57,9 +57,6 @@ which are areas visible from specific viewpoints, based on a Digital Surface
 Model (DSM). It provides flexibility for single or multi-viewpoint analyses
 and allows options for parallel processing, raster output, and plotting.
 }
-\details{
-Parallel computing used the functions from BiocParallel package
-}
 \examples{
 \dontrun{
 #test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
@@ -74,10 +71,4 @@ Parallel computing used the functions from BiocParallel package
 # Calculate viewsheds for multiple viewpoints in parallel
 #viewsheds <- compute_viewshed(dsm, viewpoints = test_viewpoint, parallel = TRUE, workers = 2)
 }
-}
-\references{
-Martin Morgan, Jiefei Wang, Valerie Obenchain, Michel Lang,
-Ryan Thompson and Nitesh Turaga (2021). BiocParallel: Bioconductor facilities
-for parallel evaluation. R package version 1.28.3.
-https://github.com/Bioconductor/BiocParallel
 }
