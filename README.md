@@ -60,6 +60,14 @@ The metrics are including:
     the viewshed.
 -   Relief: The standard deviation of elevations of the visible ground
     surface.
+-   Number of patches: Visible fragmentation measured by total visible patches
+    with the viewscape
+-   Mean shape index: Visible patchiness based on average perimeter-to-area ratio
+    for all viewscape patches (vegetation and building)
+-   Edge density: A measure of visible complexity based on the length of
+    patch edges per unit area
+-   Patch size: Total average size of a patches over the entire viewscape area
+-   Patch density: Visible landscape granularity based on measuring patch density
 -   Skyline: Variation of (Standard deviation) of the vertical viewscape
     (visible canopy and buildings).
 -   Shannon diversity index: Based on the number of land use/cover
@@ -68,8 +76,8 @@ The metrics are including:
 
 ``` r
 #Load in DSM
-test_dsm <- raster::raster(system.file("test_dsm.tif", 
-                                       package ="viewscape"))
+test_dsm <- terra::rast(system.file("test_dsm.tif", 
+                                    package ="viewscape"))
 
 #Load in the viewpoint
 test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", 
@@ -83,7 +91,7 @@ output <- viewscape::compute_viewshed(dsm = test_dsm,
 
 # Load DTM
 test_dtm <- terra::rast(system.file("test_dtm.tif", 
-                                       package ="viewscape"))
+                                    package ="viewscape"))
 
 # load landuse raster
 test_landcover <- terra::rast(system.file("test_landuse.tif",
