@@ -14,8 +14,8 @@ digital surface model (DSM) and a viewpoint.
 ### 1.1 Compute single viewshed
 
     #Load in DSM
-    test_dsm <- raster::raster(system.file("test_dsm.tif", 
-                                           package ="viewscape"))
+    test_dsm <- terra::rast(system.file("test_dsm.tif", 
+                            package ="viewscape"))
 
     #Load in the viewpoint
     test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", 
@@ -42,8 +42,8 @@ digital surface model (DSM) and a viewpoint.
 ### 1.2 Compute the viewshed for multiple viewpoints
 
     #Load in DSM
-    test_dsm <- raster::raster(system.file("test_dsm.tif", 
-                                           package ="viewscape"))
+    test_dsm <- terra::rast(system.file("test_dsm.tif", 
+                            package ="viewscape"))
 
     # Load points (.shp file)
     test_viewpoints <- sf::read_sf(system.file("test_viewpoints.shp", 
@@ -78,16 +78,16 @@ The function calculates various metrics that describe the visibility characteris
 of a landscape from a specific viewpoint.
 
     # Load DTM
-    test_dtm <- raster::raster(system.file("test_dtm.tif", 
-                                           package ="viewscape"))
+    test_dtm <- terra::rast(system.file("test_dtm.tif", 
+                                        package ="viewscape"))
 
     # Load canopy raster
-    test_canopy <- raster::raster(system.file("test_canopy.tif", 
+    test_canopy <- terra::rast(system.file("test_canopy.tif", 
                                            package ="viewscape"))
 
     # Load building footprints raster
-    test_building <- raster::raster(system.file("test_building.tif", 
-                                           package ="viewscape"))
+    test_building <- terra::rast(system.file("test_building.tif", 
+                                             package ="viewscape"))
 
 
 ![](/private/var/folders/8t/yvsjl1wd01z9y49tb6zbyszw0000gn/T/RtmpCIg1Uj/preview-ed46e4fdb6d.dir/viewscape_files/figure-markdown_strict/unnamed-chunk-8-1.png)
@@ -105,8 +105,8 @@ calculate\_diversity() calculates the proportion of each type of land
 use/ cover within a viewshed to get the Shannon Diversity Index.
 
     # load landuse raster
-    test_landcover <- raster::raster(system.file("test_landuse.tif",
-                                               package ="viewscape"))
+    test_landuse <- terra::rast(system.file("test_landuse.tif",
+                                            package ="viewscape"))
 
 ![](/private/var/folders/8t/yvsjl1wd01z9y49tb6zbyszw0000gn/T/RtmpCIg1Uj/preview-ed46e4fdb6d.dir/viewscape_files/figure-markdown_strict/unnamed-chunk-10-1.png)
 
@@ -114,7 +114,7 @@ use/ cover within a viewshed to get the Shannon Diversity Index.
 
     ## [1] 8
 
-    test_diversity <- viewscape::calculate_diversity(test_landcover, 
+    test_diversity <- viewscape::calculate_diversity(test_landuse, 
                                                      output[[1]], 
                                                      proportion = TRUE)
     # SDI and The proportion of each type of land use
@@ -135,12 +135,13 @@ calculate\_feature is to calculate the proportion of a feature
 This function can be applied to
 
     # load landuse raster
-    test_canopy <- raster::raster(system.file("test_canopy.tif",
-                                              package ="viewscape"))
+    test_canopy <- terra::rast(system.file("test_canopy.tif",
+                                           package ="viewscape"))
     # calculate the percentage of each type of land use  
     test_canopy_proportion <- viewscape::calculate_feature(type = 2, 
                                                            feature = test_canopy,
-                                                           viewshed = output[[1]])
+                                                           viewshed = output[[1]],
+                                                           exclude_value=0)
     test_canopy_proportion
 
 ## 3. Get LiDAR data

@@ -94,8 +94,8 @@ test_dtm <- terra::rast(system.file("test_dtm.tif",
                                     package ="viewscape"))
 
 # load landuse raster
-test_landcover <- terra::rast(system.file("test_landuse.tif",
-                                           package ="viewscape"))
+test_landuse <- terra::rast(system.file("test_landuse.tif",
+                                        package ="viewscape"))
 
 # Load canopy raster
 test_canopy <- terra::rast(system.file("test_canopy.tif", 
@@ -112,7 +112,7 @@ test_metrics <- viewscape::calculate_viewmetrics(output,
                                                  list(test_canopy, test_building))
 
 # the Shannon Diversity Index (SDI)
-test_diversity <- calculate_diversity(test_landcover, output, proportion = TRUE)
+test_diversity <- calculate_diversity(test_landuse, output, proportion = TRUE)
 ```
 
 Baesd on the TNMAccess API, LiDAR search facilitate the retrieval and

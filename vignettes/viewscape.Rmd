@@ -120,14 +120,13 @@ calculate_diversity() calculates the proportion of each type of land use/ cover 
 
 ```{r}
 # load landuse raster
-test_landcover <- terra::rast(system.file("test_landuse.tif",
-                                           package ="viewscape"))
-terra::plot(test_landcover, axes=FALSE)
+test_landuse <- terra::rast(system.file("test_landuse.tif",
+                                        package ="viewscape"))
 ```
 
 ```{r}
 # the Shannon Diversity Index (SDI)
-test_diversity <- viewscape::calculate_diversity(test_landcover, 
+test_diversity <- viewscape::calculate_diversity(test_landuse, 
                                                  output[[1]], 
                                                  proportion = TRUE)
 # SDI and The proportion of each type of land use
@@ -145,7 +144,8 @@ test_canopy <- terra::rast(system.file("test_canopy.tif",
 # calculate the percentage of canopy coverage  
 test_canopy_proportion <- viewscape::calculate_feature(type = 2, 
                                                        feature = test_canopy,
-                                                       viewshed = output[[1]])
+                                                       viewshed = output[[1]],
+                                                       exclude_value=0)
 test_canopy_proportion
 ```
 
