@@ -12,6 +12,7 @@
 setClass(
   Class = "Viewshed",
   representation(viewpoint = "numeric",
+                 viewpos = "numeric",
                  visible = "matrix",
                  resolution = "numeric",
                  extent = "numeric",

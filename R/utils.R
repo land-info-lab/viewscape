@@ -29,6 +29,7 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   label_matrix <- visibleLabel(viewpoint, dsm_matrix, offset2, distance)
   output <- new("Viewshed",
                 viewpoint = viewPt,
+                viewpos = viewpoint,
                 visible = label_matrix,
                 resolution = resolution,
                 extent = as.vector(sf::st_bbox(dsm)),
@@ -36,6 +37,16 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   return(output)
 }
 
+#' @noMd
+paral_nix <- function(X, dsm, r, offset, workers){
+  results <- pbmcapply::pbmclapply(X = X,
+                                   FUN=radius_viewshed,
+                                   dsm=dsm,
+                                   r=r,
+                                   offset=offset,
+                                   mc.cores=workers)
+  return(results)
+}
 
 # radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
 #   output <- c()
@@ -204,13 +215,4 @@ find_year <- function(url) {
   return(as.integer(date[1]))
 }
 
-#' @noMd
-paral_nix <- function(X, dsm, r, offset, workers){
-  results <- pbmcapply::pbmclapply(X = X,
-                                   FUN=radius_viewshed,
-                                   dsm=dsm,
-                                   r=r,
-                                   offset=offset,
-                                   mc.cores=workers)
-  return(results)
-}
+
