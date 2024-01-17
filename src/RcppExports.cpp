@@ -10,6 +10,22 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// cosAB
+double cosAB(int xyp, double zp, int xyt, double zt, int xyn, double zn);
+RcppExport SEXP _viewscape_cosAB(SEXP xypSEXP, SEXP zpSEXP, SEXP xytSEXP, SEXP ztSEXP, SEXP xynSEXP, SEXP znSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type xyp(xypSEXP);
+    Rcpp::traits::input_parameter< double >::type zp(zpSEXP);
+    Rcpp::traits::input_parameter< int >::type xyt(xytSEXP);
+    Rcpp::traits::input_parameter< double >::type zt(ztSEXP);
+    Rcpp::traits::input_parameter< int >::type xyn(xynSEXP);
+    Rcpp::traits::input_parameter< double >::type zn(znSEXP);
+    rcpp_result_gen = Rcpp::wrap(cosAB(xyp, zp, xyt, zt, xyn, zn));
+    return rcpp_result_gen;
+END_RCPP
+}
 // get_depths
 NumericVector get_depths(double px, double py, NumericVector& x, NumericVector& y, int num);
 RcppExport SEXP _viewscape_get_depths(SEXP pxSEXP, SEXP pySEXP, SEXP xSEXP, SEXP ySEXP, SEXP numSEXP) {
@@ -40,6 +56,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sectorValue
+double sectorValue(const double k, const double b, const int x);
+RcppExport SEXP _viewscape_sectorValue(SEXP kSEXP, SEXP bSEXP, SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double >::type k(kSEXP);
+    Rcpp::traits::input_parameter< const double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const int >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(sectorValue(k, b, x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // visibleLabel
 Rcpp::IntegerMatrix visibleLabel(const Rcpp::NumericVector& viewpoint, const Rcpp::NumericMatrix& dsm, const double h, const int max_dis);
 RcppExport SEXP _viewscape_visibleLabel(SEXP viewpointSEXP, SEXP dsmSEXP, SEXP hSEXP, SEXP max_disSEXP) {
@@ -56,8 +85,10 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_viewscape_cosAB", (DL_FUNC) &_viewscape_cosAB, 6},
     {"_viewscape_get_depths", (DL_FUNC) &_viewscape_get_depths, 5},
     {"_viewscape_multiLabel", (DL_FUNC) &_viewscape_multiLabel, 5},
+    {"_viewscape_sectorValue", (DL_FUNC) &_viewscape_sectorValue, 3},
     {"_viewscape_visibleLabel", (DL_FUNC) &_viewscape_visibleLabel, 4},
     {NULL, NULL, 0}
 };

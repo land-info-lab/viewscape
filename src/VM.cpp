@@ -17,11 +17,11 @@ double cosAB(int xyp, double zp,
 Rcpp::NumericVector normalVector(int slope, int direction,
                                  int x, int y, double z) {
   Rcpp::NumericVector res(3);
-  double zn;
-  int xn;
-  int yn;
+  double zn = 0.0;
+  int xn = 0;
+  int yn = 0;
   if (direction == 1 || direction == 4 || direction == 16 || direction == 64) {
-    zn = tan(90-slope)+z;
+    zn = tan((90-slope)*3.14159/180)+z;
     if (direction == 4 || direction == 64) {
       xn = x;
       if (direction == 4) {
@@ -38,7 +38,7 @@ Rcpp::NumericVector normalVector(int slope, int direction,
       }
     }
   } else if (direction == 2 || direction == 8 || direction == 32 || direction == 128) {
-    zn = tan(90-slope)*sqrt(2)+z;
+    zn = tan((90-slope)*3.14159/180)*sqrt(2)+z;
     if (direction == 2) {
       xn = x + 1;
       yn = y + 1;
@@ -60,33 +60,56 @@ Rcpp::NumericVector normalVector(int slope, int direction,
 }
 
 double PTdistance(int xp, int yp, double zp,
-                  int xt, int yt, double zt) {
-  double res = sqrt(pow(xp-xt,2)+pow(yp-yt,2)+pow(zp-zt,2.0));
+                  int xt, int yt, double zt,
+                  int resolution) {
+  double res = sqrt(pow((xp-xt)*resolution,2)+
+                    pow((yp-yt)*resolution,2)+
+                    pow(zp-zt,2));
   return res;
 }
 
 Rcpp::IntegerMatrix VM(const Rcpp::IntegerMatrix &viewshed,
+                       const Rcpp::IntegerMatrix &dsm,
                        const Rcpp::IntegerMatrix &slp,
                        const Rcpp::IntegerMatrix &dir,
-                       const Rcpp::NumericVector viewpt) {
-  const int rows = viewshed.rows();
-  const int cols = viewshed.cols();
+                       const Rcpp::NumericVector viewpt,
+                       const int resolution) {
+  const int rows = dsm.rows();
+  const int cols = dsm.cols();
   Rcpp::IntegerMatrix magnitude(rows, cols);
   for (int i = 0; i < cols; i++) {
     for (int j = 0; j < rows; j++) {
-      double zt = viewshed(j,i);
-      double zp = viewshed(viewpt[1],viewpt[0]);
-      int slope = slp(j,i);
-      int direction = dir(j,i);
-      double dis = PTdistance(viewpt[0], viewpt[1], zp,
-                              i, j, zt);
-      Rcpp::NumericVector normal = normalVector(slope, direction,
-                                                i, j, zt);
-      double cosA = cosAB(viewpt[0], zp, i, zt,
-                          normal[0], normal[2]);
-      double cosB = cosAB(viewpt[1], zp, j, zt,
-                          normal[1], normal[2]);
-      magnitude(j, i) = cosA * cosB / dis;
+      if (i != viewpt[0] && j != viewpt[1]) {
+        if (viewshed(j,i) == 1) {
+          double zt = dsm(j,i);
+          double zp = dsm(viewpt[1],viewpt[0]);
+          int slope = slp(j,i);
+          int direction = dir(j,i);
+          double dis = PTdistance(viewpt[0], viewpt[1], zp,
+                                  i, j, zt, resolution);
+          Rcpp::NumericVector normal = normalVector(slope, direction,
+                                                    i, j, zt);
+          double cosA;
+          double cosB;
+            if (viewpt[0] == i) {
+              cosA = 1;
+            } else {
+              cosA = cosAB(viewpt[0], zp, i, zt,
+                           normal[0], normal[2]);
+            }
+            if (viewpt[1] == j) {
+              cosB = 1;
+            } else {
+              cosB = cosAB(viewpt[1], zp, j, zt,
+                           normal[1], normal[2]);
+            }
+            magnitude(j, i) = cosA*cosB*(resolution*resolution/dis);
+        } else {
+          magnitude(j, i) = 0;
+        }
+      } else if (i == viewpt[0] && j == viewpt[1]) {
+        magnitude(j, i) = 1;
+      }
     }
   }
   return magnitude;

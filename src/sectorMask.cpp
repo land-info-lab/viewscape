@@ -27,41 +27,63 @@ Rcpp::IntegerMatrix sectorMask(
 
   for (int i = 0; i < cols; i++) {
     for (int j = 0; j < rows; j++) {
-      int y = -j;
-      double a = sectorValue(ka, ba, i);
-      double b = sectorValue(kb, bb, i);
-      if (fov[0] < fov[1]) {
-        if (fov[1]-fov[0] < 180){
-          if (fov[0] <= 90) {
-            if (a <= y && b <= y) {
-              visible(j,i) = viewshed(j,i);
-            } else {
-              visible(j,i) = 0;
-            }
-          } else if (fov[0] > 90 && fov[0] <= 270) {
-            if (fov[1] <= 270) {
-              if (a >= y && b <= y) {
+      if (viewshed(j,i) == 1) {
+        int y = -j;
+        double a = sectorValue(ka, ba, i);
+        double b = sectorValue(kb, bb, i);
+        if (fov[0] < fov[1]) {
+          if (fov[1]-fov[0] < 180){
+            if (fov[0] <= 90) {
+              if (a <= y && b <= y) {
                 visible(j,i) = viewshed(j,i);
               } else {
                 visible(j,i) = 0;
               }
-            } else {
+            } else if (fov[0] > 90 && fov[0] <= 270) {
+              if (fov[1] <= 270) {
+                if (a >= y && b <= y) {
+                  visible(j,i) = viewshed(j,i);
+                } else {
+                  visible(j,i) = 0;
+                }
+              } else {
+                if (a >= y && b >= y) {
+                  visible(j,i) = viewshed(j,i);
+                } else {
+                  visible(j,i) = 0;
+                }
+              }
+            } else if (fov[0] > 270 && fov[0] < 360) {
+              if (a <= y && b >= y) {
+                visible(j,i) = viewshed(j,i);
+              } else {
+                visible(j,i) = 0;
+              }
+            }
+          } else if (fov[1]-fov[0] > 180) {
+            if (fov[0] > 90 && fov[1] < 270) {
               if (a >= y && b >= y) {
                 visible(j,i) = viewshed(j,i);
               } else {
                 visible(j,i) = 0;
               }
-            }
-          } else if (fov[0] > 270 && fov[0] < 360) {
-            if (a <= y && b >= y) {
-              visible(j,i) = viewshed(j,i);
-            } else {
-              visible(j,i) = 0;
+            } else if (fov[0] < 90 && fov[1] >= 270) {
+              if (a >= y && b <= y) {
+                visible(j,i) = viewshed(j,i);
+              } else {
+                visible(j,i) = 0;
+              }
+            } else if (fov[0] >= 90) {
+              if (a <= y && b <= y) {
+                visible(j,i) = viewshed(j,i);
+              } else {
+                visible(j,i) = 0;
+              }
             }
           }
-        } else if (fov[1]-fov[0] > 180) {
-
         }
+      } else {
+        visible(j,i) = 0;
       }
     }
   }

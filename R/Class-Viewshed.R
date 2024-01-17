@@ -38,7 +38,7 @@ setMethod("filter_invisible", signature(object="Viewshed", ifRaster="logical"),
               y <- coords[,4]
               z <- terra::values(pointsData)[,1]
               pt <- cbind(x, y, z)
-              pt <- pt[pt[,3] == 1,]
+              pt <- pt[pt[,3] > 0,]
               pt <- pt[,-3]
               return(pt)
             }
