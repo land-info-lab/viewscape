@@ -28,8 +28,8 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   # compute viewshed
   label_matrix <- visibleLabel(viewpoint, dsm_matrix, offset2, distance)
   output <- new("Viewshed",
-                viewpoint = viewPt,
-                viewpos = viewpoint,
+                viewpoint = c(viewPt, offset),
+                viewpos = c(col,row),
                 visible = label_matrix,
                 resolution = resolution,
                 extent = as.vector(sf::st_bbox(dsm)),

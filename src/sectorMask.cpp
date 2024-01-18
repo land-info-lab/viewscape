@@ -2,7 +2,6 @@
 #include <cmath>
 using namespace Rcpp;
 
-// [[Rcpp::export]]
 double sectorValue(
     const double k,
     const double b,
@@ -12,6 +11,7 @@ double sectorValue(
   return result;
 }
 
+// [[Rcpp::export]]
 Rcpp::IntegerMatrix sectorMask(
     const Rcpp::IntegerMatrix &viewshed,
     const Rcpp::NumericVector viewpt,

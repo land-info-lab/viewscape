@@ -11,6 +11,7 @@
 #' with 0 inclusive and 360 exclusive. The initial angle must be smaller than the terminal
 #' angle in the sequence c(a,b) (a < b). To capture the northeast quadrant of a viewshed,
 #' one would use c(0,90), while the eastern quadrant would be delineated by c(45,315) as
+#'
 #' shown below:
 #' 135  90  45
 #' 180   v   0
@@ -19,6 +20,7 @@
 #'
 #'
 #' @return viewshed object
+#'
 #' @export
 #'
 

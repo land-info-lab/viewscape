@@ -7,7 +7,9 @@
 #' @param dsm Raster, the digital surface / elevation model
 #' @param viewshed Viewshed object.
 #'
-#' @return raster
+#' @return SpatRaster
+#'
+#' @importFrom terra terrain
 #'
 #' @references Chamberlain, B. C., & Meitner, M. J. (2013).
 #' A route-based visibility analysis for landscape management.
@@ -23,21 +25,26 @@ visual_magnitude <- function(dsm, viewshed) {
     stop("Viewshed object is missing")
   }
   # crop raster
-  visiblepoints <- filter_invisible(viewshed, FALSE)
-  m <- terra::vect(sp::SpatialPoints(visiblepoints))
-  mask_ <- terra::mask(filter_invisible(viewshed, TRUE), m)
-  subdsm <- terra::crop(dsm, terra::ext(mask_))
+  subdsm <- terra::crop(dsm, terra::ext(viewshed@extent, xy=TRUE))
   # get slope and direction
-  slope <- terra::terrain(test_dsm, v="slope", neighbors=8, unit="degrees")
+  slope <- terra::terrain(subdsm, v="slope", neighbors=8, unit="degrees")
   direction <- terra::terrain(subdsm, v="flowdir")
   # convert raster to matrix
   dsm_matrix <- terra::as.matrix(subdsm, wide=TRUE)
   slope_matrix <- terra::as.matrix(slope, wide=TRUE)
+  slope_matrix[is.nan(slope_matrix)] = 0
   direction_matrix <- terra::as.matrix(direction, wide=TRUE)
+  direction_matrix[is.nan(direction_matrix)] = 0
   # compute visual magnitude
   vm_matrix <- VM(viewshed@visible, dsm_matrix,
                   slope_matrix, direction_matrix,
-                  viewshed@viewpos, viewshed@resolution)
+                  viewshed@viewpos, viewshed@viewpoint[3],
+                  viewshed@resolution[1])
   viewshed@visible <- vm_matrix
-  return(filter_invisible(viewshed, TRUE))
+  # vm raster
+  vmpoints <- filter_invisible(viewshed, FALSE)
+  m <- terra::vect(sp::SpatialPoints(vmpoints))
+  terra::crs(m) <- viewshed@crs
+  vm <- terra::mask(filter_invisible(viewshed, TRUE), m)
+  return(vm)
 }
