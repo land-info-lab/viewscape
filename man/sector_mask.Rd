@@ -25,10 +25,14 @@ For defining the field of view ('fov'), angles range from 0 to 360 degrees,
 with 0 inclusive and 360 exclusive. The initial angle must be smaller than the terminal
 angle in the sequence c(a,b) (a < b). To capture the northeast quadrant of a viewshed,
 one would use c(0,90), while the eastern quadrant would be delineated by c(45,315) as
-
 shown below:
-135  90  45
-180   v   0
-225 270 315
+\tabular{rrr}{
+135 \tab 90 \tab 45 \cr
+180 \tab v \tab 0 \cr
+225 \tab 270 \tab 315 \cr
+}
 Here, 'v' represents the viewpoint, with angles measured clockwise from due north.
+}
+\seealso{
+\code{\link[=compute_viewshed]{compute_viewshed()}}
 }
