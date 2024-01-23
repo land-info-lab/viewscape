@@ -18,7 +18,7 @@ SpatRaster
 Visual Magnitude quantifies the extent of a visible region
 as perceived by an observer. It is derived from the surface's slope and
 angle features, alongside the observer's relative distance from the area
-in question.
+in question (Chamberlain & Meitner).
 }
 \references{
 Chamberlain, B. C., & Meitner, M. J. (2013).
