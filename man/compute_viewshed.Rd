@@ -10,6 +10,7 @@ compute_viewshed(
   offset_viewpoint = 1.7,
   offset_height = 0,
   r = NULL,
+  method = "plane",
   parallel = FALSE,
   workers = 0,
   raster = FALSE,
@@ -30,6 +31,9 @@ viewpoint will look at. (defaut is 0)}
 
 \item{r}{Numeric (optional), setting the radius for viewshed analysis.
 (it is defaulted as NULL)}
+
+\item{method}{Character, The algorithm for computing a viewshed:
+"plane" and "los" (see details). "plane"  is used as default.}
 
 \item{parallel}{Logical, (default is FALSE) indicating if parallel computing
 should be used to compute viewsheds of multiview points. When it is TRUE,
@@ -57,6 +61,12 @@ which are areas visible from specific viewpoints, based on a Digital Surface
 Model (DSM). It provides flexibility for single or multi-viewpoint analyses
 and allows options for parallel processing, raster output, and plotting.
 }
+\details{
+For method, "plane" is the reference plane algorithm introduced by
+Wang et al. (2000) and "los" is the line of sight algorithm (Franklin & Ray, 1994).
+The reference plane algorithm can be more time-efficient than the line of sight
+algorithm, whereas the accuracy of the line of sight is better.
+}
 \examples{
 \dontrun{
 #test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
@@ -71,4 +81,13 @@ and allows options for parallel processing, raster output, and plotting.
 # Calculate viewsheds for multiple viewpoints in parallel
 #viewsheds <- compute_viewshed(dsm, viewpoints = test_viewpoint, parallel = TRUE, workers = 2)
 }
+}
+\references{
+Franklin, W. R., & Ray, C. (1994, May).
+Higher isn’t necessarily better: Visibility algorithms and experiments.
+In Advances in GIS research: sixth international symposium on spatial
+data handling (Vol. 2, pp. 751-770). Edinburgh: Taylor & Francis.
+Wang, J., Robinson, G. J., & White, K. (2000).
+Generating viewsheds without using sightlines.
+Photogrammetric engineering and remote sensing, 66(1), 87-90.
 }

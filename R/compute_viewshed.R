@@ -13,6 +13,8 @@
 #' viewpoint will look at. (defaut is 0)
 #' @param r Numeric (optional), setting the radius for viewshed analysis.
 #' (it is defaulted as NULL)
+#' @param method Character, The algorithm for computing a viewshed:
+#' "plane" and "los" (see details). "plane"  is used as default.
 #' @param parallel Logical, (default is FALSE) indicating if parallel computing
 #' should be used to compute viewsheds of multiview points. When it is TRUE,
 #' arguements 'raster' and 'plot' are ignored
@@ -29,6 +31,19 @@
 #' value 0 means invisible. For multi-viewpoint analysis, a list of viewsheds
 #' is returned.
 #'
+#' @details For method, "plane" is the reference plane algorithm introduced by
+#' Wang et al. (2000) and "los" is the line of sight algorithm (Franklin & Ray, 1994).
+#' The reference plane algorithm can be more time-efficient than the line of sight
+#' algorithm, whereas the accuracy of the line of sight is better.
+#'
+#'
+#' @references Franklin, W. R., & Ray, C. (1994, May).
+#' Higher isn’t necessarily better: Visibility algorithms and experiments.
+#' In Advances in GIS research: sixth international symposium on spatial
+#' data handling (Vol. 2, pp. 751-770). Edinburgh: Taylor & Francis.
+#' Wang, J., Robinson, G. J., & White, K. (2000).
+#' Generating viewsheds without using sightlines.
+#' Photogrammetric engineering and remote sensing, 66(1), 87-90.
 #'
 #' @useDynLib viewscape
 #' @import pbmcapply
@@ -60,6 +75,7 @@ compute_viewshed <- function(dsm,
                              offset_viewpoint=1.7,
                              offset_height = 0,
                              r = NULL,
+                             method = "plane",
                              parallel = FALSE,
                              workers = 0,
                              raster = FALSE,
@@ -105,7 +121,10 @@ compute_viewshed <- function(dsm,
   if (multiviewpoints == FALSE){
     viewpoints <- c(viewpoints[,1], viewpoints[,2])
     # compute viewshed
-    output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint, offset_height)
+    output <- radius_viewshed(dsm, r, viewpoints,
+                              offset_viewpoint,
+                              offset_height,
+                              method)
     if (raster) {
       raster_data <- filter_invisible(output, raster)
       if (plot) {
@@ -144,37 +163,22 @@ compute_viewshed <- function(dsm,
       # inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
         workers = 1
-        # viewsheds <- radius_viewshed_m(dsm=dsm,
-        #                                r=r,
-        #                                viewPts=viewpoints,
-        #                                offset=offset_viewpoint)
       }
       suppressWarnings(
         viewsheds <- paral_nix(X = inputs,
                                dsm = dsm,
                                r = r,
                                offset = offset_viewpoint,
+                               method = method,
                                workers = workers)
       )
     } else {
-      # if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-      #   viewsheds <- c()
-      #   for(i in 1:length(viewpoints[,1])){
-      #     viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
-      #     output <- radius_viewshed(dsm, r, viewpoint, offset_viewpoint)
-      #     viewsheds <- c(viewsheds, output)
-      #   }
-      # } else {
-      #   viewsheds <- radius_viewshed_m(dsm=dsm,
-      #                                  r=r,
-      #                                  viewPts=viewpoints,
-      #                                  offset=offset_viewpoint)
-      # }
       suppressWarnings(
         viewsheds <- paral_nix(X = inputs,
                                dsm = dsm,
                                r = r,
                                offset = offset_viewpoint,
+                               method = method,
                                workers = 1)
       )
     }

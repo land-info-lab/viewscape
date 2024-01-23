@@ -21,6 +21,8 @@ carrying out landscape spatial analysis based on the viewshed within the
 R environment. The viewscape R pacakge can currently be downloaded via
 github.
 
+## Intallation
+
 ``` r
 
 # download the package
@@ -30,14 +32,17 @@ devtools::install_github("land-info-lab/viewscape", dependencies=TRUE)
 library(viewscape)
 ```
 
+## Functionality and metrics
+
 The basic viewshed analysis can be accessed through calling the
 `compute_viewshed`. The two needed objects are a digital surface model
 (DSM) and a viewpoint. It provides flexibility for single or
 multi-viewpoint analyses and allows options for parallel processing,
-raster output, and plotting.
+raster output, and plotting. In addition, a `sector_mask` function is 
+designed to subset a viewshed based on its viewpoint and the field of view. 
 
-Based on the viewshed, a set of configuration metrics can be calculated
-using `calculate_viewmetrics`, `calculate_diversity`, and
+Based on the viewshed, visual magnitude, a gradient ofvisibility across the range, 
+can be calculated using the `visual_magnitude` function. Also, a set of configuration metrics can be calculated using `calculate_viewmetrics`, `calculate_diversity`, and
 `calculate_feature`.
 
 The metrics are including:
@@ -73,6 +78,8 @@ The metrics are including:
 -   Shannon diversity index: Based on the number of land use/cover
     classes and the proportion of distribution.
 -   Proportion of other object: Building, trees, or paved surface.
+
+
 
 ``` r
 #Load in DSM
@@ -145,6 +152,23 @@ vignette](https://github.com/land-info-lab/viewscape/blob/master/vignettes/views
 The package currently does not support multi-core processing on Windows system. 
 The function 'compute_viewshed' with 'parallel = TRUE' will automatically work
 on single worker.
+
+## Reference
+
+Franklin, W. R., & Ray, C. (1994, May).
+Higher isn’t necessarily better: Visibility algorithms and experiments.
+In Advances in GIS research: sixth international symposium on spatial
+data handling (Vol. 2, pp. 751-770). Edinburgh: Taylor & Francis.
+
+Wang, J., Robinson, G. J., & White, K. (2000).
+Generating viewsheds without using sightlines.
+Photogrammetric engineering and remote sensing, 66(1), 87-90.
+
+Chamberlain, B. C., & Meitner, M. J. (2013). 
+A route-based visibility analysis for landscape management. 
+Landscape and Urban Planning, 111, 13-24.
+
+Tabrizian, P., Baran, P. K., Van Berkel, D., Mitasova, H., & Meentemeyer, R. (2020). Modeling restorative potential of urban environments by coupling viewscape analysis of lidar data with experiments in immersive virtual environments. Landscape and Urban planning, 195, 103704.
 
 ## Issues and bugs
 

@@ -12,7 +12,7 @@ visual_magnitude(dsm, viewshed)
 \item{viewshed}{Viewshed object.}
 }
 \value{
-raster
+SpatRaster
 }
 \description{
 Visual Magnitude quantifies the extent of a visible region

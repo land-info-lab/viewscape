@@ -30,14 +30,14 @@ VignetteBuilder: knitr,
                  rmarkdown
 biocViews:
 Imports: 
-    Rcpp,
+    Rcpp (>= 1.0.11),
     methods,
     dplyr,
     sf,
     sp,
     terra,
-    lidR,
-    ForestTools,
+    lidR (>= 4.0.4),
+    ForestTools (>= 1.0.1),
     parallel,
     pbmcapply,
     httr2

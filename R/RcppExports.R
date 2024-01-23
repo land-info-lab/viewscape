@@ -9,15 +9,11 @@ get_depths <- function(px, py, x, y, num) {
     .Call('_viewscape_get_depths', PACKAGE = 'viewscape', px, py, x, y, num)
 }
 
-multiLabel <- function(vpts, dsm, max_dis, vpth, h) {
-    .Call('_viewscape_multiLabel', PACKAGE = 'viewscape', vpts, dsm, max_dis, vpth, h)
-}
-
 sectorMask <- function(viewshed, viewpt, fov) {
     .Call('_viewscape_sectorMask', PACKAGE = 'viewscape', viewshed, viewpt, fov)
 }
 
-visibleLabel <- function(viewpoint, dsm, h, max_dis) {
-    .Call('_viewscape_visibleLabel', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis)
+reference <- function(viewpoint, dsm, h, max_dis) {
+    .Call('_viewscape_reference', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis)
 }
 

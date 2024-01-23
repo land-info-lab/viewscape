@@ -7,7 +7,7 @@
 #' @importFrom utils install.packages
 
 #' @noMd
-radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
+radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0, method) {
   resolution <- terra::res(dsm)
   distance <- round(r/resolution[1])
   projection <- terra::crs(dsm, proj = TRUE)
@@ -26,7 +26,12 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   # get raster information
   dsm_matrix <- terra::as.matrix(dsm, wide=TRUE)
   # compute viewshed
-  label_matrix <- visibleLabel(viewpoint, dsm_matrix, offset2, distance)
+  if (method == "plane") {
+    label_matrix <- reference(viewpoint, dsm_matrix, offset2, distance)
+  } else if (method == "los") {
+    label_matrix <- LOS(viewpoint, dsm_matrix, offset2, distance)
+  }
+
   output <- new("Viewshed",
                 viewpoint = c(viewPt, offset),
                 viewpos = c(col,row),
@@ -38,53 +43,16 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
 }
 
 #' @noMd
-paral_nix <- function(X, dsm, r, offset, workers){
+paral_nix <- function(X, dsm, r, offset, workers, method){
   results <- pbmcapply::pbmclapply(X = X,
                                    FUN=radius_viewshed,
                                    dsm=dsm,
                                    r=r,
                                    offset=offset,
+                                   method = method,
                                    mc.cores=workers)
   return(results)
 }
-
-# radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
-#   output <- c()
-#   dsm_list <- list()
-#   ex <- list()
-#   resolution <- terra::res(dsm)
-#   projt <- terra::crs(dsm, proj = TRUE)
-#   x <- c()
-#   y <- c()
-#   z <- terra::extract(dsm, viewPts)[,1] + offset
-#   distance <- round(r/resolution[1])
-#   for (i in 1:length(z)) {
-#     subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
-#     subdsm <- terra::crop(dsm, terra::ext(subarea))
-#     e <- as.vector(sf::st_bbox(subdsm))
-#     ex[[i]] <- e
-#     x <- c(x, terra::colFromX(subdsm, viewPts[i,1]))
-#     y <- c(y, terra::rowFromY(subdsm, viewPts[i,2]))
-#     dsm_list[[i]] <- terra::as.matrix(subdsm, wide=TRUE)
-#   }
-#   vpts <- cbind(x, y)
-#   vpts <- cbind(vpts, z)
-#   label_matrix <- multiLabelParallel(vpts=vpts,
-#                              dsm=dsm_list,
-#                              max_dis=distance,
-#                              vpth=offset,
-#                              h=offset2)
-#   for(i in 1:length(z)) {
-#     out <- new("Viewshed",
-#                viewpoint = viewPts[i,],
-#                visible = label_matrix[[i]],
-#                resolution = resolution,
-#                extent = ex[[i]],
-#                crs = projt)
-#     output <- c(output, out)
-#   }
-#   return(output)
-# }
 
 #' @noMd
 # H=−∑[(pi)×ln(pi)]
