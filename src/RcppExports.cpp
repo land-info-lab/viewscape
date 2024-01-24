@@ -11,19 +11,19 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // VM
-Rcpp::NumericMatrix VM(const Rcpp::IntegerMatrix& viewshed, const Rcpp::IntegerMatrix& dsm, const Rcpp::IntegerMatrix& slp, const Rcpp::IntegerMatrix& dir, const Rcpp::NumericVector viewpt, const double h, const int resolution);
-RcppExport SEXP _viewscape_VM(SEXP viewshedSEXP, SEXP dsmSEXP, SEXP slpSEXP, SEXP dirSEXP, SEXP viewptSEXP, SEXP hSEXP, SEXP resolutionSEXP) {
+Rcpp::NumericMatrix VM(const Rcpp::IntegerMatrix& viewshed, const Rcpp::IntegerMatrix& dsm, const Rcpp::NumericMatrix& slp, const Rcpp::NumericMatrix& asp, const Rcpp::NumericVector viewpt, const double h, const int resolution);
+RcppExport SEXP _viewscape_VM(SEXP viewshedSEXP, SEXP dsmSEXP, SEXP slpSEXP, SEXP aspSEXP, SEXP viewptSEXP, SEXP hSEXP, SEXP resolutionSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type viewshed(viewshedSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type dsm(dsmSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type slp(slpSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type dir(dirSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type slp(slpSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type asp(aspSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector >::type viewpt(viewptSEXP);
     Rcpp::traits::input_parameter< const double >::type h(hSEXP);
     Rcpp::traits::input_parameter< const int >::type resolution(resolutionSEXP);
-    rcpp_result_gen = Rcpp::wrap(VM(viewshed, dsm, slp, dir, viewpt, h, resolution));
+    rcpp_result_gen = Rcpp::wrap(VM(viewshed, dsm, slp, asp, viewpt, h, resolution));
     return rcpp_result_gen;
 END_RCPP
 }

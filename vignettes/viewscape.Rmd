@@ -67,7 +67,6 @@ terra::plot(vm, axes=FALSE, box=FALSE)
 ```
 
 
-
 ### 1.4 Compute the viewshed for multiple viewpoints
 
 ```{r}

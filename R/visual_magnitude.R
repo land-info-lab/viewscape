@@ -2,7 +2,7 @@
 #' @description Visual Magnitude quantifies the extent of a visible region
 #' as perceived by an observer. It is derived from the surface's slope and
 #' angle features, alongside the observer's relative distance from the area
-#' in question (Chamberlain & Meitner).
+#' (Chamberlain & Meitner).
 #'
 #' @param dsm Raster, the digital surface / elevation model
 #' @param viewshed Viewshed object.
@@ -26,18 +26,19 @@ visual_magnitude <- function(dsm, viewshed) {
   }
   # crop raster
   subdsm <- terra::crop(dsm, terra::ext(viewshed@extent, xy=TRUE))
-  # get slope and direction
-  slope <- terra::terrain(subdsm, v="slope", neighbors=8, unit="degrees")
-  direction <- terra::terrain(subdsm, v="flowdir")
+  # get slope
+  slope <- terra::terrain(subdsm, v="slope", neighbors=8, unit="radians")
+  aspect <- terra::terrain(subdsm, v="aspect", neighbors=8, unit="radians")
+  # direction <- terra::terrain(subdsm, v="flowdir")
   # convert raster to matrix
   dsm_matrix <- terra::as.matrix(subdsm, wide=TRUE)
   slope_matrix <- terra::as.matrix(slope, wide=TRUE)
   slope_matrix[is.nan(slope_matrix)] = 0
-  direction_matrix <- terra::as.matrix(direction, wide=TRUE)
-  direction_matrix[is.nan(direction_matrix)] = 0
+  aspect_matrix <- terra::as.matrix(aspect, wide=TRUE)
+  aspect_matrix[is.nan(aspect_matrix)] = 0
   # compute visual magnitude
   vm_matrix <- VM(viewshed@visible, dsm_matrix,
-                  slope_matrix, direction_matrix,
+                  slope_matrix, aspect_matrix,
                   viewshed@viewpos, viewshed@viewpoint[3],
                   viewshed@resolution[1])
   viewshed@visible <- vm_matrix
