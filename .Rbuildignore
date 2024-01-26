@@ -3,3 +3,7 @@
 ^README\.Rmd$
 ^\.github$
 ^codecov\.yml$
+^CODE_OF_CONDUCT\.md$
+^_config\.yml$
+^codemeta\.json$
+^viewscape\.md$
