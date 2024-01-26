@@ -48,7 +48,10 @@ calculate_diversity <- function(viewshed,
   p <- land_class$proportion
   sdi <- sd_index(p)
   if (proportion) {
-    return(list(SDI=sdi, Proportion=t(subset(land_class, select = c(type, proportion)))))
+    return(list(SDI=sdi,
+                Proportion=t(subset(land_class,
+                                    select = c(.data$type,
+                                               proportion)))))
   } else {
     return(sdi)
   }
