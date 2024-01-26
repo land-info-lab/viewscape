@@ -36,44 +36,16 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {
   return(output)
 }
 
-
-# radius_viewshed_m <- function(dsm, r, viewPts, offset, offset2 = 0) {
-#   output <- c()
-#   dsm_list <- list()
-#   ex <- list()
-#   resolution <- terra::res(dsm)
-#   projt <- terra::crs(dsm, proj = TRUE)
-#   x <- c()
-#   y <- c()
-#   z <- terra::extract(dsm, viewPts)[,1] + offset
-#   distance <- round(r/resolution[1])
-#   for (i in 1:length(z)) {
-#     subarea <- get_buffer(viewPts[i,1], viewPts[i,2], r)
-#     subdsm <- terra::crop(dsm, terra::ext(subarea))
-#     e <- as.vector(sf::st_bbox(subdsm))
-#     ex[[i]] <- e
-#     x <- c(x, terra::colFromX(subdsm, viewPts[i,1]))
-#     y <- c(y, terra::rowFromY(subdsm, viewPts[i,2]))
-#     dsm_list[[i]] <- terra::as.matrix(subdsm, wide=TRUE)
-#   }
-#   vpts <- cbind(x, y)
-#   vpts <- cbind(vpts, z)
-#   label_matrix <- multiLabelParallel(vpts=vpts,
-#                              dsm=dsm_list,
-#                              max_dis=distance,
-#                              vpth=offset,
-#                              h=offset2)
-#   for(i in 1:length(z)) {
-#     out <- new("Viewshed",
-#                viewpoint = viewPts[i,],
-#                visible = label_matrix[[i]],
-#                resolution = resolution,
-#                extent = ex[[i]],
-#                crs = projt)
-#     output <- c(output, out)
-#   }
-#   return(output)
-# }
+#' @noMd
+paral_nix <- function(X, dsm, r, offset, workers){
+  results <- pbmcapply::pbmclapply(X = X,
+                                   FUN=radius_viewshed,
+                                   dsm=dsm,
+                                   r=r,
+                                   offset=offset,
+                                   mc.cores=workers)
+  return(results)
+}
 
 #' @noMd
 # H=−∑[(pi)×ln(pi)]
@@ -141,76 +113,4 @@ patch_p <- function(m, patchpoly){
                            num_pt)
   samples <- sf::st_coordinates(samples)[,-3]
   return(list(Nump, MSI, ED, PS, PD, samples))
-}
-
-
-#' @noMd
-# create a request of the TNMAccess API
-return_response <- function(bbox, max_return) {
-  api1 <- 'https://tnmaccess.nationalmap.gov/api/v1/products?bbox='
-  api2 <- paste0(bbox[1], ",",
-                 bbox[2], ",",
-                 bbox[3], ",",
-                 bbox[4])
-  api3 <- paste0('&datasets=Lidar%20Point%20Cloud%20(LPC)&max=',
-                 max_return,
-                 '&prodFormats=LAS,LAZ')
-  json <- httr2::request(paste0(api1, api2, api3)) %>%
-    httr2::req_timeout(10000) %>%
-    httr2::req_perform() %>%
-    httr2::resp_body_json()
-  items <- length(json$items)
-  cat(paste0("Get ", items, " returns", "\n"))
-  cat(paste0("Find available items: ", json$total, "\n"))
-  if (json$total > items) {
-    cat("There are more available items\n")
-    cat("You can set a greater return number to return\n")
-  }
-  titles <- c()
-  sourceId <- c()
-  metaUrl <- c()
-  sizeInBytes <- c()
-  startYear <- c()
-  previewGraphicURL <- c()
-  downloadLazURL <- c()
-  if (items >= 1) {
-    for (i in 1:items) {
-      item <- json[[2]][[i]]
-      titles <- c(titles, item$title)
-      sourceId <- c(sourceId, item$sourceId)
-      url <- paste0(item$metaUrl, "?format=json")
-      metaUrl <- c(metaUrl, url)
-      sizeInBytes <- c(sizeInBytes, item$sizeInBytes)
-      startYear <- c(startYear, find_year(url))
-      previewGraphicURL <- c(previewGraphicURL, item$previewGraphicURL)
-      downloadLazURL <- c(downloadLazURL, item$downloadLazURL)
-    }
-    df <- data.frame(titles, sourceId,
-                     metaUrl, sizeInBytes,
-                     startYear, previewGraphicURL,
-                     downloadLazURL)
-    return(df)
-  }
-}
-
-#' @noMd
-# find year
-find_year <- function(url) {
-  j <- httr2::request(url) %>%
-    httr2::req_timeout(10000) %>%
-    httr2::req_perform() %>%
-    httr2::resp_body_json()
-  date <- j$dates[[2]]$dateString %>% strsplit("-") %>% unlist()
-  return(as.integer(date[1]))
-}
-
-#' @noMd
-paral_nix <- function(X, dsm, r, offset, workers){
-  results <- pbmcapply::pbmclapply(X = X,
-                                   FUN=radius_viewshed,
-                                   dsm=dsm,
-                                   r=r,
-                                   offset=offset,
-                                   mc.cores=workers)
-  return(results)
 }

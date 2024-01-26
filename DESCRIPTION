@@ -36,10 +36,8 @@ Imports:
     sf,
     sp,
     terra,
-    lidR,
     ForestTools,
     parallel,
-    pbmcapply,
-    httr2
+    pbmcapply
 LinkingTo:
     Rcpp
