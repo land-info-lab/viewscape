@@ -10,7 +10,7 @@
 
 <p align="left">
 
-<img src=".viewscape_hex-01.png" height="200">
+<img src="viewscape_hex-01.png" height="200">
 
 </p>
 
