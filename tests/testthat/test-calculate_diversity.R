@@ -19,8 +19,8 @@ testthat::test_that("runs correctly", {
                                         plot=FALSE)
 
   # the Shannon Diversity Index (SDI)
-  test_diversity <- viewscape::calculate_diversity(test_landcover,
-                                                   output,
+  test_diversity <- viewscape::calculate_diversity(output,
+                                                   test_landcover,
                                                    proportion = TRUE)
 
   testthat::expect_type(test_diversity[[1]], "double")
