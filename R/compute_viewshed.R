@@ -144,10 +144,6 @@ compute_viewshed <- function(dsm,
       # inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
         workers = 1
-        # viewsheds <- radius_viewshed_m(dsm=dsm,
-        #                                r=r,
-        #                                viewPts=viewpoints,
-        #                                offset=offset_viewpoint)
       }
       suppressWarnings(
         viewsheds <- paral_nix(X = inputs,
@@ -157,19 +153,6 @@ compute_viewshed <- function(dsm,
                                workers = workers)
       )
     } else {
-      # if (isTRUE(Sys.info()[1]=="Windows") == TRUE){
-      #   viewsheds <- c()
-      #   for(i in 1:length(viewpoints[,1])){
-      #     viewpoint <- c(viewpoints[i,1],viewpoints[i,2])
-      #     output <- radius_viewshed(dsm, r, viewpoint, offset_viewpoint)
-      #     viewsheds <- c(viewsheds, output)
-      #   }
-      # } else {
-      #   viewsheds <- radius_viewshed_m(dsm=dsm,
-      #                                  r=r,
-      #                                  viewPts=viewpoints,
-      #                                  offset=offset_viewpoint)
-      # }
       suppressWarnings(
         viewsheds <- paral_nix(X = inputs,
                                dsm = dsm,

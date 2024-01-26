@@ -25,21 +25,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// multiLabel
-Rcpp::List multiLabel(Rcpp::NumericMatrix& vpts, Rcpp::List& dsm, const int max_dis, const double vpth, const double h);
-RcppExport SEXP _viewscape_multiLabel(SEXP vptsSEXP, SEXP dsmSEXP, SEXP max_disSEXP, SEXP vpthSEXP, SEXP hSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type vpts(vptsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List& >::type dsm(dsmSEXP);
-    Rcpp::traits::input_parameter< const int >::type max_dis(max_disSEXP);
-    Rcpp::traits::input_parameter< const double >::type vpth(vpthSEXP);
-    Rcpp::traits::input_parameter< const double >::type h(hSEXP);
-    rcpp_result_gen = Rcpp::wrap(multiLabel(vpts, dsm, max_dis, vpth, h));
-    return rcpp_result_gen;
-END_RCPP
-}
 // visibleLabel
 Rcpp::IntegerMatrix visibleLabel(const Rcpp::NumericVector& viewpoint, const Rcpp::NumericMatrix& dsm, const double h, const int max_dis);
 RcppExport SEXP _viewscape_visibleLabel(SEXP viewpointSEXP, SEXP dsmSEXP, SEXP hSEXP, SEXP max_disSEXP) {
@@ -57,7 +42,6 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_viewscape_get_depths", (DL_FUNC) &_viewscape_get_depths, 5},
-    {"_viewscape_multiLabel", (DL_FUNC) &_viewscape_multiLabel, 5},
     {"_viewscape_visibleLabel", (DL_FUNC) &_viewscape_visibleLabel, 4},
     {NULL, NULL, 0}
 };
