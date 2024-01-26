@@ -14,6 +14,7 @@
 #' within the viewshed.
 #' @import terra
 #' @importFrom dplyr count
+#' @importFrom rlang .data
 #'
 #' @export
 #'
