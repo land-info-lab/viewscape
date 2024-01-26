@@ -19,7 +19,6 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Language: en_GB
 Suggests: 
-    covr,
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
