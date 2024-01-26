@@ -4,9 +4,9 @@
 #' a viewshed object representing the observer's line of sight, and an optional
 #' parameter to compute class proportions.
 #'
+#' @param viewshed Viewshed object.
 #' @param land Raster. The raster of land use/land cover representing different
 #' land use/cover classes.
-#' @param viewshed Viewshed object.
 #' @param proportion logical (Optional), indicating whether to return class
 #' proportions along with the Shannon Diversity Index (SDI). (default is FALSE).
 #' @return List. a list containing the Shannon Diversity Index (SDI) and,
@@ -19,14 +19,14 @@
 #'
 #' @examples
 #' \dontrun{
-#' #diversity_metrics <- calculate_diversity(land_cover_raster,
-#' #                                         viewshed_object,
+#' #diversity_metrics <- calculate_diversity(viewshed_object,
+#' #                                         land_cover_raster,
 #' #                                         proportion = TRUE)
 #'}
 #'
 
-calculate_diversity <- function(land,
-                                viewshed,
+calculate_diversity <- function(viewshed,
+                                land,
                                 proportion = FALSE){
   if (isFALSE(terra::crs(land, proj = TRUE) == viewshed@crs)) {
     cat("Your input (land) rasters have different
@@ -40,7 +40,7 @@ calculate_diversity <- function(land,
   land_class <- terra::extract(land, pt)[,1]
   land_class <- as.data.frame(land_class)
   colnames(land_class)[1] <- "type"
-  land_class <- dplyr::count(land_class, type)
+  land_class <- dplyr::count(land_class, .data$type)
   total <- sum(land_class$n)
   land_class$proportion <- land_class$n/total
   # calculate Shannon diversity index

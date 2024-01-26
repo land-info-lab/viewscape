@@ -22,15 +22,15 @@
 #' # test_canopy <- terra::rast(system.file("test_canopy.tif",
 #' #                                      package ="viewscape"))
 #' # calculate the percentage of canopy coverage
-#' # test_canopy_proportion <- viewscape::calculate_feature(type = 2,
+#' # test_canopy_proportion <- viewscape::calculate_feature(viewshed = viewshed,
 #' #                                                       feature = test_canopy,
-#' #                                                       viewshed = viewshed
+#' #                                                       type = 2,
 #' #                                                       exclude_value = 0)
 #' }
 
-calculate_feature <- function(type,
+calculate_feature <- function(viewshed,
                               feature,
-                              viewshed,
+                              type,
                               exclude_value){
   if (isFALSE(terra::crs(feature, proj = TRUE) == viewshed@crs)) {
     cat("Your input (feature) rasters have different
