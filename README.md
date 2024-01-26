@@ -10,7 +10,7 @@
 
 <p align="left">
 
-<img src=".//man//figures//viewscape_hex.png" height="200">
+<img src=".viewscape_hex-01.png" height="200">
 
 </p>
 
@@ -122,7 +122,7 @@ metrics and the rest of the functions available in this package please
 refer to the [package
 website](https://land-info-lab.github.io/viewscape/). For more
 information and examples of the functions check out the [package
-vignette](https://github.com/land-info-lab/viewscape/blob/master/inst/extdata/viewscape.md).
+vignette](https://github.com/land-info-lab/viewscape/blob/master/viewscape.md).
 
 ## Note
 
