@@ -7,6 +7,7 @@
 #' @slot extent numeric
 #' @slot crs character
 #' @import methods
+#' @importFrom terra geom
 #' @md
 
 setClass(

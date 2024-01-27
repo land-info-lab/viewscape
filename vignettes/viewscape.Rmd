@@ -133,7 +133,7 @@ test_diversity
 
 calculate_feature is to calculate the proportion of a feature (including trees, buildings, parking, and roads) within the viewshed. This function can be applied to 
 
-```{r eval=FALSE}
+```{r}
 # load canopy raster
 test_canopy <- terra::rast(system.file("test_canopy.tif",
                                           package ="viewscape"))
