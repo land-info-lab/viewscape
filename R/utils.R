@@ -4,6 +4,7 @@
 #' @importFrom methods new
 #' @importFrom stats sd
 #' @importFrom utils install.packages
+#' @importFrom sp SpatialPoints
 
 #' @noMd
 radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0, method) {

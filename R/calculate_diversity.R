@@ -15,6 +15,7 @@
 #' @import terra
 #' @importFrom dplyr count
 #' @importFrom dplyr select
+#' @importFrom dplyr "%>%"
 #' @importFrom rlang .data
 #'
 #' @export
