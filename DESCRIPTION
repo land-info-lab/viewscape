@@ -6,7 +6,6 @@ Authors@R: c(person("Xiaohao", "Yang", role = c("aut", "cre"), email = "xiaohaoy
            person("Nathan", "Fox", role = c("aut")),
            person("Derek", "Van Berkel", role = c("aut")),
            person("Mark", "Lindquist", role = c("aut")))
-Maintainer: Xiaohao Yang <xiaohaoy@umich.edu>
 Description: A collection of functions to make R a more effective viewscape analysis 
     tool for calculating viewscape metrics based on computing the viewable area for 
     given a point/multiple viewpoints and a digital elevation model.
@@ -15,7 +14,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Language: en_GB
 Suggests: 
     testthat (>= 3.0.0),
