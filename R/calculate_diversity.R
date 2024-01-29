@@ -14,13 +14,15 @@
 #' within the viewshed.
 #' @import terra
 #' @importFrom dplyr count
+#' @importFrom dplyr select
+#' @importFrom rlang .data
 #'
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' #diversity_metrics <- calculate_diversity(land_cover_raster,
-#' #                                         viewshed_object,
+#' #diversity_metrics <- calculate_diversity(viewshed_object,
+#' #                                         land_cover_raster,
 #' #                                         proportion = TRUE)
 #'}
 #'
@@ -47,7 +49,9 @@ calculate_diversity <- function(land,
   p <- land_class$proportion
   sdi <- sd_index(p)
   if (proportion) {
-    return(list(SDI=sdi, Proportion=t(subset(land_class, select = c(type, proportion)))))
+    sub_land_class <- land_class %>%
+      dplyr::select(.data$type, proportion)
+    return(list(SDI=sdi,Proportion=t(sub_land_class)))
   } else {
     return(sdi)
   }

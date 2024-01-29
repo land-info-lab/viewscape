@@ -4,12 +4,12 @@
 \alias{visual_magnitude}
 \title{visual_magnitude}
 \usage{
-visual_magnitude(dsm, viewshed)
+visual_magnitude(viewshed, dsm)
 }
 \arguments{
-\item{dsm}{Raster, the digital surface / elevation model}
-
 \item{viewshed}{Viewshed object.}
+
+\item{dsm}{Raster, the digital surface / elevation model}
 }
 \value{
 SpatRaster
@@ -18,10 +18,22 @@ SpatRaster
 Visual Magnitude quantifies the extent of a visible region
 as perceived by an observer. It is derived from the surface's slope and
 angle features, alongside the observer's relative distance from the area
-in question (Chamberlain & Meitner).
+(Chamberlain & Meitner).
+}
+\examples{
+\dontrun{
+viewshed<- compute_viewshed(dsm = dsm,
+                           viewpoints = test_viewpoint,
+                           offset_viewpoint = 6)
+vm <- viewscape::visual_magnitude(viewshed, test_dsm)
+}
+
 }
 \references{
 Chamberlain, B. C., & Meitner, M. J. (2013).
 A route-based visibility analysis for landscape management.
 Landscape and Urban Planning, 111, 13-24.
+}
+\seealso{
+\code{\link[=compute_viewshed]{compute_viewshed()}}
 }

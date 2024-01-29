@@ -2,12 +2,10 @@ Package: viewscape
 Type: Package
 Title: Viewscape Analysis
 Version: 1.0.0
-Author@R: c(person("Xiaohao", "Yang", role = c("aut", "cre"), email = "xiaohaoy@umich.edu"),
+Authors@R: c(person("Xiaohao", "Yang", role = c("aut", "cre", "cph"), email = "xiaohaoy@umich.edu"),
            person("Nathan", "Fox", role = c("aut")),
            person("Derek", "Van Berkel", role = c("aut")),
            person("Mark", "Lindquist", role = c("aut")))
-Author: Xiaohao Yang
-Maintainer: Xiaohao Yang <xiaohaoy@umich.edu>
 Description: A collection of functions to make R a more effective viewscape analysis 
     tool for calculating viewscape metrics based on computing the viewable area for 
     given a point/multiple viewpoints and a digital elevation model.
@@ -16,10 +14,9 @@ License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Language: en_GB
 Suggests: 
-    covr,
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
@@ -32,14 +29,13 @@ biocViews:
 Imports: 
     Rcpp (>= 1.0.11),
     methods,
+    rlang,
     dplyr,
     sf,
     sp,
     terra,
-    lidR (>= 4.0.4),
     ForestTools (>= 1.0.1),
     parallel,
-    pbmcapply,
-    httr2
+    pbmcapply
 LinkingTo:
     Rcpp

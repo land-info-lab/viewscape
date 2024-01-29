@@ -4,12 +4,22 @@
 #' angle features, alongside the observer's relative distance from the area
 #' (Chamberlain & Meitner).
 #'
-#' @param dsm Raster, the digital surface / elevation model
 #' @param viewshed Viewshed object.
+#' @param dsm Raster, the digital surface / elevation model
 #'
 #' @return SpatRaster
 #'
+#' @examples
+#' \dontrun{
+#' viewshed<- compute_viewshed(dsm = dsm,
+#'                            viewpoints = test_viewpoint,
+#'                            offset_viewpoint = 6)
+#' vm <- viewscape::visual_magnitude(viewshed, test_dsm)
+#' }
+#'
 #' @importFrom terra terrain
+#'
+#' @seealso [compute_viewshed()]
 #'
 #' @references Chamberlain, B. C., & Meitner, M. J. (2013).
 #' A route-based visibility analysis for landscape management.
@@ -17,7 +27,7 @@
 #'
 #' @export
 
-visual_magnitude <- function(dsm, viewshed) {
+visual_magnitude <- function(viewshed, dsm) {
   if (missing(dsm)) {
     stop("dsm is missing")
   }

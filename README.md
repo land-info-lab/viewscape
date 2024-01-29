@@ -1,7 +1,6 @@
 
 <!-- badges: start -->
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
-[![Codecov test coverage](https://codecov.io/github/land-info-lab/viewscape/branch/master/graph/badge.svg)](https://codecov.io/github/land-info-lab/viewscape?branch=master)
 [![R-CMD-check](https://github.com/land-info-lab/viewscape/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/land-info-lab/viewscape/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
@@ -121,22 +120,6 @@ test_metrics <- viewscape::calculate_viewmetrics(output,
 # the Shannon Diversity Index (SDI)
 test_diversity <- calculate_diversity(test_landuse, output, proportion = TRUE)
 ```
-
-Baesd on the TNMAccess API, LiDAR search facilitate the retrieval and
-exploration of LiDAR (Light Detection and Ranging) data (from USGS)
-within a specified bounding box (bbox). This function enables users to
-search for LiDAR data, preview available graphics, and optionally
-download LiDAR data files for further viewscape analysis. Current
-dataset of USGS covers the most area in the US:
-<https://apps.nationalmap.gov/lidar-explorer/#/>
-
-``` r
-# search for lidar data information using bbox
-search_result <- viewscape::lidar_search(bbox = c(-83.742282,42.273389,-83.733442,42.278724), preview = TRUE)
-#> Find 5 items
-```
-
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 From viewshed analysis, the visible area of a viewpoint is presented by
 visible points. There are several viewshed metrics such as can be

@@ -87,7 +87,11 @@ Franklin, W. R., & Ray, C. (1994, May).
 Higher isn’t necessarily better: Visibility algorithms and experiments.
 In Advances in GIS research: sixth international symposium on spatial
 data handling (Vol. 2, pp. 751-770). Edinburgh: Taylor & Francis.
+
 Wang, J., Robinson, G. J., & White, K. (2000).
 Generating viewsheds without using sightlines.
 Photogrammetric engineering and remote sensing, 66(1), 87-90.
+}
+\seealso{
+\code{\link[=visual_magnitude]{visual_magnitude()}} \code{\link[=sector_mask]{sector_mask()}}
 }

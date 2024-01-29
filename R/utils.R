@@ -3,7 +3,6 @@
 #' @importFrom grDevices rgb
 #' @importFrom methods new
 #' @importFrom stats sd
-#' @importFrom utils download.file
 #' @importFrom utils install.packages
 
 #' @noMd
@@ -121,66 +120,3 @@ patch_p <- function(m, patchpoly){
   samples <- sf::st_coordinates(samples)[,-3]
   return(list(Nump, MSI, ED, PS, PD, samples))
 }
-
-
-#' @noMd
-# create a request of the TNMAccess API
-return_response <- function(bbox, max_return) {
-  api1 <- 'https://tnmaccess.nationalmap.gov/api/v1/products?bbox='
-  api2 <- paste0(bbox[1], ",",
-                 bbox[2], ",",
-                 bbox[3], ",",
-                 bbox[4])
-  api3 <- paste0('&datasets=Lidar%20Point%20Cloud%20(LPC)&max=',
-                 max_return,
-                 '&prodFormats=LAS,LAZ')
-  json <- httr2::request(paste0(api1, api2, api3)) %>%
-    httr2::req_timeout(10000) %>%
-    httr2::req_perform() %>%
-    httr2::resp_body_json()
-  items <- length(json$items)
-  cat(paste0("Get ", items, " returns", "\n"))
-  cat(paste0("Find available items: ", json$total, "\n"))
-  if (json$total > items) {
-    cat("There are more available items\n")
-    cat("You can set a greater return number to return\n")
-  }
-  titles <- c()
-  sourceId <- c()
-  metaUrl <- c()
-  sizeInBytes <- c()
-  startYear <- c()
-  previewGraphicURL <- c()
-  downloadLazURL <- c()
-  if (items >= 1) {
-    for (i in 1:items) {
-      item <- json[[2]][[i]]
-      titles <- c(titles, item$title)
-      sourceId <- c(sourceId, item$sourceId)
-      url <- paste0(item$metaUrl, "?format=json")
-      metaUrl <- c(metaUrl, url)
-      sizeInBytes <- c(sizeInBytes, item$sizeInBytes)
-      startYear <- c(startYear, find_year(url))
-      previewGraphicURL <- c(previewGraphicURL, item$previewGraphicURL)
-      downloadLazURL <- c(downloadLazURL, item$downloadLazURL)
-    }
-    df <- data.frame(titles, sourceId,
-                     metaUrl, sizeInBytes,
-                     startYear, previewGraphicURL,
-                     downloadLazURL)
-    return(df)
-  }
-}
-
-#' @noMd
-# find year
-find_year <- function(url) {
-  j <- httr2::request(url) %>%
-    httr2::req_timeout(10000) %>%
-    httr2::req_perform() %>%
-    httr2::resp_body_json()
-  date <- j$dates[[2]]$dateString %>% strsplit("-") %>% unlist()
-  return(as.integer(date[1]))
-}
-
-

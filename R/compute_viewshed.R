@@ -31,16 +31,19 @@
 #' value 0 means invisible. For multi-viewpoint analysis, a list of viewsheds
 #' is returned.
 #'
+#'
 #' @details For method, "plane" is the reference plane algorithm introduced by
 #' Wang et al. (2000) and "los" is the line of sight algorithm (Franklin & Ray, 1994).
 #' The reference plane algorithm can be more time-efficient than the line of sight
 #' algorithm, whereas the accuracy of the line of sight is better.
 #'
+#' @seealso [visual_magnitude()] [sector_mask()]
 #'
 #' @references Franklin, W. R., & Ray, C. (1994, May).
 #' Higher isn’t necessarily better: Visibility algorithms and experiments.
 #' In Advances in GIS research: sixth international symposium on spatial
 #' data handling (Vol. 2, pp. 751-770). Edinburgh: Taylor & Francis.
+#'
 #' Wang, J., Robinson, G. J., & White, K. (2000).
 #' Generating viewsheds without using sightlines.
 #' Photogrammetric engineering and remote sensing, 66(1), 87-90.

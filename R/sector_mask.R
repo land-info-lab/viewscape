@@ -17,10 +17,20 @@
 #' 180 \tab v \tab 0 \cr
 #' 225 \tab 270 \tab 315 \cr
 #' }
-#' Here, 'v' represents the viewpoint, with angles measured clockwise from due north.
+#' Here, 'v' represents the viewpoint, with angles measured counterclockwise from due north.
 #'
 #'
 #' @return viewshed object
+#'
+#' \dontrun{
+#' viewshed <- compute_viewshed(dsm,
+#'                            viewpoints = test_viewpoint,
+#'                            offset_viewpoint = 6)
+#' out <- viewscape::sector_mask(viewshed, c(40,160))
+#' terra::plot(viewscape::visualize_viewshed(out, outputtype = 'raster'),
+#'             axes=FALSE, box=FALSE, legend = FALSE, add = TRUE, col = "red")
+#' }
+#'
 #' @seealso [compute_viewshed()]
 #' @export
 #'

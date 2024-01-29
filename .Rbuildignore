@@ -1,5 +1,12 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
+^README\.md$
 ^\.github$
 ^codecov\.yml$
+^CODE_OF_CONDUCT\.md$
+^_config\.yml$
+^codemeta\.json$
+^viewscape\.md$
+^viewscape_hex-01\.png$
+^LICENSE$

@@ -13,6 +13,6 @@ testthat::test_that("runs correctly", {
                                         viewpoints = test_viewpoint,
                                         offset_viewpoint = 6,
                                         plot=FALSE)
-  test_vm <- viewscape::visual_magnitude(test_dsm, output)
+  test_vm <- viewscape::visual_magnitude(output, test_dsm)
   testthat::expect_type(test_vm, "S4")
 })

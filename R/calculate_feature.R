@@ -3,13 +3,13 @@
 #' feature-related information within a viewshed. It allows you to compute
 #' the proportion of the feature that is present in the viewshed.
 #'
+#' @param viewshed Viewshed object.
 #' @param type Numeric. The input type of land cover raster.
 #' type=1: percentage raster (that represents the percentage of
 #' area in each cell).
 #' type=2: binary raster (that only uses two values to represent whether
 #' the feature exists in each cell).
 #' @param feature Raster. Land cover or land use
-#' @param viewshed Viewshed object.
 #' @param exclude_value Numeric. the value of those cells need to be excluded
 #' in the analysis. If type = 2, exclude_value is reqired.
 #'
@@ -22,15 +22,15 @@
 #' # test_canopy <- terra::rast(system.file("test_canopy.tif",
 #' #                                      package ="viewscape"))
 #' # calculate the percentage of canopy coverage
-#' # test_canopy_proportion <- viewscape::calculate_feature(type = 2,
+#' # test_canopy_proportion <- viewscape::calculate_feature(viewshed = viewshed,
 #' #                                                       feature = test_canopy,
-#' #                                                       viewshed = viewshed
+#' #                                                       type = 2,
 #' #                                                       exclude_value = 0)
 #' }
 
-calculate_feature <- function(type,
+calculate_feature <- function(viewshed,
                               feature,
-                              viewshed,
+                              type,
                               exclude_value){
   if (isFALSE(terra::crs(feature, proj = TRUE) == viewshed@crs)) {
     cat("Your input (feature) rasters have different
