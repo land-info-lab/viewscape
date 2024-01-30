@@ -27,6 +27,7 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+
 // get_depths
 NumericVector get_depths(double px, double py, NumericVector& x, NumericVector& y, int num);
 RcppExport SEXP _viewscape_get_depths(SEXP pxSEXP, SEXP pySEXP, SEXP xSEXP, SEXP ySEXP, SEXP numSEXP) {
@@ -42,6 +43,7 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+
 // sectorMask
 Rcpp::IntegerMatrix sectorMask(const Rcpp::IntegerMatrix& viewshed, const Rcpp::NumericVector viewpt, const Rcpp::NumericVector fov);
 RcppExport SEXP _viewscape_sectorMask(SEXP viewshedSEXP, SEXP viewptSEXP, SEXP fovSEXP) {
@@ -55,6 +57,7 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+
 // reference
 Rcpp::IntegerMatrix reference(const Rcpp::NumericVector& viewpoint, const Rcpp::NumericMatrix& dsm, const double h, const int max_dis);
 RcppExport SEXP _viewscape_reference(SEXP viewpointSEXP, SEXP dsmSEXP, SEXP hSEXP, SEXP max_disSEXP) {

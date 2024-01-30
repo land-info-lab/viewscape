@@ -4,13 +4,13 @@
 \alias{calculate_diversity}
 \title{calculate_diversity}
 \usage{
-calculate_diversity(land, viewshed, proportion = FALSE)
+calculate_diversity(viewshed, land, proportion = FALSE)
 }
 \arguments{
+\item{viewshed}{Viewshed object.}
+
 \item{land}{Raster. The raster of land use/land cover representing different
 land use/cover classes.}
-
-\item{viewshed}{Viewshed object.}
 
 \item{proportion}{logical (Optional), indicating whether to return class
 proportions along with the Shannon Diversity Index (SDI). (default is FALSE).}

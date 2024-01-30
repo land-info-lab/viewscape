@@ -5,9 +5,9 @@
 #' plotting and output types.
 #'
 #' @param viewshed Viewshed object
-#' @param plottype String, specifying the type of visualization ("polygon,"
+#' @param plottype Character, specifying the type of visualization ("polygon,"
 #' "raster," or "3D").
-#' @param outputtype String, specifying the type of output object ("raster"
+#' @param outputtype Character, specifying the type of output object ("raster"
 #' or "polygon").
 #' @return Visualized viewshed as either a raster or polygon object,
 #' depending on the outputtype specified.

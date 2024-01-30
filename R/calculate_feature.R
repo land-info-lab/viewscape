@@ -4,12 +4,12 @@
 #' the proportion of the feature that is present in the viewshed.
 #'
 #' @param viewshed Viewshed object.
+#' @param feature Raster. Land cover or land use
 #' @param type Numeric. The input type of land cover raster.
 #' type=1: percentage raster (that represents the percentage of
 #' area in each cell).
 #' type=2: binary raster (that only uses two values to represent whether
 #' the feature exists in each cell).
-#' @param feature Raster. Land cover or land use
 #' @param exclude_value Numeric. the value of those cells need to be excluded
 #' in the analysis. If type = 2, exclude_value is reqired.
 #'

@@ -10,7 +10,7 @@ Description: A collection of functions to make R a more effective viewscape anal
     tool for calculating viewscape metrics based on computing the viewable area for 
     given a point/multiple viewpoints and a digital elevation model.
 Depends: R (>= 4.2)
-License: file LICENSE
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -27,14 +27,23 @@ VignetteBuilder: knitr,
                  rmarkdown
 biocViews:
 Imports: 
+<<<<<<< HEAD
     Rcpp (>= 1.0.11),
+=======
+    Rcpp,
+    rlang,
+>>>>>>> master
     methods,
     rlang,
     dplyr,
     sf,
     sp,
     terra,
+<<<<<<< HEAD
     ForestTools (>= 1.0.1),
+=======
+    ForestTools,
+>>>>>>> master
     parallel,
     pbmcapply
 LinkingTo:

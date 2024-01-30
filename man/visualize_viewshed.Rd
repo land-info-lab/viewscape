@@ -9,10 +9,10 @@ visualize_viewshed(viewshed, plottype = "", outputtype = "")
 \arguments{
 \item{viewshed}{Viewshed object}
 
-\item{plottype}{String, specifying the type of visualization ("polygon,"
+\item{plottype}{Character, specifying the type of visualization ("polygon,"
 "raster," or "3D").}
 
-\item{outputtype}{String, specifying the type of output object ("raster"
+\item{outputtype}{Character, specifying the type of output object ("raster"
 or "polygon").}
 }
 \value{

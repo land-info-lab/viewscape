@@ -9,7 +9,7 @@
 
 <p align="left">
 
-<img src=".//man//figures//viewscape_hex.png" height="200">
+<img src="viewscape_hex-01.png" height="200">
 
 </p>
 
@@ -17,7 +17,7 @@
 
 The goal of viewscape package is to provide an accessible method of
 carrying out landscape spatial analysis based on the viewshed within the
-R environment. The viewscape R pacakge can currently be downloaded via
+R environment. The viewscape R pacakge can currently be installed via
 github.
 
 ## Intallation
@@ -128,7 +128,7 @@ metrics and the rest of the functions available in this package please
 refer to the [package
 website](https://land-info-lab.github.io/viewscape/). For more
 information and examples of the functions check out the [package
-vignette](https://github.com/land-info-lab/viewscape/blob/master/vignettes/viewscape.md).
+vignette](https://github.com/land-info-lab/viewscape/blob/master/viewscape.md).
 
 ## Note
 

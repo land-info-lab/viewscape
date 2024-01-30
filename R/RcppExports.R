@@ -17,3 +17,7 @@ reference <- function(viewpoint, dsm, h, max_dis) {
     .Call('_viewscape_reference', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis)
 }
 
+visibleLabel <- function(viewpoint, dsm, h, max_dis) {
+    .Call('_viewscape_visibleLabel', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis)
+}
+
