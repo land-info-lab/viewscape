@@ -3,8 +3,7 @@
 #' @importFrom grDevices rgb
 #' @importFrom methods new
 #' @importFrom stats sd
-#' @importFrom utils download.file
-#' @importFrom utils install.packages
+#' @importFrom sp SpatialPoints
 
 #' @noMd
 radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0) {

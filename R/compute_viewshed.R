@@ -42,17 +42,24 @@
 #'
 #' @examples
 #' \dontrun{
-#' #test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+#' # Load a viewpoint
+#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+#'
 #' #Compute viewshed
-#' #dsm <- terra::raster(system.file("test_dsm.tif", package ="viewscape"))
-#' #output <- compute_viewshed(dsm = dsm,
-#' #                           viewpoints = test_viewpoint,
-#' #                           offset_viewpoint = 6,
-#' #                           raster = TRUE,
-#' #                           plot = TRUE)
+#' dsm <- terra::raster(system.file("test_dsm.tif", package ="viewscape"))
+#' output <- compute_viewshed(dsm = dsm,
+#'                            viewpoints = test_viewpoint,
+#'                            offset_viewpoint = 6,
+#'                            raster = TRUE,
+#'                            plot = TRUE)
 #'
 #' # Calculate viewsheds for multiple viewpoints in parallel
-#' #viewsheds <- compute_viewshed(dsm, viewpoints = test_viewpoint, parallel = TRUE, workers = 2)
+#' test_viewpoints <- sf::read_sf(system.file("test_viewpoints.shp",
+#'                                            package = "viewscape"))
+#' viewsheds <- compute_viewshed(dsm,
+#'                               viewpoints = test_viewpoints,
+#'                               parallel = TRUE,
+#'                               workers = 1)
 #'}
 
 compute_viewshed <- function(dsm,
@@ -132,12 +139,12 @@ compute_viewshed <- function(dsm,
     if (parallel == TRUE){
       if (workers == 0) {
         workers <- 2
-        message("the specified number of CPU cores (workers) is not specified")
-        message("the default setting (workers = 2) will be used")
+        print("the specified number of CPU cores (workers) is not specified")
+        print("the default setting (workers = 2) will be used")
       } else if (workers > parallel::detectCores()) {
         workers <- parallel::detectCores()
-        message("the specified number of CPU cores (workers) is greater than actual number")
-        message(paste0("the actual available CPU cores (",
+        print("the specified number of CPU cores (workers) is greater than actual number")
+        print(paste0("the actual available CPU cores (",
                        workers,
                        ") will be used"))
       }

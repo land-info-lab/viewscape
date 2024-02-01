@@ -14,15 +14,15 @@
 #' within the viewshed.
 #' @import terra
 #' @importFrom dplyr count
+#' @importFrom dplyr %>%
 #' @importFrom rlang .data
 #'
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' #diversity_metrics <- calculate_diversity(viewshed_object,
-#' #                                         land_cover_raster,
-#' #                                         proportion = TRUE)
+#' diversity_metrics <- calculate_diversity(viewshed_object,
+#'                                          land_cover_raster)
 #'}
 #'
 

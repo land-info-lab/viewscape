@@ -19,13 +19,13 @@
 #' @examples
 #' \dontrun{
 #' # load canopy raster
-#' # test_canopy <- terra::rast(system.file("test_canopy.tif",
-#' #                                      package ="viewscape"))
+#' test_canopy <- terra::rast(system.file("test_canopy.tif",
+#'                                        package ="viewscape"))
 #' # calculate the percentage of canopy coverage
-#' # test_canopy_proportion <- viewscape::calculate_feature(viewshed = viewshed,
-#' #                                                       feature = test_canopy,
-#' #                                                       type = 2,
-#' #                                                       exclude_value = 0)
+#' test_canopy_proportion <- viewscape::calculate_feature(viewshed = viewshed,
+#'                                                        feature = test_canopy,
+#'                                                        type = 2,
+#'                                                        exclude_value = 0)
 #' }
 
 calculate_feature <- function(viewshed,

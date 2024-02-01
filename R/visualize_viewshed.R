@@ -5,8 +5,8 @@
 #' plotting and output types.
 #'
 #' @param viewshed Viewshed object
-#' @param plottype Character, specifying the type of visualization ("polygon,"
-#' "raster," or "3D").
+#' @param plottype Character, specifying the type of visualization ("polygon" or
+#' "raster").
 #' @param outputtype Character, specifying the type of output object ("raster"
 #' or "polygon").
 #' @return Visualized viewshed as either a raster or polygon object,
@@ -17,15 +17,13 @@
 #' @examples
 #' \dontrun{
 #' # Visualize the viewshed as polygons
-#' #visualize_viewshed(viewshed, plottype = "polygon")
+#' visualize_viewshed(viewshed, plottype = "polygon")
 #' # Visualize the viewshed as a raster
-#' #visualize_viewshed(viewshed, plottype = "raster")
-#' # Visualize the viewshed in 3D
-#' #visualize_viewshed(viewshed, plottype = "3D")
+#' visualize_viewshed(viewshed, plottype = "raster")
 #' # Get the visualized viewshed as a polygon object
-#' #polygon_viewshed <- visualize_viewshed(viewshed,
-#' #                                       plottype = "polygon",
-#' #                                       outputtype = "polygon")
+#' polygon_viewshed <- visualize_viewshed(viewshed,
+#'                                        plottype = "polygon",
+#'                                        outputtype = "polygon")
 #'}
 
 
@@ -45,11 +43,6 @@ visualize_viewshed <- function(viewshed,
     terra::plot(polygon_v, col = rgb(0, 1, 0, 0.3), border = NA)
   }else if (plottype == "raster"){
     terra::plot(mask_v)
-  }else if (plottype == "3D"){
-    if (!requireNamespace("rasterVis", quietly = TRUE)){
-      install.packages("rasterVis")
-    }
-    rasterVis::plot3D(mask_v)
   }
   if (outputtype == "raster" || outputtype == "polygon"){
     if (outputtype == "raster"){
