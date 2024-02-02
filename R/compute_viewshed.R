@@ -41,26 +41,14 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' # Load a viewpoint
 #' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
-#'
+#' # load dsm raster
+#' dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
 #' #Compute viewshed
-#' dsm <- terra::raster(system.file("test_dsm.tif", package ="viewscape"))
 #' output <- compute_viewshed(dsm = dsm,
 #'                            viewpoints = test_viewpoint,
-#'                            offset_viewpoint = 6,
-#'                            raster = TRUE,
-#'                            plot = TRUE)
-#'
-#' # Calculate viewsheds for multiple viewpoints in parallel
-#' test_viewpoints <- sf::read_sf(system.file("test_viewpoints.shp",
-#'                                            package = "viewscape"))
-#' viewsheds <- compute_viewshed(dsm,
-#'                               viewpoints = test_viewpoints,
-#'                               parallel = TRUE,
-#'                               workers = 1)
-#'}
+#'                            offset_viewpoint = 6)
 
 compute_viewshed <- function(dsm,
                              viewpoints,
@@ -139,14 +127,8 @@ compute_viewshed <- function(dsm,
     if (parallel == TRUE){
       if (workers == 0) {
         workers <- 2
-        print("the specified number of CPU cores (workers) is not specified")
-        print("the default setting (workers = 2) will be used")
       } else if (workers > parallel::detectCores()) {
         workers <- parallel::detectCores()
-        print("the specified number of CPU cores (workers) is greater than actual number")
-        print(paste0("the actual available CPU cores (",
-                       workers,
-                       ") will be used"))
       }
       # inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == TRUE){

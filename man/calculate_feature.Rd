@@ -29,7 +29,14 @@ feature-related information within a viewshed. It allows you to compute
 the proportion of the feature that is present in the viewshed.
 }
 \examples{
-\dontrun{
+# Load a viewpoint
+test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+# load dsm raster
+dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
+#Compute viewshed
+viewshed <- compute_viewshed(dsm = dsm,
+                             viewpoints = test_viewpoint,
+                             offset_viewpoint = 6)
 # load canopy raster
 test_canopy <- terra::rast(system.file("test_canopy.tif",
                                        package ="viewscape"))
@@ -38,5 +45,4 @@ test_canopy_proportion <- viewscape::calculate_feature(viewshed = viewshed,
                                                        feature = test_canopy,
                                                        type = 2,
                                                        exclude_value = 0)
-}
 }

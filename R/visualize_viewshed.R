@@ -15,7 +15,15 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' # Load a viewpoint
+#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+#' # load dsm raster
+#' dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
+#' #Compute viewshed
+#' viewshed <- compute_viewshed(dsm = dsm,
+#'                              viewpoints = test_viewpoint,
+#'                              offset_viewpoint = 6)
 #' # Visualize the viewshed as polygons
 #' visualize_viewshed(viewshed, plottype = "polygon")
 #' # Visualize the viewshed as a raster

@@ -49,7 +49,7 @@ patch edges per unit area
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Load in DSM
 test_dsm <- terra::rast(system.file("test_dsm.tif",
                                     package ="viewscape"))

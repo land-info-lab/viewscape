@@ -20,10 +20,19 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' diversity_metrics <- calculate_diversity(viewshed_object,
-#'                                          land_cover_raster)
-#'}
+#' # Load a viewpoint
+#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+#' # load dsm raster
+#' dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
+#' #Compute viewshed
+#' output <- compute_viewshed(dsm = dsm,
+#'                            viewpoints = test_viewpoint,
+#'                            offset_viewpoint = 6)
+#' # load landuse raster
+#' test_landuse <- terra::rast(system.file("test_landuse.tif",
+#'                                         package ="viewscape"))
+#' diversity <- calculate_diversity(output,
+#'                                  test_landuse)
 #'
 
 calculate_diversity <- function(viewshed,

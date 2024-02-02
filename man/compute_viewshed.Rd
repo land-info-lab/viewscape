@@ -58,24 +58,12 @@ Model (DSM). It provides flexibility for single or multi-viewpoint analyses
 and allows options for parallel processing, raster output, and plotting.
 }
 \examples{
-\dontrun{
 # Load a viewpoint
 test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
-
+# load dsm raster
+dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
 #Compute viewshed
-dsm <- terra::raster(system.file("test_dsm.tif", package ="viewscape"))
 output <- compute_viewshed(dsm = dsm,
                            viewpoints = test_viewpoint,
-                           offset_viewpoint = 6,
-                           raster = TRUE,
-                           plot = TRUE)
-
-# Calculate viewsheds for multiple viewpoints in parallel
-test_viewpoints <- sf::read_sf(system.file("test_viewpoints.shp",
-                                           package = "viewscape"))
-viewsheds <- compute_viewshed(dsm,
-                              viewpoints = test_viewpoints,
-                              parallel = TRUE,
-                              workers = 1)
-}
+                           offset_viewpoint = 6)
 }

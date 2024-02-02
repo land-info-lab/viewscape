@@ -43,7 +43,7 @@
 #' @importFrom ForestTools mcws
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Load in DSM
 #' test_dsm <- terra::rast(system.file("test_dsm.tif",
 #'                                     package ="viewscape"))
@@ -93,15 +93,9 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
     minHeight <- 3
   }
   if (isFALSE(terra::crs(dsm, proj = TRUE) == viewshed@crs)) {
-    cat("First input dsm has different
-        coordinate reference system from the viewshed\n")
-    cat("Reprojetion will be processing ...\n")
     dsm <- terra::project(dsm, y=terra::crs(viewshed@crs))
   }
   if (isFALSE(terra::crs(dtm, proj = TRUE) == viewshed@crs)) {
-    cat("First input dtm has different
-        coordinate reference system from the viewshed\n")
-    cat("Reprojetion will be processing ...\n")
     dsm <- terra::project(dtm, y=terra::crs(viewshed@crs))
   }
   output <- list()
@@ -172,15 +166,9 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   # (visible canopy and buildings)
   if (length(masks) == 2) {
     if (isFALSE(terra::crs(masks[[1]], proj = TRUE) == viewshed@crs)) {
-      cat("First input mask has different
-        coordinate reference system from the viewshed\n")
-      cat("Reprojetion will be processing ...\n")
       masks[[1]] <- terra::project(masks[[1]], y=terra::crs(viewshed@crs))
     }
     if (isFALSE(terra::crs(masks[[2]], proj = TRUE) == viewshed@crs)) {
-      cat("Second input mask has different
-        coordinate reference system from the viewshed\n")
-      cat("Reprojetion will be processing ...\n")
       masks[[2]] <- terra::project(masks[[2]], y=terra::crs(viewshed@crs))
     }
     masks_1 <- terra::crop(masks[[1]], terra::ext(viewshed@extent, xy = TRUE))
