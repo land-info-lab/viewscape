@@ -24,7 +24,10 @@ github.
 
 ``` r
 
-# download the package
+# Install the package from CRAN
+install.packages("viewscape")
+
+# Install the package from GitHub
 devtools::install_github("land-info-lab/viewscape", dependencies=TRUE)
 
 # Load the package
