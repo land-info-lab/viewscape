@@ -12,7 +12,7 @@
 #' @param offset_height numeric, setting the height of positions that a given
 #' viewpoint will look at. (defaut is 0)
 #' @param r Numeric (optional), setting the radius for viewshed analysis.
-#' (it is defaulted as NULL)
+#' (The default is 1000m/3281ft)
 #' @param parallel Logical, (default is FALSE) indicating if parallel computing
 #' should be used to compute viewsheds of multiview points. When it is TRUE,
 #' arguements 'raster' and 'plot' are ignored

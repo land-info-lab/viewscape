@@ -29,7 +29,7 @@ or a matrix including several viewpoints with x,y coordinates}
 viewpoint will look at. (defaut is 0)}
 
 \item{r}{Numeric (optional), setting the radius for viewshed analysis.
-(it is defaulted as NULL)}
+(The default is 1000m/3281ft)}
 
 \item{parallel}{Logical, (default is FALSE) indicating if parallel computing
 should be used to compute viewsheds of multiview points. When it is TRUE,

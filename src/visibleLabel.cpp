@@ -13,20 +13,21 @@ Rcpp::IntegerMatrix visibleLabel(
     const double h,
     const int max_dis) {
 
-  Rcpp::NumericVector zl;
-  Rcpp::NumericVector xl;
-  Rcpp::NumericVector yl;
+  // Rcpp::NumericVector zl;
+  // Rcpp::NumericVector xl;
+  // Rcpp::NumericVector yl;
   const int rows = dsm.rows();
   const int cols = dsm.cols();
   int steps;
   Rcpp::IntegerMatrix visible(rows, cols);
+  Rcpp::NumericVector sequence(max_dis), xl(max_dis), yl(max_dis), zl(max_dis);
 
   for (int i = 0; i < rows; i++) {
      for (int j = 0; j < cols; j++) {
        steps = sqrt((viewpoint[0]-j)*(viewpoint[0]-j) + (viewpoint[1]-i)*(viewpoint[1]-i));
        const double z = dsm(i,j) + h;
        if (steps <= max_dis) {
-         Rcpp::NumericVector sequence(steps);
+         // Rcpp::NumericVector sequence(steps);
          std::iota(sequence.begin(), sequence.end(), 1);
          xl = viewpoint[0] + sequence * (j-viewpoint[0])/steps;
          yl = viewpoint[1] + sequence * (i-viewpoint[1])/steps;
