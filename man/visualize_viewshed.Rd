@@ -9,8 +9,8 @@ visualize_viewshed(viewshed, plottype = "", outputtype = "")
 \arguments{
 \item{viewshed}{Viewshed object}
 
-\item{plottype}{Character, specifying the type of visualization ("polygon,"
-"raster," or "3D").}
+\item{plottype}{Character, specifying the type of visualization ("polygon" or
+"raster").}
 
 \item{outputtype}{Character, specifying the type of output object ("raster"
 or "polygon").}
@@ -26,16 +26,22 @@ the results. The function works with a viewshed object and offers multiple
 plotting and output types.
 }
 \examples{
-\dontrun{
+\donttest{
+# Load a viewpoint
+test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+# load dsm raster
+dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
+#Compute viewshed
+viewshed <- compute_viewshed(dsm = dsm,
+                             viewpoints = test_viewpoint,
+                             offset_viewpoint = 6)
 # Visualize the viewshed as polygons
-#visualize_viewshed(viewshed, plottype = "polygon")
+visualize_viewshed(viewshed, plottype = "polygon")
 # Visualize the viewshed as a raster
-#visualize_viewshed(viewshed, plottype = "raster")
-# Visualize the viewshed in 3D
-#visualize_viewshed(viewshed, plottype = "3D")
+visualize_viewshed(viewshed, plottype = "raster")
 # Get the visualized viewshed as a polygon object
-#polygon_viewshed <- visualize_viewshed(viewshed,
-#                                       plottype = "polygon",
-#                                       outputtype = "polygon")
+polygon_viewshed <- visualize_viewshed(viewshed,
+                                       plottype = "polygon",
+                                       outputtype = "polygon")
 }
 }

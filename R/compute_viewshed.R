@@ -12,7 +12,7 @@
 #' @param offset_height numeric, setting the height of positions that a given
 #' viewpoint will look at. (defaut is 0)
 #' @param r Numeric (optional), setting the radius for viewshed analysis.
-#' (it is defaulted as NULL)
+#' (The default is 1000m/3281ft)
 #' @param method Character, The algorithm for computing a viewshed:
 #' "plane" and "los" (see details). "plane"  is used as default.
 #' @param parallel Logical, (default is FALSE) indicating if parallel computing
@@ -59,19 +59,14 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' #test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+#' # Load a viewpoint
+#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+#' # load dsm raster
+#' dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
 #' #Compute viewshed
-#' #dsm <- terra::raster(system.file("test_dsm.tif", package ="viewscape"))
-#' #output <- compute_viewshed(dsm = dsm,
-#' #                           viewpoints = test_viewpoint,
-#' #                           offset_viewpoint = 6,
-#' #                           raster = TRUE,
-#' #                           plot = TRUE)
-#'
-#' # Calculate viewsheds for multiple viewpoints in parallel
-#' #viewsheds <- compute_viewshed(dsm, viewpoints = test_viewpoint, parallel = TRUE, workers = 2)
-#'}
+#' output <- compute_viewshed(dsm = dsm,
+#'                            viewpoints = test_viewpoint,
+#'                            offset_viewpoint = 6)
 
 compute_viewshed <- function(dsm,
                              viewpoints,
@@ -154,14 +149,8 @@ compute_viewshed <- function(dsm,
     if (parallel == TRUE){
       if (workers == 0) {
         workers <- 2
-        message("the specified number of CPU cores (workers) is not specified")
-        message("the default setting (workers = 2) will be used")
       } else if (workers > parallel::detectCores()) {
         workers <- parallel::detectCores()
-        message("the specified number of CPU cores (workers) is greater than actual number")
-        message(paste0("the actual available CPU cores (",
-                       workers,
-                       ") will be used"))
       }
       # inputs <- split(viewpoints,seq(nrow(viewpoints)))
       if (isTRUE(Sys.info()[1]=="Windows") == TRUE){

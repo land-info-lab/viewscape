@@ -43,36 +43,36 @@
 #' @importFrom ForestTools mcws
 #'
 #' @examples
-#' \dontrun{
-#' #Load in DSM
-#' #test_dsm <- terra::rast(system.file("test_dsm.tif",
-#' #                                    package ="viewscape"))
-#' ## Load DTM
-#' #test_dtm <- terra::rast(system.file("test_dtm.tif",
-#' #                                    package ="viewscape"))
+#' \donttest{
+#' # Load in DSM
+#' test_dsm <- terra::rast(system.file("test_dsm.tif",
+#'                                     package ="viewscape"))
+#' # Load DTM
+#' test_dtm <- terra::rast(system.file("test_dtm.tif",
+#'                                     package ="viewscape"))
 #'
-#' ## Load canopy raster
-#' #test_canopy <- terra::rast(system.file("test_canopy.tif",
-#' #                                       package ="viewscape"))
+#' # Load canopy raster
+#' test_canopy <- terra::rast(system.file("test_canopy.tif",
+#'                                        package ="viewscape"))
 #'
-#' ## Load building footprints raster
-#' #test_building <- terra::rast(system.file("test_building.tif",
-#' #                                         package ="viewscape"))
+#' # Load building footprints raster
+#' test_building <- terra::rast(system.file("test_building.tif",
+#'                                          package ="viewscape"))
 #'
-#' ##Load in the viewpoint
-#' #test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp",
-#' #                                          package = "viewscape"))
+#' # Load in the viewpoint
+#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp",
+#'                                           package = "viewscape"))
 #'
-#' ##Compute viewshed
-#' #output <- viewscape::compute_viewshed(dsm = test_dsm,
-#' #                                    viewpoints = test_viewpoint,
-#' #                                      offset_viewpoint = 6)
+#' # Compute viewshed
+#' output <- viewscape::compute_viewshed(dsm = test_dsm,
+#'                                       viewpoints = test_viewpoint,
+#'                                       offset_viewpoint = 6)
 #'
 #' # calculate metrics given the viewshed, canopy, and building footprints
-#' # test_metrics <- viewscape::calculate_viewmetrics(output,
-#' #                                                 test_dsm,
-#' #                                                 test_dtm,
-#' #                                                 list(test_canopy, test_building))
+#' test_metrics <- viewscape::calculate_viewmetrics(output,
+#'                                                  test_dsm,
+#'                                                  test_dtm,
+#'                                                  list(test_canopy, test_building))
 #' }
 #'
 #' @export
@@ -93,15 +93,9 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
     minHeight <- 3
   }
   if (isFALSE(terra::crs(dsm, proj = TRUE) == viewshed@crs)) {
-    cat("First input dsm has different
-        coordinate reference system from the viewshed\n")
-    cat("Reprojetion will be processing ...\n")
     dsm <- terra::project(dsm, y=terra::crs(viewshed@crs))
   }
   if (isFALSE(terra::crs(dtm, proj = TRUE) == viewshed@crs)) {
-    cat("First input dtm has different
-        coordinate reference system from the viewshed\n")
-    cat("Reprojetion will be processing ...\n")
     dsm <- terra::project(dtm, y=terra::crs(viewshed@crs))
   }
   output <- list()
@@ -172,15 +166,9 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   # (visible canopy and buildings)
   if (length(masks) == 2) {
     if (isFALSE(terra::crs(masks[[1]], proj = TRUE) == viewshed@crs)) {
-      cat("First input mask has different
-        coordinate reference system from the viewshed\n")
-      cat("Reprojetion will be processing ...\n")
       masks[[1]] <- terra::project(masks[[1]], y=terra::crs(viewshed@crs))
     }
     if (isFALSE(terra::crs(masks[[2]], proj = TRUE) == viewshed@crs)) {
-      cat("Second input mask has different
-        coordinate reference system from the viewshed\n")
-      cat("Reprojetion will be processing ...\n")
       masks[[2]] <- terra::project(masks[[2]], y=terra::crs(viewshed@crs))
     }
     masks_1 <- terra::crop(masks[[1]], terra::ext(viewshed@extent, xy = TRUE))

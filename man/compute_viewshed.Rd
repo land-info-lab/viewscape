@@ -30,7 +30,7 @@ or a matrix including several viewpoints with x,y coordinates}
 viewpoint will look at. (defaut is 0)}
 
 \item{r}{Numeric (optional), setting the radius for viewshed analysis.
-(it is defaulted as NULL)}
+(The default is 1000m/3281ft)}
 
 \item{method}{Character, The algorithm for computing a viewshed:
 "plane" and "los" (see details). "plane"  is used as default.}
@@ -68,19 +68,14 @@ The reference plane algorithm can be more time-efficient than the line of sight
 algorithm, whereas the accuracy of the line of sight is better.
 }
 \examples{
-\dontrun{
-#test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+# Load a viewpoint
+test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+# load dsm raster
+dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
 #Compute viewshed
-#dsm <- terra::raster(system.file("test_dsm.tif", package ="viewscape"))
-#output <- compute_viewshed(dsm = dsm,
-#                           viewpoints = test_viewpoint,
-#                           offset_viewpoint = 6,
-#                           raster = TRUE,
-#                           plot = TRUE)
-
-# Calculate viewsheds for multiple viewpoints in parallel
-#viewsheds <- compute_viewshed(dsm, viewpoints = test_viewpoint, parallel = TRUE, workers = 2)
-}
+output <- compute_viewshed(dsm = dsm,
+                           viewpoints = test_viewpoint,
+                           offset_viewpoint = 6)
 }
 \references{
 Franklin, W. R., & Ray, C. (1994, May).

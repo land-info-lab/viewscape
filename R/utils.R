@@ -3,7 +3,6 @@
 #' @importFrom grDevices rgb
 #' @importFrom methods new
 #' @importFrom stats sd
-#' @importFrom utils install.packages
 #' @importFrom sp SpatialPoints
 
 #' @noMd
