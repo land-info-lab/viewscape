@@ -50,7 +50,7 @@ The metrics are including:
 -   Number of patches: Visible fragmentation measured by total visible patches
     with the viewscape.
 -   Mean shape index: Visible patchiness based on average perimeter-to-area ratio
-    for all viewscape patches. 
+    for all viewscape patches (vegetation and building). 
 -   Edge density: A measure of visible complexity based on the length of
     patch edges per unit area.
 -   Patch size: Total average size of a patches over the entire viewscape area.
@@ -65,14 +65,6 @@ The metrics are including:
     the viewshed.
 -   Relief: The standard deviation of elevations of the visible ground
     surface.
--   Number of patches: Visible fragmentation measured by total visible patches
-    with the viewscape
--   Mean shape index: Visible patchiness based on average perimeter-to-area ratio
-    for all viewscape patches (vegetation and building)
--   Edge density: A measure of visible complexity based on the length of
-    patch edges per unit area
--   Patch size: Total average size of a patches over the entire viewscape area
--   Patch density: Visible landscape granularity based on measuring patch density
 -   Skyline: Variation of (Standard deviation) of the vertical viewscape
     (visible canopy and buildings).
 -   Shannon diversity index: Based on the number of land use/cover
