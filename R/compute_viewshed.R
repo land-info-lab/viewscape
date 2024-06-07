@@ -64,9 +64,9 @@
 #' # load dsm raster
 #' dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
 #' #Compute viewshed
-#' output <- compute_viewshed(dsm = dsm,
-#'                            viewpoints = test_viewpoint,
-#'                            offset_viewpoint = 6)
+#' output <- viewscape::compute_viewshed(dsm = dsm,
+#'                                       viewpoints = test_viewpoint,
+#'                                       offset_viewpoint = 6)
 
 compute_viewshed <- function(dsm,
                              viewpoints,
@@ -75,7 +75,7 @@ compute_viewshed <- function(dsm,
                              r = NULL,
                              method = "plane",
                              parallel = FALSE,
-                             workers = 0,
+                             workers = 1,
                              raster = FALSE,
                              plot = FALSE){
   multiviewpoints <- FALSE
@@ -162,9 +162,7 @@ compute_viewshed <- function(dsm,
     }
     inputs <- split(viewpoints,seq(nrow(viewpoints)))
     if (parallel == TRUE){
-      if (workers == 0) {
-        workers <- 2
-      } else if (workers > parallel::detectCores()) {
+      if (workers > parallel::detectCores()) {
         workers <- parallel::detectCores()
       }
       # inputs <- split(viewpoints,seq(nrow(viewpoints)))

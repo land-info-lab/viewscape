@@ -12,7 +12,7 @@ compute_viewshed(
   r = NULL,
   method = "plane",
   parallel = FALSE,
-  workers = 0,
+  workers = 1,
   raster = FALSE,
   plot = FALSE
 )
@@ -73,9 +73,9 @@ test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "views
 # load dsm raster
 dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
 #Compute viewshed
-output <- compute_viewshed(dsm = dsm,
-                           viewpoints = test_viewpoint,
-                           offset_viewpoint = 6)
+output <- viewscape::compute_viewshed(dsm = dsm,
+                                      viewpoints = test_viewpoint,
+                                      offset_viewpoint = 6)
 }
 \references{
 Franklin, W. R., & Ray, C. (1994, May).

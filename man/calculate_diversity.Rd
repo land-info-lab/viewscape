@@ -32,13 +32,13 @@ test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "views
 # load dsm raster
 dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
 #Compute viewshed
-output <- compute_viewshed(dsm = dsm,
-                           viewpoints = test_viewpoint,
-                           offset_viewpoint = 6)
+output <- viewscape::compute_viewshed(dsm = dsm,
+                                      viewpoints = test_viewpoint,
+                                      offset_viewpoint = 6)
 # load landuse raster
 test_landuse <- terra::rast(system.file("test_landuse.tif",
                                         package ="viewscape"))
-diversity <- calculate_diversity(output,
-                                 test_landuse)
+diversity <- viewscape::calculate_diversity(output,
+                                            test_landuse)
 
 }
