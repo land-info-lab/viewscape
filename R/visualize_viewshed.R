@@ -34,9 +34,6 @@
 #'                                        outputtype = "polygon")
 #'}
 
-
-
-
 visualize_viewshed <- function(viewshed,
                                plottype = "",
                                outputtype = "") {
