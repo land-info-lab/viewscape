@@ -617,6 +617,7 @@ Rcpp::IntegerMatrix reference(
 }
 
 // Line of sight
+//[[Rcpp::export]]
 Rcpp::IntegerMatrix LOS(
     const Rcpp::NumericVector &viewpoint,
     const Rcpp::NumericMatrix &dsm,

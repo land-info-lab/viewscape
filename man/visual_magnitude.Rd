@@ -21,12 +21,16 @@ angle features, alongside the observer's relative distance from the area
 (Chamberlain & Meitner).
 }
 \examples{
-\dontrun{
-viewshed<- compute_viewshed(dsm = dsm,
-                           viewpoints = test_viewpoint,
-                           offset_viewpoint = 6)
-vm <- viewscape::visual_magnitude(viewshed, test_dsm)
-}
+# Load a viewpoint
+test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+# load dsm raster
+dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
+# Compute viewshed
+viewshed <- viewscape::compute_viewshed(dsm = dsm,
+                                        viewpoints = test_viewpoint,
+                                        offset_viewpoint = 6)
+# Compute visual magnitude
+vm <- viewscape::visual_magnitude(viewshed, dsm)
 
 }
 \references{

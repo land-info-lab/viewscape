@@ -17,3 +17,7 @@ reference <- function(viewpoint, dsm, h, max_dis) {
     .Call('_viewscape_reference', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis)
 }
 
+LOS <- function(viewpoint, dsm, h, max_dis) {
+    .Call('_viewscape_LOS', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis)
+}
+

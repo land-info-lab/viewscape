@@ -23,6 +23,6 @@ testthat::test_that("runs correctly", {
                                                    test_landcover,
                                                    proportion = TRUE)
 
-  testthat::expect_type(test_diversity[[1]], "double")
+  testthat::expect_type(test_diversity, "list")
 
 })

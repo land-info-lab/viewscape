@@ -21,15 +21,17 @@
 #'
 #'
 #' @return viewshed object
-#'
-#' \dontrun{
-#' viewshed <- compute_viewshed(dsm,
-#'                            viewpoints = test_viewpoint,
-#'                            offset_viewpoint = 6)
+#' @examples
+#' # Load a viewpoint
+#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+#' # load dsm raster
+#' dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
+#' # Compute viewshed
+#' viewshed <- viewscape::compute_viewshed(dsm,
+#'                                         viewpoints = test_viewpoint,
+#'                                         offset_viewpoint = 6)
+#' # subset viewshed using the field of view
 #' out <- viewscape::sector_mask(viewshed, c(40,160))
-#' terra::plot(viewscape::visualize_viewshed(out, outputtype = 'raster'),
-#'             axes=FALSE, box=FALSE, legend = FALSE, add = TRUE, col = "red")
-#' }
 #'
 #' @seealso [compute_viewshed()]
 #' @export

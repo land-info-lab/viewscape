@@ -14,5 +14,5 @@ testthat::test_that("runs correctly", {
                                         offset_viewpoint = 6,
                                         plot=FALSE)
   test_sector <- viewscape::sector_mask(output, c(40,160))
-  testthat::expect_type(test_vm, "S4")
+  testthat::expect_type(test_sector, "S4")
 })

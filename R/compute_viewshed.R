@@ -92,6 +92,7 @@ compute_viewshed <- function(dsm,
       r <- 1000
     }
   }
+  ext_dsm <- terra::ext(dsm)
   # if (dsm_units == "ft" && r > 3281) {
   #   r <- 3281
   # } else if (dsm_units == "m" && r > 1000) {
@@ -117,6 +118,13 @@ compute_viewshed <- function(dsm,
     }
   }
   if (multiviewpoints == FALSE){
+    # validate the viewpoint
+    if (viewpoints[,1] < ext_dsm[1] | viewpoints[,1] > ext_dsm[2]) {
+      stop("The input viewpoint(s) is not on input dsm")
+    }
+    if (viewpoints[,2] < ext_dsm[3] | viewpoints[,2] > ext_dsm[4]) {
+      stop("The input viewpoint(s) is not on input dsm")
+    }
     viewpoints <- c(viewpoints[,1], viewpoints[,2])
     # compute viewshed
     output <- radius_viewshed(dsm, r, viewpoints,
@@ -145,6 +153,13 @@ compute_viewshed <- function(dsm,
       return(output)
     }
   }else if (multiviewpoints){
+    # validate the viewpoints
+    if (min(viewpoints[,1]) < ext_dsm[1] | max(viewpoints[,1]) > ext_dsm[2]) {
+      stop("Some of input viewpoint(s) is not on input dsm")
+    }
+    if (min(viewpoints[,2]) < ext_dsm[3] | max(viewpoints[,2]) > ext_dsm[4]) {
+      stop("Some of input viewpoint(s) is not on input dsm")
+    }
     inputs <- split(viewpoints,seq(nrow(viewpoints)))
     if (parallel == TRUE){
       if (workers == 0) {

@@ -32,7 +32,6 @@ Imports:
     Rcpp,
     rlang,
     methods,
-    rlang,
     dplyr,
     sf,
     sp,
