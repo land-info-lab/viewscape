@@ -375,175 +375,238 @@ Vector3 updateLine(const Vector3 &viewpt,
                    int max_dis) {
   double distance_a = horizontalDis(target, viewpt);
   double distance_b = horizontalDis(temp, viewpt);
-  if (distance_a <= max_dis) {
-    double h_a = target.z - viewpt.z;
-    double h_b = temp.z - viewpt.z;
-    if (h_b < 0) {
-      if (h_a >= 0) {
-        temp = target;
-      } else {
-        if (compareTan(distance_a, distance_b, -h_a, -h_b) == 0) {
-          temp = target;
-        }
-      }
-    } else {
-      if (h_a > 0) {
-        if (compareTan(distance_a, distance_b, h_a, h_b) == 1) {
-          temp = target;
-        }
-      }
-    }
+  if (distance_a > max_dis) {
+    // If target is beyond max distance, return temp as-is
+    return temp;
   }
+
+  double h_a = target.z - viewpt.z;
+  double h_b = temp.z - viewpt.z;
+
+  if (h_b < 0) {
+    // Case where temp is below view height
+    if (h_a >= 0 || compareTan(distance_a, distance_b, -h_a, -h_b) == 0) {
+      temp = target;
+    }
+  } else if (h_a > 0 && compareTan(distance_a, distance_b, h_a, h_b) == 1) {
+    // Case where both are above view height, and target has a higher tangent
+    temp = target;
+  }
+
+  // if (distance_a <= max_dis) {
+  //   double h_a = target.z - viewpt.z;
+  //   double h_b = temp.z - viewpt.z;
+  //   if (h_b < 0) {
+  //     if (h_a >= 0) {
+  //       temp = target;
+  //     } else {
+  //       if (compareTan(distance_a, distance_b, -h_a, -h_b) == 0) {
+  //         temp = target;
+  //       }
+  //     }
+  //   } else {
+  //     if (h_a > 0) {
+  //       if (compareTan(distance_a, distance_b, h_a, h_b) == 1) {
+  //         temp = target;
+  //       }
+  //     }
+  //   }
+  // }
   return temp;
 }
 
-Rcpp::IntegerMatrix referenceLineVisible(
-    const Vector3 &viewpt,
-    const Rcpp::NumericMatrix &dsm,
-    Rcpp::IntegerMatrix& visible,
-    int rows,
-    int cols,
-    int max_dis,
-    const double h) {
-  Vector3 temp;
-  // to N
-  if (viewpt.y >= 2) {
-    temp = {viewpt.x, viewpt.y-1, double(dsm(viewpt.y-1, viewpt.x) + h)};
-    for (int i = 1; i < viewpt.y; i++) {
-      Vector3 target = {double(viewpt.x),
-                        double(viewpt.y-1 - i),
-                        double(dsm(viewpt.y-1 - i, viewpt.x) + h)};
-      Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
-      if (updateTemp.z == target.z &&
-          updateTemp.x == target.x &&
-          updateTemp.y == target.y) {
-        temp = target;
-        visible(target.y, target.x) = 1;
-      }
+// Helper function to check visibility in a given direction
+void check_direction(const Vector3 &viewpt, int dx, int dy, int max_steps,
+                     const Rcpp::NumericMatrix &dsm, Rcpp::IntegerMatrix &visible,
+                     int max_dis, double h) {
+  Vector3 temp = {viewpt.x + dx, viewpt.y + dy, dsm(viewpt.y + dy, viewpt.x + dx) + h};
+
+  for (int i = 1; i <= max_steps; ++i) {
+    int x = viewpt.x + i * dx;
+    int y = viewpt.y + i * dy;
+
+    if (!is_within_bounds(x, y, dsm.nrow(), dsm.ncol())) break;
+
+    Vector3 target = {double(x), double(y), dsm(y, x) + h};
+    Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
+
+    if (updateTemp.z == target.z && updateTemp.x == target.x && updateTemp.y == target.y) {
+      temp = target;
+      visible(y, x) = 1;
     }
   }
+}
 
-  // to S
-  if (viewpt.y <= cols-2) {
-    temp = {viewpt.x, viewpt.y+1, double(dsm(viewpt.y+1, viewpt.x) + h)};
-    for (int i = 1; i < rows-viewpt.y; i++) {
-      Vector3 target = {double(viewpt.x),
-                        double(viewpt.y+1 + i),
-                        double(dsm(viewpt.y+1 + i, viewpt.x) + h)};
-      Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
-      if (updateTemp.z == target.z &&
-          updateTemp.x == target.x &&
-          updateTemp.y == target.y) {
-        temp = target;
-        visible(target.y, target.x) = 1;
-      }
-    }
-  }
-
-  // to E
-  if (viewpt.x <= rows-2) {
-    temp = {viewpt.x+1, viewpt.y, double(dsm(viewpt.y, viewpt.x+1) + h)};
-    for (int i = 1; i < cols-viewpt.x; i++) {
-      Vector3 target = {double(viewpt.x+1 + i),
-                        double(viewpt.y),
-                        double(dsm(viewpt.y, viewpt.x+1 + i) + h)};
-      Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
-      if (updateTemp.z == target.z &&
-          updateTemp.x == target.x &&
-          updateTemp.y == target.y) {
-        temp = target;
-        visible(target.y, target.x) = 1;
-      }
-    }
-  }
-
-  // to W
-  if (viewpt.x >= 2) {
-    temp = {viewpt.x-1, viewpt.y, double(dsm(viewpt.y, viewpt.x-1) + h)};
-    for (int i = 1; i < cols; i++) {
-      Vector3 target = {double(viewpt.x-1 - i),
-                        double(viewpt.y),
-                        double(dsm(viewpt.y, viewpt.x-1 - i) + h)};
-      Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
-      if (updateTemp.z == target.z &&
-          updateTemp.x == target.x &&
-          updateTemp.y == target.y) {
-        temp = target;
-        visible(target.y, target.x) = 1;
-      }
-    }
-  }
-
-  // to SW
-  if (viewpt.x >= 2 && viewpt.y <= cols-2) {
-    temp = {viewpt.x-1, viewpt.y+1, double(dsm(viewpt.y+1, viewpt.x-1) + h)};
-    for (int i = 1; i < rows-viewpt.y; i++) {
-      Vector3 target = {double(viewpt.x-1 - i),
-                        double(viewpt.y+1 + i),
-                        double(dsm(viewpt.y+1 + i, viewpt.x-1 - i) + h)};
-      Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
-      if (updateTemp.z == target.z &&
-          updateTemp.x == target.x &&
-          updateTemp.y == target.y) {
-        temp = target;
-        visible(target.y, target.x) = 1;
-      }
-    }
-  }
-
-  // to NE
-  if (viewpt.x <= rows-2 && viewpt.y >= 2) {
-    temp = {viewpt.x+1, viewpt.y-1, double(dsm(viewpt.y-1, viewpt.x+1) + h)};
-    for (int i = 1; i < viewpt.y; i++) {
-      Vector3 target = {double(viewpt.x+1 + i),
-                        double(viewpt.y-1 - i),
-                        double(dsm(viewpt.y-1 - i, viewpt.x+1 + i) + h)};
-      Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
-      if (updateTemp.z == target.z &&
-          updateTemp.x == target.x &&
-          updateTemp.y == target.y) {
-        temp = target;
-        visible(target.y, target.x) = 1;
-      }
-    }
-  }
-
-  // to NW
-  if (viewpt.x >= 2 && viewpt.y >= 2) {
-    temp = {viewpt.x-1, viewpt.y-1, double(dsm(viewpt.y-1, viewpt.x-1) + h)};
-    for (int i = 1; i < viewpt.y; i++) {
-      Vector3 target = {double(viewpt.x-1 - i),
-                        double(viewpt.y-1 - i),
-                        double(dsm(viewpt.y-1 - i, viewpt.x-1 - i) + h)};
-      Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
-      if (updateTemp.z == target.z &&
-          updateTemp.x == target.x &&
-          updateTemp.y == target.y) {
-        temp = target;
-        visible(target.y, target.x) = 1;
-      }
-    }
-  }
-
-  // to SE
-  if (viewpt.x <= rows-2 && viewpt.y <= cols-2) {
-    temp = {viewpt.x+1, viewpt.y+1, double(dsm(viewpt.y+1, viewpt.x+1) + h)};
-    for (int i = 1; i < rows-viewpt.y; i++) {
-      Vector3 target = {double(viewpt.x+1 + i),
-                        double(viewpt.y+1 + i),
-                        double(dsm(viewpt.y+1 + i, viewpt.x+1 + i) + h)};
-      Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
-      if (updateTemp.z == target.z &&
-          updateTemp.x == target.x &&
-          updateTemp.y == target.y) {
-        temp = target;
-        visible(target.y, target.x) = 1;
-      }
-    }
-  }
-
+Rcpp::IntegerMatrix referenceLineVisible(const Vector3 &viewpt,
+                                         const Rcpp::NumericMatrix &dsm,
+                                         Rcpp::IntegerMatrix &visible,
+                                         int rows, int cols, int max_dis, double h) {
+  // North
+  if (viewpt.y >= 2) check_direction(viewpt, 0, -1, viewpt.y, dsm, visible, max_dis, h);
+  // South
+  if (viewpt.y <= rows - 2) check_direction(viewpt, 0, 1, rows - viewpt.y - 1, dsm, visible, max_dis, h);
+  // East
+  if (viewpt.x <= cols - 2) check_direction(viewpt, 1, 0, cols - viewpt.x - 1, dsm, visible, max_dis, h);
+  // West
+  if (viewpt.x >= 2) check_direction(viewpt, -1, 0, viewpt.x, dsm, visible, max_dis, h);
+  // Southwest
+  if (viewpt.x >= 2 && viewpt.y <= rows - 2) check_direction(viewpt, -1, 1, std::min(viewpt.x, rows - viewpt.y - 1), dsm, visible, max_dis, h);
+  // Northeast
+  if (viewpt.x <= cols - 2 && viewpt.y >= 2) check_direction(viewpt, 1, -1, std::min(cols - viewpt.x - 1, viewpt.y), dsm, visible, max_dis, h);
+  // Northwest
+  if (viewpt.x >= 2 && viewpt.y >= 2) check_direction(viewpt, -1, -1, std::min(viewpt.x, viewpt.y), dsm, visible, max_dis, h);
+  // Southeast
+  if (viewpt.x <= cols - 2 && viewpt.y <= rows - 2) check_direction(viewpt, 1, 1, std::min(cols - viewpt.x - 1, rows - viewpt.y - 1), dsm, visible, max_dis, h);
   return visible;
 }
+
+// Rcpp::IntegerMatrix referenceLineVisible(
+//     const Vector3 &viewpt,
+//     const Rcpp::NumericMatrix &dsm,
+//     Rcpp::IntegerMatrix& visible,
+//     int rows,
+//     int cols,
+//     int max_dis,
+//     const double h) {
+//   Vector3 temp;
+//   // to N
+//   if (viewpt.y >= 2) {
+//     temp = {viewpt.x, viewpt.y-1, double(dsm(viewpt.y-1, viewpt.x) + h)};
+//     for (int i = 1; i < viewpt.y; i++) {
+//       Vector3 target = {double(viewpt.x),
+//                         double(viewpt.y-1 - i),
+//                         double(dsm(viewpt.y-1 - i, viewpt.x) + h)};
+//       Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
+//       if (updateTemp.z == target.z &&
+//           updateTemp.x == target.x &&
+//           updateTemp.y == target.y) {
+//         temp = target;
+//         visible(target.y, target.x) = 1;
+//       }
+//     }
+//   }
+//
+//   // to S
+//   if (viewpt.y <= cols-2) {
+//     temp = {viewpt.x, viewpt.y+1, double(dsm(viewpt.y+1, viewpt.x) + h)};
+//     for (int i = 1; i < rows-viewpt.y; i++) {
+//       Vector3 target = {double(viewpt.x),
+//                         double(viewpt.y+1 + i),
+//                         double(dsm(viewpt.y+1 + i, viewpt.x) + h)};
+//       Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
+//       if (updateTemp.z == target.z &&
+//           updateTemp.x == target.x &&
+//           updateTemp.y == target.y) {
+//         temp = target;
+//         visible(target.y, target.x) = 1;
+//       }
+//     }
+//   }
+//
+//   // to E
+//   if (viewpt.x <= rows-2) {
+//     temp = {viewpt.x+1, viewpt.y, double(dsm(viewpt.y, viewpt.x+1) + h)};
+//     for (int i = 1; i < cols-viewpt.x; i++) {
+//       Vector3 target = {double(viewpt.x+1 + i),
+//                         double(viewpt.y),
+//                         double(dsm(viewpt.y, viewpt.x+1 + i) + h)};
+//       Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
+//       if (updateTemp.z == target.z &&
+//           updateTemp.x == target.x &&
+//           updateTemp.y == target.y) {
+//         temp = target;
+//         visible(target.y, target.x) = 1;
+//       }
+//     }
+//   }
+//
+//   // to W
+//   if (viewpt.x >= 2) {
+//     temp = {viewpt.x-1, viewpt.y, double(dsm(viewpt.y, viewpt.x-1) + h)};
+//     for (int i = 1; i < cols; i++) {
+//       Vector3 target = {double(viewpt.x-1 - i),
+//                         double(viewpt.y),
+//                         double(dsm(viewpt.y, viewpt.x-1 - i) + h)};
+//       Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
+//       if (updateTemp.z == target.z &&
+//           updateTemp.x == target.x &&
+//           updateTemp.y == target.y) {
+//         temp = target;
+//         visible(target.y, target.x) = 1;
+//       }
+//     }
+//   }
+//
+//   // to SW
+//   if (viewpt.x >= 2 && viewpt.y <= cols-2) {
+//     temp = {viewpt.x-1, viewpt.y+1, double(dsm(viewpt.y+1, viewpt.x-1) + h)};
+//     for (int i = 1; i < rows-viewpt.y; i++) {
+//       Vector3 target = {double(viewpt.x-1 - i),
+//                         double(viewpt.y+1 + i),
+//                         double(dsm(viewpt.y+1 + i, viewpt.x-1 - i) + h)};
+//       Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
+//       if (updateTemp.z == target.z &&
+//           updateTemp.x == target.x &&
+//           updateTemp.y == target.y) {
+//         temp = target;
+//         visible(target.y, target.x) = 1;
+//       }
+//     }
+//   }
+//
+//   // to NE
+//   if (viewpt.x <= rows-2 && viewpt.y >= 2) {
+//     temp = {viewpt.x+1, viewpt.y-1, double(dsm(viewpt.y-1, viewpt.x+1) + h)};
+//     for (int i = 1; i < viewpt.y; i++) {
+//       Vector3 target = {double(viewpt.x+1 + i),
+//                         double(viewpt.y-1 - i),
+//                         double(dsm(viewpt.y-1 - i, viewpt.x+1 + i) + h)};
+//       Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
+//       if (updateTemp.z == target.z &&
+//           updateTemp.x == target.x &&
+//           updateTemp.y == target.y) {
+//         temp = target;
+//         visible(target.y, target.x) = 1;
+//       }
+//     }
+//   }
+//
+//   // to NW
+//   if (viewpt.x >= 2 && viewpt.y >= 2) {
+//     temp = {viewpt.x-1, viewpt.y-1, double(dsm(viewpt.y-1, viewpt.x-1) + h)};
+//     for (int i = 1; i < viewpt.y; i++) {
+//       Vector3 target = {double(viewpt.x-1 - i),
+//                         double(viewpt.y-1 - i),
+//                         double(dsm(viewpt.y-1 - i, viewpt.x-1 - i) + h)};
+//       Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
+//       if (updateTemp.z == target.z &&
+//           updateTemp.x == target.x &&
+//           updateTemp.y == target.y) {
+//         temp = target;
+//         visible(target.y, target.x) = 1;
+//       }
+//     }
+//   }
+//
+//   // to SE
+//   if (viewpt.x <= rows-2 && viewpt.y <= cols-2) {
+//     temp = {viewpt.x+1, viewpt.y+1, double(dsm(viewpt.y+1, viewpt.x+1) + h)};
+//     for (int i = 1; i < rows-viewpt.y; i++) {
+//       Vector3 target = {double(viewpt.x+1 + i),
+//                         double(viewpt.y+1 + i),
+//                         double(dsm(viewpt.y+1 + i, viewpt.x+1 + i) + h)};
+//       Vector3 updateTemp = updateLine(viewpt, target, temp, max_dis);
+//       if (updateTemp.z == target.z &&
+//           updateTemp.x == target.x &&
+//           updateTemp.y == target.y) {
+//         temp = target;
+//         visible(target.y, target.x) = 1;
+//       }
+//     }
+//   }
+//
+//   return visible;
+// }
 
 // bool is_within_bounds(double x, double y, int rows, int cols) {
 //   return x >= 0 && x < cols && y >= 0 && y < rows;
