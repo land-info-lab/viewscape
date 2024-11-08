@@ -6,7 +6,7 @@
 #' @importFrom sp SpatialPoints
 
 #' @noMd
-radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0, method) {
+radius_viewshed <- function(dsm, r, refraction_factor, viewPt, offset, offset2 = 0, method) {
   resolution <- terra::res(dsm)
   distance <- round(r/resolution[1])
   projection <- terra::crs(dsm, proj = TRUE)
@@ -28,7 +28,7 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0, method) {
   if (method == "plane") {
     label_matrix <- reference(viewpoint, dsm_matrix, offset2, distance)
   } else if (method == "los") {
-    label_matrix <- LOS(viewpoint, dsm_matrix, offset2, distance)
+    label_matrix <- LOS(viewpoint, dsm_matrix, offset2, distance, refraction_factor)
   }
 
   output <- new("Viewshed",
@@ -42,11 +42,12 @@ radius_viewshed <- function(dsm, r, viewPt, offset, offset2 = 0, method) {
 }
 
 #' @noMd
-paral_nix <- function(X, dsm, r, offset, workers, method){
+paral_nix <- function(X, dsm, r, refraction_factor, offset, workers, method){
   results <- pbmcapply::pbmclapply(X = X,
                                    FUN=radius_viewshed,
                                    dsm=dsm,
                                    r=r,
+                                   refraction_factor=refraction_factor,
                                    offset=offset,
                                    method = method,
                                    mc.cores=workers)

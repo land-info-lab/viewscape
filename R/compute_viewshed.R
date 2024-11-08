@@ -13,6 +13,11 @@
 #' viewpoint will look at. (defaut is 0)
 #' @param r Numeric (optional), setting the radius for viewshed analysis.
 #' (The default is 1000m/3281ft)
+#' @param refraction_factor Number, indicating the refraction factor.
+#' The refraction factor adjusts the effect of atmospheric refraction
+#' on the apparent curvature of the Earth. In most standard applications, a refraction factor
+#' of 0.13 is used, and so does this function. However, the appropriate refraction factor may
+#' vary depending on environmental conditions.
 #' @param method Character, The algorithm for computing a viewshed:
 #' "plane" and "los" (see details). "plane" is used as default.
 #' @param parallel Logical, (default is FALSE) indicating if parallel computing
@@ -73,6 +78,7 @@ compute_viewshed <- function(dsm,
                              offset_viewpoint=1.7,
                              offset_height = 0,
                              r = NULL,
+                             refraction_factor = 0.13,
                              method = "plane",
                              parallel = FALSE,
                              workers = 1,
@@ -127,7 +133,9 @@ compute_viewshed <- function(dsm,
     }
     viewpoints <- c(viewpoints[,1], viewpoints[,2])
     # compute viewshed
-    output <- radius_viewshed(dsm, r, viewpoints,
+    output <- radius_viewshed(dsm, r,
+                              refraction_factor,
+                              viewpoints,
                               offset_viewpoint,
                               offset_height,
                               method)
@@ -173,6 +181,7 @@ compute_viewshed <- function(dsm,
         viewsheds <- paral_nix(X = inputs,
                                dsm = dsm,
                                r = r,
+                               refraction_factor = refraction_factor,
                                offset = offset_viewpoint,
                                method = method,
                                workers = workers)
@@ -182,6 +191,7 @@ compute_viewshed <- function(dsm,
         viewsheds <- paral_nix(X = inputs,
                                dsm = dsm,
                                r = r,
+                               refraction_factor = refraction_factor,
                                offset = offset_viewpoint,
                                method = method,
                                workers = 1)

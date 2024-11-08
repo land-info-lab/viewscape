@@ -13,11 +13,11 @@ sectorMask <- function(viewshed, viewpt, fov) {
     .Call('_viewscape_sectorMask', PACKAGE = 'viewscape', viewshed, viewpt, fov)
 }
 
-reference <- function(viewpoint, dsm, h, max_dis) {
-    .Call('_viewscape_reference', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis)
+reference <- function(viewpoint, dsm, h, max_dis, refraction_factor) {
+    .Call('_viewscape_reference', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis, refraction_factor)
 }
 
-LOS <- function(viewpoint, dsm, h, max_dis) {
-    .Call('_viewscape_LOS', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis)
+LOS <- function(viewpoint, dsm, h, max_dis, refraction_factor) {
+    .Call('_viewscape_LOS', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis, refraction_factor)
 }
 

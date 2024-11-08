@@ -27,11 +27,8 @@ Vector3 vectorSubtract(const Vector3& end, const Vector3& start) {
   return result;
 }
 
-const double REarth = 6371000.0; // Earth's radius in meters
-const double refraction_factor = 6.0 / 7.0; // Refraction adjustment factor
-
-double curvatureRefractionAdjustment(double distance) {
-  return (distance * distance) / (2 * REarth) * refraction_factor;
+double curvatureRefractionAdjustment(double distance, double refraction_factor = 0.13) {
+  return (distance * distance) / 12740000.0 * refraction_factor;
 }
 
 std::vector<double> computePlane(const Vector3& viewpoint,
@@ -60,7 +57,8 @@ Rcpp::IntegerMatrix wswSector(const Vector3 &viewpt,
                               Rcpp::IntegerMatrix visible,
                               int rows,
                               int max_dis,
-                              const double h) {
+                              const double h,
+                              const double refraction_factor) {
   Rcpp::NumericMatrix referenceGrid = dsm;
   double minElevation;
   Vector3 target;
@@ -87,7 +85,7 @@ Rcpp::IntegerMatrix wswSector(const Vector3 &viewpt,
           // Calculate horizontal distance for curvature and refraction correction
           double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
           // Adjust target height with curvature and refraction
-          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance, refraction_factor)};
 
           // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
@@ -108,7 +106,8 @@ Rcpp::IntegerMatrix wnwSector(const Vector3 &viewpt,
                               const Rcpp::NumericMatrix &dsm,
                               Rcpp::IntegerMatrix visible,
                               int max_dis,
-                              const double h) {
+                              const double h,
+                              const double refraction_factor) {
   Rcpp::NumericMatrix referenceGrid = dsm;
   double minElevation;
   Vector3 target;
@@ -129,7 +128,7 @@ Rcpp::IntegerMatrix wnwSector(const Vector3 &viewpt,
           // Calculate horizontal distance for curvature and refraction correction
           double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
           // Adjust target height with curvature and refraction
-          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance, refraction_factor)};
 
           // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
@@ -150,7 +149,8 @@ Rcpp::IntegerMatrix nwnSector(const Vector3 &viewpt,
                               const Rcpp::NumericMatrix &dsm,
                               Rcpp::IntegerMatrix visible,
                               int max_dis,
-                              const double h) {
+                              const double h,
+                              const double refraction_factor) {
   Rcpp::NumericMatrix referenceGrid = dsm;
   double minElevation;
   Vector3 target;
@@ -171,7 +171,7 @@ Rcpp::IntegerMatrix nwnSector(const Vector3 &viewpt,
           // Calculate horizontal distance for curvature and refraction correction
           double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
           // Adjust target height with curvature and refraction
-          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance, refraction_factor)};
 
           // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
@@ -193,7 +193,8 @@ Rcpp::IntegerMatrix nenSector(const Vector3 &viewpt,
                               Rcpp::IntegerMatrix visible,
                               int cols,
                               int max_dis,
-                              const double h) {
+                              const double h,
+                              const double refraction_factor) {
   Rcpp::NumericMatrix referenceGrid = dsm;
   double minElevation;
   Vector3 target;
@@ -214,7 +215,7 @@ Rcpp::IntegerMatrix nenSector(const Vector3 &viewpt,
           // Calculate horizontal distance for curvature and refraction correction
           double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
           // Adjust target height with curvature and refraction
-          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance, refraction_factor)};
 
           // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
@@ -236,7 +237,8 @@ Rcpp::IntegerMatrix eneSector(const Vector3 &viewpt,
                               Rcpp::IntegerMatrix visible,
                               int cols,
                               int max_dis,
-                              const double h) {
+                              const double h,
+                              const double refraction_factor) {
   Rcpp::NumericMatrix referenceGrid = dsm;
   double minElevation;
   Vector3 target;
@@ -257,7 +259,7 @@ Rcpp::IntegerMatrix eneSector(const Vector3 &viewpt,
           // Calculate horizontal distance for curvature and refraction correction
           double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
           // Adjust target height with curvature and refraction
-          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance, refraction_factor)};
 
           // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
@@ -280,7 +282,8 @@ Rcpp::IntegerMatrix eseSector(const Vector3 &viewpt,
                               int rows,
                               int cols,
                               int max_dis,
-                              const double h) {
+                              const double h,
+                              const double refraction_factor) {
   Rcpp::NumericMatrix referenceGrid = dsm;
   double minElevation;
   Vector3 target;
@@ -301,7 +304,7 @@ Rcpp::IntegerMatrix eseSector(const Vector3 &viewpt,
           // Calculate horizontal distance for curvature and refraction correction
           double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
           // Adjust target height with curvature and refraction
-          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance, refraction_factor)};
 
           // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
@@ -324,7 +327,8 @@ Rcpp::IntegerMatrix sesSector(const Vector3 &viewpt,
                               int rows,
                               int cols,
                               int max_dis,
-                              const double h) {
+                              const double h,
+                              const double refraction_factor) {
   Rcpp::NumericMatrix referenceGrid = dsm;
   double minElevation;
   Vector3 target;
@@ -342,7 +346,7 @@ Rcpp::IntegerMatrix sesSector(const Vector3 &viewpt,
         // Calculate horizontal distance for curvature and refraction correction
         double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
         // Adjust target height with curvature and refraction
-        target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+        target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance, refraction_factor)};
 
         // target = {double(j), double(i), dsm(i,j)+h};
         referencePlane = computePlane(viewpt, temp_1, temp_2);
@@ -363,7 +367,8 @@ Rcpp::IntegerMatrix swsSector(const Vector3 &viewpt,
                               Rcpp::IntegerMatrix visible,
                               int max_dis,
                               int rows,
-                              const double h) {
+                              const double h,
+                              const double refraction_factor) {
   Rcpp::NumericMatrix referenceGrid = dsm;
   double minElevation;
   Vector3 target;
@@ -384,7 +389,7 @@ Rcpp::IntegerMatrix swsSector(const Vector3 &viewpt,
           // Calculate horizontal distance for curvature and refraction correction
           double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
           // Adjust target height with curvature and refraction
-          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance, refraction_factor)};
 
           // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
@@ -493,7 +498,8 @@ Rcpp::IntegerMatrix reference(
     const Rcpp::NumericVector &viewpoint,
     const Rcpp::NumericMatrix &dsm,
     const double h,
-    const int max_dis) {
+    const int max_dis,
+    const double refraction_factor) {
 
   const int rows = dsm.rows();
   const int cols = dsm.cols();
@@ -530,14 +536,14 @@ Rcpp::IntegerMatrix reference(
 
   visible = referenceLineVisible(viewpt, dsm, visible, rows, cols, max_dis, h);
 
-  visible = wswSector(viewpt, dsm, visible, rows, max_dis, h);
-  visible = wnwSector(viewpt, dsm, visible, max_dis, h);
-  visible = nwnSector(viewpt, dsm, visible, max_dis, h);
-  visible = nenSector(viewpt, dsm, visible, cols, max_dis, h);
-  visible = eneSector(viewpt, dsm, visible, cols, max_dis, h);
-  visible = sesSector(viewpt, dsm, visible, rows, cols, max_dis, h);
-  visible = eseSector(viewpt, dsm, visible, rows, cols, max_dis, h);
-  visible = swsSector(viewpt, dsm, visible, max_dis, rows, h);
+  visible = wswSector(viewpt, dsm, visible, rows, max_dis, h, refraction_factor);
+  visible = wnwSector(viewpt, dsm, visible, max_dis, h, refraction_factor);
+  visible = nwnSector(viewpt, dsm, visible, max_dis, h, refraction_factor);
+  visible = nenSector(viewpt, dsm, visible, cols, max_dis, h, refraction_factor);
+  visible = eneSector(viewpt, dsm, visible, cols, max_dis, h, refraction_factor);
+  visible = sesSector(viewpt, dsm, visible, rows, cols, max_dis, h, refraction_factor);
+  visible = eseSector(viewpt, dsm, visible, rows, cols, max_dis, h, refraction_factor);
+  visible = swsSector(viewpt, dsm, visible, max_dis, rows, h, refraction_factor);
   return visible;
 }
 
@@ -547,7 +553,8 @@ Rcpp::IntegerMatrix LOS(
     const Rcpp::NumericVector &viewpoint,
     const Rcpp::NumericMatrix &dsm,
     const double h,
-    const int max_dis) {
+    const int max_dis,
+    const double refraction_factor) {
 
   const int rows = dsm.rows();
   const int cols = dsm.cols();
