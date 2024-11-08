@@ -44,6 +44,10 @@ double zOnPlane(const Vector3& p, const std::vector<double>& plane) {
   return -(plane[0]*p.x + plane[1]*p.y + plane[3])/plane[2];
 }
 
+bool is_within_bounds(double x, double y, int rows, int cols) {
+  return x >= 0 && x < cols && y >= 0 && y < rows;
+}
+
 Rcpp::IntegerMatrix wswSector(const Vector3 &viewpt,
                               const Rcpp::NumericMatrix &dsm,
                               Rcpp::IntegerMatrix visible,
@@ -61,9 +65,16 @@ Rcpp::IntegerMatrix wswSector(const Vector3 &viewpt,
   for (int j = viewpt.x - 2; j > 0; --j) {
     count++;
     for (int i = viewpt.y + 1; i < rows && count >= i-viewpt.y; i++) {
-      if (j + 1 < dsm.ncol() && i < dsm.nrow() && i - 1 >= 0) {
-        temp_1 = {double(j+1), double(i), referenceGrid(double(i), double(j+1))};
-        temp_2 = {double(j+1), double(i-1), referenceGrid(double(i-1), double(j+1))};
+      if (
+          // j + 1 < dsm.ncol() && i < dsm.nrow() && i - 1 >= 0
+          is_within_bounds(j + 1, i, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j + 1, i - 1, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j, i, dsm.nrow(), dsm.ncol())
+      ) {
+        temp_1 = {double(j + 1), double(i), referenceGrid(i, j + 1)};
+        temp_2 = {double(j + 1), double(i - 1), referenceGrid(i - 1, j + 1)};
+        // temp_1 = {double(j+1), double(i), referenceGrid(double(i), double(j+1))};
+        // temp_2 = {double(j+1), double(i-1), referenceGrid(double(i-1), double(j+1))};
         if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
           target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
@@ -96,16 +107,20 @@ Rcpp::IntegerMatrix wnwSector(const Vector3 &viewpt,
   for (int j = viewpt.x - 2; j > 0; --j) {
     count++;
     for (int i = viewpt.y - 1; i > 0 && count >= viewpt.y - i; --i) {
-      temp_1 = {double(j+1), double(i), referenceGrid(double(i), double(j+1))};
-      temp_2 = {double(j+1), double(i+1), referenceGrid(double(i+1), double(j+1))};
-      if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-        target = {double(j), double(i), dsm(i,j)+h};
-        referencePlane = computePlane(viewpt, temp_1, temp_2);
-        minElevation = zOnPlane(target, referencePlane);
-        if (target.z > minElevation) {
-          visible(i,j) = 1;
-        } else {
-          referenceGrid(i,j) = minElevation;
+      if (is_within_bounds(j + 1, i, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j + 1, i + 1, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j, i, dsm.nrow(), dsm.ncol())) {
+        temp_1 = {double(j+1), double(i), referenceGrid(double(i), double(j+1))};
+        temp_2 = {double(j+1), double(i+1), referenceGrid(double(i+1), double(j+1))};
+        if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
+          target = {double(j), double(i), dsm(i,j)+h};
+          referencePlane = computePlane(viewpt, temp_1, temp_2);
+          minElevation = zOnPlane(target, referencePlane);
+          if (target.z > minElevation) {
+            visible(i,j) = 1;
+          } else {
+            referenceGrid(i,j) = minElevation;
+          }
         }
       }
     }
@@ -129,16 +144,20 @@ Rcpp::IntegerMatrix nwnSector(const Vector3 &viewpt,
   for (int i = viewpt.y - 2; i > 0; --i) {
     count++;
     for (int j = viewpt.x - 1; j > 0 && count >= viewpt.x - j; --j) {
-      temp_1 = {double(j), double(i+1), referenceGrid(double(i+1), double(j))};
-      temp_2 = {double(j+1), double(i+1), referenceGrid(double(i+1), double(j+1))};
-      if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-        target = {double(j), double(i), dsm(i,j)+h};
-        referencePlane = computePlane(viewpt, temp_1, temp_2);
-        minElevation = zOnPlane(target, referencePlane);
-        if (target.z > minElevation) {
-          visible(i,j) = 1;
-        } else {
-          referenceGrid(i,j) = minElevation;
+      if (is_within_bounds(j, i + 1, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j + 1, i + 1, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j, i, dsm.nrow(), dsm.ncol())) {
+        temp_1 = {double(j), double(i+1), referenceGrid(double(i+1), double(j))};
+        temp_2 = {double(j+1), double(i+1), referenceGrid(double(i+1), double(j+1))};
+        if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
+          target = {double(j), double(i), dsm(i,j)+h};
+          referencePlane = computePlane(viewpt, temp_1, temp_2);
+          minElevation = zOnPlane(target, referencePlane);
+          if (target.z > minElevation) {
+            visible(i,j) = 1;
+          } else {
+            referenceGrid(i,j) = minElevation;
+          }
         }
       }
     }
@@ -163,16 +182,20 @@ Rcpp::IntegerMatrix nenSector(const Vector3 &viewpt,
   for (int i = viewpt.y - 2; i > 0; --i) {
     count++;
     for (int j = viewpt.x + 1; j < cols && count >= j-viewpt.x; j++) {
-      temp_1 = {double(j), double(i+1), referenceGrid(double(i+1), double(j))};
-      temp_2 = {double(j-1), double(i+1), referenceGrid(double(i+1), double(j-1))};
-      if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-        target = {double(j), double(i), dsm(i,j)+h};
-        referencePlane = computePlane(viewpt, temp_1, temp_2);
-        minElevation = zOnPlane(target, referencePlane);
-        if (target.z > minElevation) {
-          visible(i,j) = 1;
-        } else {
-          referenceGrid(i,j) = minElevation;
+      if (is_within_bounds(j, i + 1, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j - 1, i + 1, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j, i, dsm.nrow(), dsm.ncol())) {
+        temp_1 = {double(j), double(i+1), referenceGrid(double(i+1), double(j))};
+        temp_2 = {double(j-1), double(i+1), referenceGrid(double(i+1), double(j-1))};
+        if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
+          target = {double(j), double(i), dsm(i,j)+h};
+          referencePlane = computePlane(viewpt, temp_1, temp_2);
+          minElevation = zOnPlane(target, referencePlane);
+          if (target.z > minElevation) {
+            visible(i,j) = 1;
+          } else {
+            referenceGrid(i,j) = minElevation;
+          }
         }
       }
     }
@@ -197,16 +220,20 @@ Rcpp::IntegerMatrix eneSector(const Vector3 &viewpt,
   for (int j = viewpt.x + 2; j < cols; j++) {
     count++;
     for (int i = viewpt.y - 1; i > 0 && count >= viewpt.y-i; --i) {
-      temp_1 = {double(j-1), double(i), referenceGrid(double(i), double(j-1))};
-      temp_2 = {double(j-1), double(i+1), referenceGrid(double(i+1), double(j-1))};
-      if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-        target = {double(j), double(i), dsm(i,j)+h};
-        referencePlane = computePlane(viewpt, temp_1, temp_2);
-        minElevation = zOnPlane(target, referencePlane);
-        if (target.z > minElevation) {
-          visible(i,j) = 1;
-        } else {
-          referenceGrid(i,j) = minElevation;
+      if (is_within_bounds(j - 1, i, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j - 1, i + 1, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j, i, dsm.nrow(), dsm.ncol())) {
+        temp_1 = {double(j-1), double(i), referenceGrid(double(i), double(j-1))};
+        temp_2 = {double(j-1), double(i+1), referenceGrid(double(i+1), double(j-1))};
+        if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
+          target = {double(j), double(i), dsm(i,j)+h};
+          referencePlane = computePlane(viewpt, temp_1, temp_2);
+          minElevation = zOnPlane(target, referencePlane);
+          if (target.z > minElevation) {
+            visible(i,j) = 1;
+          } else {
+            referenceGrid(i,j) = minElevation;
+          }
         }
       }
     }
@@ -232,16 +259,20 @@ Rcpp::IntegerMatrix eseSector(const Vector3 &viewpt,
   for (int j = viewpt.x + 2; j < cols; j++) {
     count++;
     for (int i = viewpt.y + 1; i < rows && count >= i-viewpt.y; i++) {
-      temp_1 = {double(j-1), double(i), referenceGrid(double(i), double(j-1))};
-      temp_2 = {double(j-1), double(i-1), referenceGrid(double(i-1), double(j-1))};
-      if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-        target = {double(j), double(i), dsm(i,j)+h};
-        referencePlane = computePlane(viewpt, temp_1, temp_2);
-        minElevation = zOnPlane(target, referencePlane);
-        if (target.z > minElevation) {
-          visible(i,j) = 1;
-        } else {
-          referenceGrid(i,j) = minElevation;
+      if (is_within_bounds(j - 1, i, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j - 1, i - 1, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j, i, dsm.nrow(), dsm.ncol())) {
+        temp_1 = {double(j-1), double(i), referenceGrid(double(i), double(j-1))};
+        temp_2 = {double(j-1), double(i-1), referenceGrid(double(i-1), double(j-1))};
+        if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
+          target = {double(j), double(i), dsm(i,j)+h};
+          referencePlane = computePlane(viewpt, temp_1, temp_2);
+          minElevation = zOnPlane(target, referencePlane);
+          if (target.z > minElevation) {
+            visible(i,j) = 1;
+          } else {
+            referenceGrid(i,j) = minElevation;
+          }
         }
       }
     }
@@ -301,16 +332,20 @@ Rcpp::IntegerMatrix swsSector(const Vector3 &viewpt,
   for (int i = viewpt.y + 2; i < rows; i++) {
     count++;
     for (int j = viewpt.x - 1; j > 0 && count >= viewpt.x - j; --j) {
-      temp_1 = {double(j), double(i-1), referenceGrid(double(i-1), double(j))};
-      temp_2 = {double(j+1), double(i-1), referenceGrid(double(i-1), double(j+1))};
-      if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-        target = {double(j), double(i), dsm(i,j)+h};
-        referencePlane = computePlane(viewpt, temp_1, temp_2);
-        minElevation = zOnPlane(target, referencePlane);
-        if (target.z > minElevation) {
-          visible(i,j) = 1;
-        } else {
-          referenceGrid(i,j) = minElevation;
+      if (is_within_bounds(j, i - 1, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j - 1, i - 1, dsm.nrow(), dsm.ncol()) &&
+          is_within_bounds(j, i, dsm.nrow(), dsm.ncol())) {
+        temp_1 = {double(j), double(i-1), referenceGrid(double(i-1), double(j))};
+        temp_2 = {double(j+1), double(i-1), referenceGrid(double(i-1), double(j+1))};
+        if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
+          target = {double(j), double(i), dsm(i,j)+h};
+          referencePlane = computePlane(viewpt, temp_1, temp_2);
+          minElevation = zOnPlane(target, referencePlane);
+          if (target.z > minElevation) {
+            visible(i,j) = 1;
+          } else {
+            referenceGrid(i,j) = minElevation;
+          }
         }
       }
     }
@@ -510,9 +545,9 @@ Rcpp::IntegerMatrix referenceLineVisible(
   return visible;
 }
 
-bool is_within_bounds(double x, double y, int rows, int cols) {
-  return x >= 0 && x < cols && y >= 0 && y < rows;
-}
+// bool is_within_bounds(double x, double y, int rows, int cols) {
+//   return x >= 0 && x < cols && y >= 0 && y < rows;
+// }
 
 // [[Rcpp::export]]
 Rcpp::IntegerMatrix reference(
