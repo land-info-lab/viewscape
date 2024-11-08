@@ -318,18 +318,6 @@ Rcpp::IntegerMatrix swsSector(const Vector3 &viewpt,
   return visible;
 }
 
-//Rcpp::IntegerMatrix updatePlane(const Vector3 &viewpt, Vector3 t1, Vector3 t2)
-
-//Rcpp::IntegerMatrix referencePlaneVisible(
-// const int direction,
-// const Vector3 &viewpt,
-// const Rcpp::NumericMatrix &dsm,
-// Rcpp::IntegerMatrix& visible,
-// int rows,
-// int cols,
-// int max_dis,
-// const double h)
-
 int compareTan(const double disa,
                const double disb,
                const double ha,
@@ -532,107 +520,72 @@ Rcpp::IntegerMatrix reference(
     const Rcpp::NumericMatrix &dsm,
     const double h,
     const int max_dis) {
+
   const int rows = dsm.rows();
   const int cols = dsm.cols();
   IntegerMatrix visible(rows, cols);
 
-  Vector3 viewpt, n, w, e, s, nw, sw, ne, se;
+  Vector3 viewpt;
+  // Vector3 viewpt, n, w, e, s, nw, sw, ne, se;
 
   viewpt.x = viewpoint[0];
   viewpt.y = viewpoint[1];
   viewpt.z = viewpoint[2];
 
-  visible(viewpt.y, viewpt.x) = 1;
-
-  // Update visibility for adjacent cells
-  if (viewpt.x >= 1) {
-    sw = {viewpt.x-1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x-1) + h};
-    w = {viewpt.x-1, viewpt.y, dsm(viewpt.y, viewpt.x-1) + h};
-    nw = {viewpt.x-1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x-1) + h};
-    if (is_within_bounds(sw.x, sw.y, rows, cols)) visible(sw.y, sw.x) = 1;
-    if (is_within_bounds(w.x, w.y, rows, cols)) visible(w.y, w.x) = 1;
-    if (is_within_bounds(nw.x, nw.y, rows, cols)) visible(nw.y, nw.x) = 1;
-  }
-  if (viewpt.x <= cols-2) {
-    se = {viewpt.x+1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x+1) + h};
-    e = {viewpt.x+1, viewpt.y, dsm(viewpt.y, viewpt.x+1) + h};
-    ne = {viewpt.x+1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x+1) + h};
-    if (is_within_bounds(se.x, se.y, rows, cols)) visible(se.y, se.x) = 1;
-    if (is_within_bounds(e.x, e.y, rows, cols)) visible(e.y, e.x) = 1;
-    if (is_within_bounds(ne.x, ne.y, rows, cols)) visible(ne.y, ne.x) = 1;
-  }
-  if (viewpt.y >= 1) {
-    nw = {viewpt.x-1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x-1) + h};
-    n = {viewpt.x, viewpt.y-1, dsm(viewpt.y-1, viewpt.x) + h};
-    ne = {viewpt.x+1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x+1) + h};
-    if (is_within_bounds(nw.x, nw.y, rows, cols)) visible(nw.y, nw.x) = 1;
-    if (is_within_bounds(n.x, n.y, rows, cols)) visible(n.y, n.x) = 1;
-    if (is_within_bounds(ne.x, ne.y, rows, cols)) visible(ne.y, ne.x) = 1;
-  }
-  if (viewpt.y <= rows-2) {
-    sw = {viewpt.x-1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x-1) + h};
-    s = {viewpt.x, viewpt.y+1, dsm(viewpt.y+1, viewpt.x) + h};
-    se = {viewpt.x+1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x+1) + h};
-    if (is_within_bounds(sw.x, sw.y, rows, cols)) visible(sw.y, sw.x) = 1;
-    if (is_within_bounds(s.x, s.y, rows, cols)) visible(s.y, s.x) = 1;
-    if (is_within_bounds(se.x, se.y, rows, cols)) visible(se.y, se.x) = 1;
+  if (is_within_bounds(viewpt.y, viewpt.x, rows, cols)) {
+    visible(viewpt.y, viewpt.x) = 1;
   }
 
-  // if (viewpt.x >= 1) {
-  //   sw.x = viewpt.x-1;
-  //   sw.y = viewpt.y+1;
-  //   sw.z = dsm(sw.y, sw.x) + h;
-  //   w.x = viewpt.x-1;
-  //   w.y = viewpt.y;
-  //   w.z = dsm(w.y, w.x) + h;
-  //   nw.x = viewpt.x-1;
-  //   nw.y = viewpt.y-1;
-  //   nw.z = dsm(nw.y, nw.x) + h;
-  //   visible(sw.y,sw.x) = 1;
-  //   visible(w.y,w.x) = 1;
-  //   visible(nw.y,nw.x) = 1;
+  // Check and update visibility for each adjacent cell
+  std::vector<Vector3> neighbors = {
+    {viewpt.x - 1, viewpt.y + 1, dsm(viewpt.y + 1, viewpt.x - 1) + h}, // SW
+    {viewpt.x - 1, viewpt.y, dsm(viewpt.y, viewpt.x - 1) + h},         // W
+    {viewpt.x - 1, viewpt.y - 1, dsm(viewpt.y - 1, viewpt.x - 1) + h}, // NW
+    {viewpt.x + 1, viewpt.y + 1, dsm(viewpt.y + 1, viewpt.x + 1) + h}, // SE
+    {viewpt.x + 1, viewpt.y, dsm(viewpt.y, viewpt.x + 1) + h},         // E
+    {viewpt.x + 1, viewpt.y - 1, dsm(viewpt.y - 1, viewpt.x + 1) + h}, // NE
+    {viewpt.x, viewpt.y - 1, dsm(viewpt.y - 1, viewpt.x) + h},         // N
+    {viewpt.x, viewpt.y + 1, dsm(viewpt.y + 1, viewpt.x) + h}          // S
+  };
+
+  for (const auto& neighbor : neighbors) {
+    if (is_within_bounds(neighbor.y, neighbor.x, rows, cols)) {
+      visible(neighbor.y, neighbor.x) = 1;
+    }
+  }
+
+  // // Update visibility for adjacent cells
+  // if (viewpt.x >= 1 && viewpt.y >= 1) {
+  //   sw = {viewpt.x-1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x-1) + h};
+  //   w = {viewpt.x-1, viewpt.y, dsm(viewpt.y, viewpt.x-1) + h};
+  //   nw = {viewpt.x-1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x-1) + h};
+  //   if (is_within_bounds(sw.x, sw.y, rows, cols)) visible(sw.y, sw.x) = 1;
+  //   if (is_within_bounds(w.x, w.y, rows, cols)) visible(w.y, w.x) = 1;
+  //   if (is_within_bounds(nw.x, nw.y, rows, cols)) visible(nw.y, nw.x) = 1;
   // }
-  // if (viewpt.x <= cols-2) {
-  //   se.x = viewpt.x+1;
-  //   se.y = viewpt.y+1;
-  //   se.z = dsm(se.y, se.x) + h;
-  //   e.x = viewpt.x+1;
-  //   e.y = viewpt.y;
-  //   e.z = dsm(e.y, e.x) + h;
-  //   ne.x = viewpt.x+1;
-  //   ne.y = viewpt.y-1;
-  //   ne.z = dsm(ne.y, ne.x) + h;
-  //   visible(se.y,se.x) = 1;
-  //   visible(e.y,e.x) = 1;
-  //   visible(ne.y,ne.x) = 1;
+  // if (cols >= 2 && viewpt.x <= cols-2 && viewpt.y >= 1) {
+  //   se = {viewpt.x+1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x+1) + h};
+  //   e = {viewpt.x+1, viewpt.y, dsm(viewpt.y, viewpt.x+1) + h};
+  //   ne = {viewpt.x+1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x+1) + h};
+  //   if (is_within_bounds(se.x, se.y, rows, cols)) visible(se.y, se.x) = 1;
+  //   if (is_within_bounds(e.x, e.y, rows, cols)) visible(e.y, e.x) = 1;
+  //   if (is_within_bounds(ne.x, ne.y, rows, cols)) visible(ne.y, ne.x) = 1;
   // }
-  // if (viewpt.y >= 1) {
-  //   nw.x = viewpt.x-1;
-  //   nw.y = viewpt.y-1;
-  //   nw.z = dsm(nw.y, nw.x) + h;
-  //   n.x = viewpt.x;
-  //   n.y = viewpt.y-1;
-  //   n.z = dsm(n.y, n.x) + h;
-  //   ne.x = viewpt.x+1;
-  //   ne.y = viewpt.y-1;
-  //   ne.z = dsm(ne.y, ne.x) + h;
-  //   visible(nw.y,nw.x) = 1;
-  //   visible(n.y,n.x) = 1;
-  //   visible(ne.y,ne.x) = 1;
+  // if (viewpt.y >= 1 && viewpt.x >= 1) {
+  //   nw = {viewpt.x-1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x-1) + h};
+  //   n = {viewpt.x, viewpt.y-1, dsm(viewpt.y-1, viewpt.x) + h};
+  //   ne = {viewpt.x+1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x+1) + h};
+  //   if (is_within_bounds(nw.x, nw.y, rows, cols)) visible(nw.y, nw.x) = 1;
+  //   if (is_within_bounds(n.x, n.y, rows, cols)) visible(n.y, n.x) = 1;
+  //   if (is_within_bounds(ne.x, ne.y, rows, cols)) visible(ne.y, ne.x) = 1;
   // }
-  // if (viewpt.y <= rows-2) {
-  //   sw.x = viewpt.x-1;
-  //   sw.y = viewpt.y+1;
-  //   sw.z = dsm(sw.y, sw.x) + h;
-  //   s.x = viewpt.x;
-  //   s.y = viewpt.y+1;
-  //   s.z = dsm(s.y, s.x) + h;
-  //   se.x = viewpt.x+1;
-  //   se.y = viewpt.y+1;
-  //   se.z = dsm(se.y, se.x) + h;
-  //   visible(sw.y,sw.x) = 1;
-  //   visible(s.y,s.x) = 1;
-  //   visible(se.y,se.x) = 1;
+  // if (rows >= 2 && viewpt.y <= rows-2 && viewpt.x >= 1) {
+  //   sw = {viewpt.x-1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x-1) + h};
+  //   s = {viewpt.x, viewpt.y+1, dsm(viewpt.y+1, viewpt.x) + h};
+  //   se = {viewpt.x+1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x+1) + h};
+  //   if (is_within_bounds(sw.x, sw.y, rows, cols)) visible(sw.y, sw.x) = 1;
+  //   if (is_within_bounds(s.x, s.y, rows, cols)) visible(s.y, s.x) = 1;
+  //   if (is_within_bounds(se.x, se.y, rows, cols)) visible(se.y, se.x) = 1;
   // }
 
   visible = referenceLineVisible(viewpt, dsm, visible, rows, cols, max_dis, h);
