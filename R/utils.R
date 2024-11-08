@@ -26,7 +26,7 @@ radius_viewshed <- function(dsm, r, refraction_factor, viewPt, offset, offset2 =
   dsm_matrix <- terra::as.matrix(dsm, wide=TRUE)
   # compute viewshed
   if (method == "plane") {
-    label_matrix <- reference(viewpoint, dsm_matrix, offset2, distance)
+    label_matrix <- reference(viewpoint, dsm_matrix, offset2, distance, refraction_factor)
   } else if (method == "los") {
     label_matrix <- LOS(viewpoint, dsm_matrix, offset2, distance, refraction_factor)
   }
