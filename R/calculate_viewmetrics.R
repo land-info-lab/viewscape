@@ -43,7 +43,6 @@
 #' @importFrom ForestTools mcws
 #'
 #' @examples
-#' \donttest{
 #' # Load in DSM
 #' test_dsm <- terra::rast(system.file("test_dsm.tif",
 #'                                     package ="viewscape"))
@@ -66,14 +65,13 @@
 #' # Compute viewshed
 #' output <- viewscape::compute_viewshed(dsm = test_dsm,
 #'                                       viewpoints = test_viewpoint,
-#'                                       offset_viewpoint = 6)
+#'                                       offset_viewpoint = 6, r = 1600)
 #'
 #' # calculate metrics given the viewshed, canopy, and building footprints
 #' test_metrics <- viewscape::calculate_viewmetrics(output,
 #'                                                  test_dsm,
 #'                                                  test_dtm,
 #'                                                  list(test_canopy, test_building))
-#' }
 #'
 #' @export
 

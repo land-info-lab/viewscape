@@ -14,7 +14,7 @@
 #' @param r Numeric (optional), setting the radius for viewshed analysis.
 #' (The default is 1000m/3281ft)
 #' @param method Character, The algorithm for computing a viewshed:
-#' "plane" and "los" (see details). "plane"  is used as default.
+#' "plane" and "los" (see details). "plane" is used as default.
 #' @param parallel Logical, (default is FALSE) indicating if parallel computing
 #' should be used to compute viewsheds of multiview points. When it is TRUE,
 #' arguements 'raster' and 'plot' are ignored
@@ -66,7 +66,7 @@
 #' #Compute viewshed
 #' output <- viewscape::compute_viewshed(dsm = dsm,
 #'                                       viewpoints = test_viewpoint,
-#'                                       offset_viewpoint = 6)
+#'                                       offset_viewpoint = 6, r = 1600)
 
 compute_viewshed <- function(dsm,
                              viewpoints,

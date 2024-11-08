@@ -6,9 +6,7 @@ double sectorValue(
     const double k,
     const double b,
     const int x) {
-  double result;
-  result = k*x + b;
-  return result;
+  return k*x + b;
 }
 
 // [[Rcpp::export]]
@@ -19,7 +17,7 @@ Rcpp::IntegerMatrix sectorMask(
   const int rows = viewshed.rows();
   const int cols = viewshed.cols();
   Rcpp::IntegerMatrix visible(rows, cols);
-  const double factor = 3.14159/180;
+  const double factor = M_PI/180;
   const double ka = tan(fov[0]*factor);
   const double kb = tan(fov[1]*factor);
   const double ba = -viewpt[1] - ka*viewpt[0];
@@ -36,54 +34,38 @@ Rcpp::IntegerMatrix sectorMask(
             if (fov[0] <= 90) {
               if (a <= y && b <= y) {
                 visible(j,i) = viewshed(j,i);
-              } else {
-                visible(j,i) = 0;
               }
             } else if (fov[0] > 90 && fov[0] <= 270) {
               if (fov[1] <= 270) {
                 if (a >= y && b <= y) {
                   visible(j,i) = viewshed(j,i);
-                } else {
-                  visible(j,i) = 0;
                 }
               } else {
                 if (a >= y && b >= y) {
                   visible(j,i) = viewshed(j,i);
-                } else {
-                  visible(j,i) = 0;
                 }
               }
             } else if (fov[0] > 270 && fov[0] < 360) {
               if (a <= y && b >= y) {
                 visible(j,i) = viewshed(j,i);
-              } else {
-                visible(j,i) = 0;
               }
             }
           } else if (fov[1]-fov[0] > 180) {
             if (fov[0] > 90 && fov[1] < 270) {
               if (a >= y && b >= y) {
                 visible(j,i) = viewshed(j,i);
-              } else {
-                visible(j,i) = 0;
               }
             } else if (fov[0] < 90 && fov[1] >= 270) {
               if (a >= y && b <= y) {
                 visible(j,i) = viewshed(j,i);
-              } else {
-                visible(j,i) = 0;
               }
             } else if (fov[0] >= 90) {
               if (a <= y && b <= y) {
                 visible(j,i) = viewshed(j,i);
-              } else {
-                visible(j,i) = 0;
               }
             }
           }
         }
-      } else {
-        visible(j,i) = 0;
       }
     }
   }

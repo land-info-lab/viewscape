@@ -38,6 +38,7 @@ visual_magnitude <- function(viewshed, dsm) {
   if (missing(viewshed)) {
     stop("Viewshed object is missing")
   }
+  v <- viewshed
   # crop raster
   subdsm <- terra::crop(dsm, terra::ext(viewshed@extent, xy=TRUE))
   # get slope
@@ -55,11 +56,11 @@ visual_magnitude <- function(viewshed, dsm) {
                   slope_matrix, aspect_matrix,
                   viewshed@viewpos, viewshed@viewpoint[3],
                   viewshed@resolution[1])
-  viewshed@visible <- vm_matrix
+  v@visible <- vm_matrix
   # vm raster
-  vmpoints <- filter_invisible(viewshed, FALSE)
+  vmpoints <- filter_invisible(v, FALSE)
   m <- terra::vect(sp::SpatialPoints(vmpoints))
   terra::crs(m) <- viewshed@crs
-  vm <- terra::mask(filter_invisible(viewshed, TRUE), m)
+  vm <- terra::mask(filter_invisible(v, TRUE), m)
   return(vm)
 }

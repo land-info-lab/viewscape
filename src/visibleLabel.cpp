@@ -46,7 +46,7 @@ double zOnPlane(const Vector3& p, const std::vector<double>& plane) {
 
 Rcpp::IntegerMatrix wswSector(const Vector3 &viewpt,
                               const Rcpp::NumericMatrix &dsm,
-                              Rcpp::IntegerMatrix& visible,
+                              Rcpp::IntegerMatrix visible,
                               int rows,
                               int max_dis,
                               const double h) {
@@ -61,16 +61,18 @@ Rcpp::IntegerMatrix wswSector(const Vector3 &viewpt,
   for (int j = viewpt.x - 2; j > 0; --j) {
     count++;
     for (int i = viewpt.y + 1; i < rows && count >= i-viewpt.y; i++) {
-      temp_1 = {double(j+1), double(i), referenceGrid(double(i), double(j+1))};
-      temp_2 = {double(j+1), double(i-1), referenceGrid(double(i-1), double(j+1))};
-      if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-        target = {double(j), double(i), dsm(i,j)+h};
-        referencePlane = computePlane(viewpt, temp_1, temp_2);
-        minElevation = zOnPlane(target, referencePlane);
-        if (target.z > minElevation) {
-          visible(i,j) = 1;
-        } else {
-          referenceGrid(i,j) = minElevation;
+      if (j + 1 < dsm.ncol() && i < dsm.nrow() && i - 1 >= 0) {
+        temp_1 = {double(j+1), double(i), referenceGrid(double(i), double(j+1))};
+        temp_2 = {double(j+1), double(i-1), referenceGrid(double(i-1), double(j+1))};
+        if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
+          target = {double(j), double(i), dsm(i,j)+h};
+          referencePlane = computePlane(viewpt, temp_1, temp_2);
+          minElevation = zOnPlane(target, referencePlane);
+          if (target.z > minElevation) {
+            visible(i,j) = 1;
+          } else {
+            referenceGrid(i,j) = minElevation;
+          }
         }
       }
     }
@@ -80,7 +82,7 @@ Rcpp::IntegerMatrix wswSector(const Vector3 &viewpt,
 
 Rcpp::IntegerMatrix wnwSector(const Vector3 &viewpt,
                               const Rcpp::NumericMatrix &dsm,
-                              Rcpp::IntegerMatrix& visible,
+                              Rcpp::IntegerMatrix visible,
                               int max_dis,
                               const double h) {
   Rcpp::NumericMatrix referenceGrid = dsm;
@@ -113,7 +115,7 @@ Rcpp::IntegerMatrix wnwSector(const Vector3 &viewpt,
 
 Rcpp::IntegerMatrix nwnSector(const Vector3 &viewpt,
                               const Rcpp::NumericMatrix &dsm,
-                              Rcpp::IntegerMatrix& visible,
+                              Rcpp::IntegerMatrix visible,
                               int max_dis,
                               const double h) {
   Rcpp::NumericMatrix referenceGrid = dsm;
@@ -146,7 +148,7 @@ Rcpp::IntegerMatrix nwnSector(const Vector3 &viewpt,
 
 Rcpp::IntegerMatrix nenSector(const Vector3 &viewpt,
                               const Rcpp::NumericMatrix &dsm,
-                              Rcpp::IntegerMatrix& visible,
+                              Rcpp::IntegerMatrix visible,
                               int cols,
                               int max_dis,
                               const double h) {
@@ -180,7 +182,7 @@ Rcpp::IntegerMatrix nenSector(const Vector3 &viewpt,
 
 Rcpp::IntegerMatrix eneSector(const Vector3 &viewpt,
                               const Rcpp::NumericMatrix &dsm,
-                              Rcpp::IntegerMatrix& visible,
+                              Rcpp::IntegerMatrix visible,
                               int cols,
                               int max_dis,
                               const double h) {
@@ -214,7 +216,7 @@ Rcpp::IntegerMatrix eneSector(const Vector3 &viewpt,
 
 Rcpp::IntegerMatrix eseSector(const Vector3 &viewpt,
                               const Rcpp::NumericMatrix &dsm,
-                              Rcpp::IntegerMatrix& visible,
+                              Rcpp::IntegerMatrix visible,
                               int rows,
                               int cols,
                               int max_dis,
@@ -249,7 +251,7 @@ Rcpp::IntegerMatrix eseSector(const Vector3 &viewpt,
 
 Rcpp::IntegerMatrix sesSector(const Vector3 &viewpt,
                               const Rcpp::NumericMatrix &dsm,
-                              Rcpp::IntegerMatrix& visible,
+                              Rcpp::IntegerMatrix visible,
                               int rows,
                               int cols,
                               int max_dis,
@@ -284,7 +286,7 @@ Rcpp::IntegerMatrix sesSector(const Vector3 &viewpt,
 
 Rcpp::IntegerMatrix swsSector(const Vector3 &viewpt,
                               const Rcpp::NumericMatrix &dsm,
-                              Rcpp::IntegerMatrix& visible,
+                              Rcpp::IntegerMatrix visible,
                               int max_dis,
                               int rows,
                               const double h) {
@@ -520,7 +522,11 @@ Rcpp::IntegerMatrix referenceLineVisible(
   return visible;
 }
 
-//[[Rcpp::export]]
+bool is_within_bounds(double x, double y, int rows, int cols) {
+  return x >= 0 && x < cols && y >= 0 && y < rows;
+}
+
+// [[Rcpp::export]]
 Rcpp::IntegerMatrix reference(
     const Rcpp::NumericVector &viewpoint,
     const Rcpp::NumericMatrix &dsm,
@@ -529,16 +535,8 @@ Rcpp::IntegerMatrix reference(
   const int rows = dsm.rows();
   const int cols = dsm.cols();
   IntegerMatrix visible(rows, cols);
-  Vector3 viewpt;
 
-  Vector3 n;
-  Vector3 w;
-  Vector3 e;
-  Vector3 s;
-  Vector3 nw;
-  Vector3 sw;
-  Vector3 ne;
-  Vector3 se;
+  Vector3 viewpt, n, w, e, s, nw, sw, ne, se;
 
   viewpt.x = viewpoint[0];
   viewpt.y = viewpoint[1];
@@ -546,62 +544,96 @@ Rcpp::IntegerMatrix reference(
 
   visible(viewpt.y, viewpt.x) = 1;
 
+  // Update visibility for adjacent cells
   if (viewpt.x >= 1) {
-    sw.x = viewpt.x-1;
-    sw.y = viewpt.y+1;
-    sw.z = dsm(sw.y, sw.x) + h;
-    w.x = viewpt.x-1;
-    w.y = viewpt.y;
-    w.z = dsm(w.y, w.x) + h;
-    nw.x = viewpt.x-1;
-    nw.y = viewpt.y-1;
-    nw.z = dsm(nw.y, nw.x) + h;
-    visible(sw.y,sw.x) = 1;
-    visible(w.y,w.x) = 1;
-    visible(nw.y,nw.x) = 1;
+    sw = {viewpt.x-1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x-1) + h};
+    w = {viewpt.x-1, viewpt.y, dsm(viewpt.y, viewpt.x-1) + h};
+    nw = {viewpt.x-1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x-1) + h};
+    if (is_within_bounds(sw.x, sw.y, rows, cols)) visible(sw.y, sw.x) = 1;
+    if (is_within_bounds(w.x, w.y, rows, cols)) visible(w.y, w.x) = 1;
+    if (is_within_bounds(nw.x, nw.y, rows, cols)) visible(nw.y, nw.x) = 1;
   }
   if (viewpt.x <= cols-2) {
-    se.x = viewpt.x+1;
-    se.y = viewpt.y+1;
-    se.z = dsm(se.y, se.x) + h;
-    e.x = viewpt.x+1;
-    e.y = viewpt.y;
-    e.z = dsm(e.y, e.x) + h;
-    ne.x = viewpt.x+1;
-    ne.y = viewpt.y-1;
-    ne.z = dsm(ne.y, ne.x) + h;
-    visible(se.y,se.x) = 1;
-    visible(e.y,e.x) = 1;
-    visible(ne.y,ne.x) = 1;
+    se = {viewpt.x+1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x+1) + h};
+    e = {viewpt.x+1, viewpt.y, dsm(viewpt.y, viewpt.x+1) + h};
+    ne = {viewpt.x+1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x+1) + h};
+    if (is_within_bounds(se.x, se.y, rows, cols)) visible(se.y, se.x) = 1;
+    if (is_within_bounds(e.x, e.y, rows, cols)) visible(e.y, e.x) = 1;
+    if (is_within_bounds(ne.x, ne.y, rows, cols)) visible(ne.y, ne.x) = 1;
   }
   if (viewpt.y >= 1) {
-    nw.x = viewpt.x-1;
-    nw.y = viewpt.y-1;
-    nw.z = dsm(nw.y, nw.x) + h;
-    n.x = viewpt.x;
-    n.y = viewpt.y-1;
-    n.z = dsm(n.y, n.x) + h;
-    ne.x = viewpt.x+1;
-    ne.y = viewpt.y-1;
-    ne.z = dsm(ne.y, ne.x) + h;
-    visible(nw.y,nw.x) = 1;
-    visible(n.y,n.x) = 1;
-    visible(ne.y,ne.x) = 1;
+    nw = {viewpt.x-1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x-1) + h};
+    n = {viewpt.x, viewpt.y-1, dsm(viewpt.y-1, viewpt.x) + h};
+    ne = {viewpt.x+1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x+1) + h};
+    if (is_within_bounds(nw.x, nw.y, rows, cols)) visible(nw.y, nw.x) = 1;
+    if (is_within_bounds(n.x, n.y, rows, cols)) visible(n.y, n.x) = 1;
+    if (is_within_bounds(ne.x, ne.y, rows, cols)) visible(ne.y, ne.x) = 1;
   }
   if (viewpt.y <= rows-2) {
-    sw.x = viewpt.x-1;
-    sw.y = viewpt.y+1;
-    sw.z = dsm(sw.y, sw.x) + h;
-    s.x = viewpt.x;
-    s.y = viewpt.y+1;
-    s.z = dsm(s.y, s.x) + h;
-    se.x = viewpt.x+1;
-    se.y = viewpt.y+1;
-    se.z = dsm(se.y, se.x) + h;
-    visible(sw.y,sw.x) = 1;
-    visible(s.y,s.x) = 1;
-    visible(se.y,se.x) = 1;
+    sw = {viewpt.x-1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x-1) + h};
+    s = {viewpt.x, viewpt.y+1, dsm(viewpt.y+1, viewpt.x) + h};
+    se = {viewpt.x+1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x+1) + h};
+    if (is_within_bounds(sw.x, sw.y, rows, cols)) visible(sw.y, sw.x) = 1;
+    if (is_within_bounds(s.x, s.y, rows, cols)) visible(s.y, s.x) = 1;
+    if (is_within_bounds(se.x, se.y, rows, cols)) visible(se.y, se.x) = 1;
   }
+
+  // if (viewpt.x >= 1) {
+  //   sw.x = viewpt.x-1;
+  //   sw.y = viewpt.y+1;
+  //   sw.z = dsm(sw.y, sw.x) + h;
+  //   w.x = viewpt.x-1;
+  //   w.y = viewpt.y;
+  //   w.z = dsm(w.y, w.x) + h;
+  //   nw.x = viewpt.x-1;
+  //   nw.y = viewpt.y-1;
+  //   nw.z = dsm(nw.y, nw.x) + h;
+  //   visible(sw.y,sw.x) = 1;
+  //   visible(w.y,w.x) = 1;
+  //   visible(nw.y,nw.x) = 1;
+  // }
+  // if (viewpt.x <= cols-2) {
+  //   se.x = viewpt.x+1;
+  //   se.y = viewpt.y+1;
+  //   se.z = dsm(se.y, se.x) + h;
+  //   e.x = viewpt.x+1;
+  //   e.y = viewpt.y;
+  //   e.z = dsm(e.y, e.x) + h;
+  //   ne.x = viewpt.x+1;
+  //   ne.y = viewpt.y-1;
+  //   ne.z = dsm(ne.y, ne.x) + h;
+  //   visible(se.y,se.x) = 1;
+  //   visible(e.y,e.x) = 1;
+  //   visible(ne.y,ne.x) = 1;
+  // }
+  // if (viewpt.y >= 1) {
+  //   nw.x = viewpt.x-1;
+  //   nw.y = viewpt.y-1;
+  //   nw.z = dsm(nw.y, nw.x) + h;
+  //   n.x = viewpt.x;
+  //   n.y = viewpt.y-1;
+  //   n.z = dsm(n.y, n.x) + h;
+  //   ne.x = viewpt.x+1;
+  //   ne.y = viewpt.y-1;
+  //   ne.z = dsm(ne.y, ne.x) + h;
+  //   visible(nw.y,nw.x) = 1;
+  //   visible(n.y,n.x) = 1;
+  //   visible(ne.y,ne.x) = 1;
+  // }
+  // if (viewpt.y <= rows-2) {
+  //   sw.x = viewpt.x-1;
+  //   sw.y = viewpt.y+1;
+  //   sw.z = dsm(sw.y, sw.x) + h;
+  //   s.x = viewpt.x;
+  //   s.y = viewpt.y+1;
+  //   s.z = dsm(s.y, s.x) + h;
+  //   se.x = viewpt.x+1;
+  //   se.y = viewpt.y+1;
+  //   se.z = dsm(se.y, se.x) + h;
+  //   visible(sw.y,sw.x) = 1;
+  //   visible(s.y,s.x) = 1;
+  //   visible(se.y,se.x) = 1;
+  // }
 
   visible = referenceLineVisible(viewpt, dsm, visible, rows, cols, max_dis, h);
 
@@ -616,17 +648,14 @@ Rcpp::IntegerMatrix reference(
   return visible;
 }
 
-// Line of sight
-//[[Rcpp::export]]
+
+// [[Rcpp::export]]
 Rcpp::IntegerMatrix LOS(
     const Rcpp::NumericVector &viewpoint,
     const Rcpp::NumericMatrix &dsm,
     const double h,
     const int max_dis) {
 
-  // Rcpp::NumericVector zl;
-  // Rcpp::NumericVector xl;
-  // Rcpp::NumericVector yl;
   const int rows = dsm.rows();
   const int cols = dsm.cols();
   int steps;
@@ -638,7 +667,6 @@ Rcpp::IntegerMatrix LOS(
        steps = sqrt((viewpoint[0]-j)*(viewpoint[0]-j) + (viewpoint[1]-i)*(viewpoint[1]-i));
        const double z = dsm(i,j) + h;
        if (steps <= max_dis) {
-         // Rcpp::NumericVector sequence(steps);
          std::iota(sequence.begin(), sequence.end(), 1);
          xl = viewpoint[0] + sequence * (j-viewpoint[0])/steps;
          yl = viewpoint[1] + sequence * (i-viewpoint[1])/steps;

@@ -16,7 +16,7 @@ testthat::test_that("runs correctly", {
   output <- viewscape::compute_viewshed(dsm = test_dsm,
                                         viewpoints = test_viewpoint,
                                         offset_viewpoint = 6,
-                                        plot=FALSE)
+                                        r = 1600)
 
   # the Shannon Diversity Index (SDI)
   test_diversity <- viewscape::calculate_diversity(output,

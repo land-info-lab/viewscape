@@ -34,6 +34,7 @@ test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp",
 output <- viewscape::compute_viewshed(dsm = test_dsm, 
                                       viewpoints = test_viewpoint, 
                                       offset_viewpoint = 6, 
+                                      r = 1600,
                                       method = 'plane')
 ```
 

@@ -33,7 +33,7 @@ viewpoint will look at. (defaut is 0)}
 (The default is 1000m/3281ft)}
 
 \item{method}{Character, The algorithm for computing a viewshed:
-"plane" and "los" (see details). "plane"  is used as default.}
+"plane" and "los" (see details). "plane" is used as default.}
 
 \item{parallel}{Logical, (default is FALSE) indicating if parallel computing
 should be used to compute viewsheds of multiview points. When it is TRUE,
@@ -75,7 +75,7 @@ dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
 #Compute viewshed
 output <- viewscape::compute_viewshed(dsm = dsm,
                                       viewpoints = test_viewpoint,
-                                      offset_viewpoint = 6)
+                                      offset_viewpoint = 6, r = 1600)
 }
 \references{
 Franklin, W. R., & Ray, C. (1994, May).
