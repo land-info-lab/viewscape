@@ -15,6 +15,7 @@ visual_magnitude(viewshed, dsm)
 SpatRaster
 }
 \description{
+This function is still in progress.
 Visual Magnitude quantifies the extent of a visible region
 as perceived by an observer. It is derived from the surface's slope and
 angle features, alongside the observer's relative distance from the area

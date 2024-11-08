@@ -1,5 +1,6 @@
 #' visual_magnitude
-#' @description Visual Magnitude quantifies the extent of a visible region
+#' @description This function is still in progress.
+#' Visual Magnitude quantifies the extent of a visible region
 #' as perceived by an observer. It is derived from the surface's slope and
 #' angle features, alongside the observer's relative distance from the area
 #' (Chamberlain & Meitner).
@@ -56,11 +57,14 @@ visual_magnitude <- function(viewshed, dsm) {
                   slope_matrix, aspect_matrix,
                   viewshed@viewpos, viewshed@viewpoint[3],
                   viewshed@resolution[1])
-  v@visible <- vm_matrix
+  # v@visible <- vm_matrix
   # vm raster
-  vmpoints <- filter_invisible(v, FALSE)
-  m <- terra::vect(sp::SpatialPoints(vmpoints))
-  terra::crs(m) <- viewshed@crs
-  vm <- terra::mask(filter_invisible(v, TRUE), m)
+  vm <- terra::rast(vm_matrix)
+  # vmpoints <- filter_invisible(v, FALSE)
+  # m <- terra::vect(sp::SpatialPoints(vmpoints))
+  terra::crs(vm) <- viewshed@crs
+  terra::ext(vm) <- terra::ext(viewshed@extent, xy = TRUE)
+  vm <- terra::classify(vm, cbind(-9, NA))
+  # vm <- terra::mask(filter_invisible(v, TRUE), m)
   return(vm)
 }

@@ -93,28 +93,12 @@ Rcpp::NumericMatrix VM(const Rcpp::IntegerMatrix &viewshed,
           Vector3 viewNormal = calculateNormal(viewAspect, viewSlope,
                                                viewpt[0], viewpt[1], zp);
           Vector3 normal = calculateNormal(aspect, slope, i, j, zt);
-          //Vector3 normal = calculateNormal(dsm, i, j, cols, rows, resolution);
-          // double cosA = 0;
-          // double cosB = 0;
-          // if (viewpt[0] == i) {
-          //   cosA = 1;
-          // } else {
-          //   cosA = cosAB(viewpt[0], zp,
-          //                i, zt,
-          //                normal.x, normal.z);
-          // }
-          // if (viewpt[1] == j) {
-          //   cosB = 1;
-          // } else {
-          //   cosB = cosAB(viewpt[1], zp,
-          //                j, zt,
-          //                normal.y, normal.z);
-          // }
-          //magnitude(j, i) = cosA*cosB*resolution*resolution/(dis*dis);
           double radian = getAngle(viewNormal, normal);
           if (radian < 3.1415926/2) {
             magnitude(j, i) = abs(cos(radian)) * resolution*resolution/(dis*dis);
           }
+        } else {
+          magnitude(j, i) = -9;
         }
       }
     }
