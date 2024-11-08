@@ -1,7 +1,7 @@
 Package: viewscape
 Type: Package
 Title: Viewscape Analysis
-Version: 1.0.0
+Version: 2.0.0
 Authors@R: c(person("Xiaohao", "Yang", role = c("aut", "cre", "cph"), email = "xiaohaoy@umich.edu"),
            person("Nathan", "Fox", role = c("aut")),
            person("Derek", "Van Berkel", role = c("aut")),
@@ -36,7 +36,7 @@ Imports:
     sf,
     sp,
     terra,
-    ForestTools,
+    ForestTools (>= 1.0.1),
     parallel,
     pbmcapply
 LinkingTo:

@@ -26,8 +26,6 @@ digital surface model (DSM) and a viewpoint.
                                           viewpoints = test_viewpoint, 
                                           offset_viewpoint = 6)
 
-![](/private/var/folders/8t/yvsjl1wd01z9y49tb6zbyszw0000gn/T/RtmpCIg1Uj/preview-ed46e4fdb6d.dir/viewscape_files/figure-markdown_strict/unnamed-chunk-2-1.png)
-
     # overlap viewshed on DSM
     viewpoint <- matrix(0,1,3)
     viewpoint[1,1] <- test_viewpoint[1]
@@ -36,8 +34,6 @@ digital surface model (DSM) and a viewpoint.
     raster::plot(test_dsm, axes=FALSE, box=FALSE, legend = FALSE)
     raster::plot(output, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALSE)
     raster::plot(sp::SpatialPoints(viewpoint), add = TRUE, col = "blue", axes=FALSE, box=FALSE, legend = FALSE)
-
-![](/private/var/folders/8t/yvsjl1wd01z9y49tb6zbyszw0000gn/T/RtmpCIg1Uj/preview-ed46e4fdb6d.dir/viewscape_files/figure-markdown_strict/unnamed-chunk-3-1.png)
 
 ### 1.2 Compute the viewshed for multiple viewpoints
 
@@ -65,8 +61,6 @@ digital surface model (DSM) and a viewpoint.
       raster::plot(raster_data, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALSE)
     }
 
-![](/private/var/folders/8t/yvsjl1wd01z9y49tb6zbyszw0000gn/T/RtmpCIg1Uj/preview-ed46e4fdb6d.dir/viewscape_files/figure-markdown_strict/unnamed-chunk-5-1.png)
-
 ## 2. Calculate viewscape metrics
 
 ### 2.1 Calculate the metrics of viewshed
@@ -88,9 +82,6 @@ of a landscape from a specific viewpoint.
     # Load building footprints raster
     test_building <- terra::rast(system.file("test_building.tif", 
                                              package ="viewscape"))
-
-
-![](/private/var/folders/8t/yvsjl1wd01z9y49tb6zbyszw0000gn/T/RtmpCIg1Uj/preview-ed46e4fdb6d.dir/viewscape_files/figure-markdown_strict/unnamed-chunk-8-1.png)
 
     # calculate metrics given the viewshed
     test_metrics <- viewscape::calculate_viewmetrics(output[[1]], 
@@ -114,8 +105,8 @@ use/ cover within a viewshed to get the Shannon Diversity Index.
 
     ## [1] 8
 
-    test_diversity <- viewscape::calculate_diversity(test_landuse, 
-                                                     output[[1]], 
+    test_diversity <- viewscape::calculate_diversity(output[[1]],
+                                                     test_landuse, 
                                                      proportion = TRUE)
     # SDI and The proportion of each type of land use
     test_diversity
@@ -138,8 +129,8 @@ This function can be applied to
     test_canopy <- terra::rast(system.file("test_canopy.tif",
                                            package ="viewscape"))
     # calculate the percentage of each type of land use  
-    test_canopy_proportion <- viewscape::calculate_feature(type = 2, 
+    test_canopy_proportion <- viewscape::calculate_feature(viewshed = output[[1]], 
                                                            feature = test_canopy,
-                                                           viewshed = output[[1]],
+                                                           type = 2,
                                                            exclude_value=0)
     test_canopy_proportion

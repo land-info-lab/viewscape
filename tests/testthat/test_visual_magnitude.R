@@ -4,10 +4,6 @@ testthat::test_that("runs correctly", {
   test_dsm <- terra::rast(system.file("test_dsm.tif",
                                       package ="viewscape"))
 
-  # load landuse raster
-  test_landcover <- terra::rast(system.file("test_landuse.tif",
-                                            package ="viewscape"))
-
   #Load in the viewpoint
   test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp",
                                             package = "viewscape"))
@@ -16,13 +12,7 @@ testthat::test_that("runs correctly", {
   output <- viewscape::compute_viewshed(dsm = test_dsm,
                                         viewpoints = test_viewpoint,
                                         offset_viewpoint = 6,
-                                        r = 1600)
-
-  # the Shannon Diversity Index (SDI)
-  test_diversity <- viewscape::calculate_diversity(output,
-                                                   test_landcover,
-                                                   proportion = TRUE)
-
-  testthat::expect_type(test_diversity, "list")
-
+                                        plot=FALSE)
+  test_vm <- viewscape::visual_magnitude(output, test_dsm)
+  testthat::expect_type(test_vm, "S4")
 })

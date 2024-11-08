@@ -11,8 +11,7 @@ testthat::test_that("runs correctly", {
   #Compute viewshed
   output <- viewscape::compute_viewshed(dsm = test_dsm,
                                         viewpoints = test_viewpoint,
-                                        offset_viewpoint = 6,
-                                        plot=FALSE)
+                                        offset_viewpoint = 6, r = 1600)
   testthat::expect_type(output, "S4")
 
 })

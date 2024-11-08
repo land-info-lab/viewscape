@@ -23,8 +23,7 @@ testthat::test_that("runs correctly", {
   #Compute viewshed
   output <- viewscape::compute_viewshed(dsm = test_dsm,
                                         viewpoints = test_viewpoint,
-                                        offset_viewpoint = 6,
-                                        plot=FALSE)
+                                        offset_viewpoint = 6)
 
   # calculate metrics given the viewshed
   test_metrics <- viewscape::calculate_viewmetrics(output,

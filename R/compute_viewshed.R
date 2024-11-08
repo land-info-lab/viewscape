@@ -13,6 +13,13 @@
 #' viewpoint will look at. (defaut is 0)
 #' @param r Numeric (optional), setting the radius for viewshed analysis.
 #' (The default is 1000m/3281ft)
+#' @param refraction_factor Number, indicating the refraction factor.
+#' The refraction factor adjusts the effect of atmospheric refraction
+#' on the apparent curvature of the Earth. In most standard applications, a refraction factor
+#' of 0.13 is used, and so does this function. However, the appropriate refraction factor may
+#' vary depending on environmental conditions.
+#' @param method Character, The algorithm for computing a viewshed:
+#' "plane" and "los" (see details). "plane" is used as default.
 #' @param parallel Logical, (default is FALSE) indicating if parallel computing
 #' should be used to compute viewsheds of multiview points. When it is TRUE,
 #' arguements 'raster' and 'plot' are ignored
@@ -30,6 +37,22 @@
 #' is returned.
 #'
 #'
+#' @details For method, "plane" is the reference plane algorithm introduced by
+#' Wang et al. (2000) and "los" is the line of sight algorithm (Franklin & Ray, 1994).
+#' The reference plane algorithm can be more time-efficient than the line of sight
+#' algorithm, whereas the accuracy of the line of sight is better.
+#'
+#' @seealso [fov_mask()] [visual_magnitude()]
+#'
+#' @references Franklin, W. R., & Ray, C. (1994, May).
+#' Higher isn’t necessarily better: Visibility algorithms and experiments.
+#' In Advances in GIS research: sixth international symposium on spatial
+#' data handling (Vol. 2, pp. 751-770). Edinburgh: Taylor & Francis.
+#'
+#' Wang, J., Robinson, G. J., & White, K. (2000).
+#' Generating viewsheds without using sightlines.
+#' Photogrammetric engineering and remote sensing, 66(1), 87-90.
+#'
 #' @useDynLib viewscape
 #' @import pbmcapply
 #' @importFrom Rcpp sourceCpp
@@ -46,17 +69,19 @@
 #' # load dsm raster
 #' dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
 #' #Compute viewshed
-#' output <- compute_viewshed(dsm = dsm,
-#'                            viewpoints = test_viewpoint,
-#'                            offset_viewpoint = 6)
+#' output <- viewscape::compute_viewshed(dsm = dsm,
+#'                                       viewpoints = test_viewpoint,
+#'                                       offset_viewpoint = 6, r = 1600)
 
 compute_viewshed <- function(dsm,
                              viewpoints,
                              offset_viewpoint=1.7,
                              offset_height = 0,
                              r = NULL,
+                             refraction_factor = 0.13,
+                             method = "plane",
                              parallel = FALSE,
-                             workers = 0,
+                             workers = 1,
                              raster = FALSE,
                              plot = FALSE){
   multiviewpoints <- FALSE
@@ -73,6 +98,7 @@ compute_viewshed <- function(dsm,
       r <- 1000
     }
   }
+  ext_dsm <- terra::ext(dsm)
   # if (dsm_units == "ft" && r > 3281) {
   #   r <- 3281
   # } else if (dsm_units == "m" && r > 1000) {
@@ -98,9 +124,21 @@ compute_viewshed <- function(dsm,
     }
   }
   if (multiviewpoints == FALSE){
+    # validate the viewpoint
+    if (viewpoints[,1] < ext_dsm[1] | viewpoints[,1] > ext_dsm[2]) {
+      stop("The input viewpoint(s) is not on input dsm")
+    }
+    if (viewpoints[,2] < ext_dsm[3] | viewpoints[,2] > ext_dsm[4]) {
+      stop("The input viewpoint(s) is not on input dsm")
+    }
     viewpoints <- c(viewpoints[,1], viewpoints[,2])
     # compute viewshed
-    output <- radius_viewshed(dsm, r, viewpoints, offset_viewpoint, offset_height)
+    output <- radius_viewshed(dsm, r,
+                              refraction_factor,
+                              viewpoints,
+                              offset_viewpoint,
+                              offset_height,
+                              method)
     if (raster) {
       raster_data <- filter_invisible(output, raster)
       if (plot) {
@@ -123,11 +161,16 @@ compute_viewshed <- function(dsm,
       return(output)
     }
   }else if (multiviewpoints){
+    # validate the viewpoints
+    if (min(viewpoints[,1]) < ext_dsm[1] | max(viewpoints[,1]) > ext_dsm[2]) {
+      stop("Some of input viewpoint(s) is not on input dsm")
+    }
+    if (min(viewpoints[,2]) < ext_dsm[3] | max(viewpoints[,2]) > ext_dsm[4]) {
+      stop("Some of input viewpoint(s) is not on input dsm")
+    }
     inputs <- split(viewpoints,seq(nrow(viewpoints)))
     if (parallel == TRUE){
-      if (workers == 0) {
-        workers <- 2
-      } else if (workers > parallel::detectCores()) {
+      if (workers > parallel::detectCores()) {
         workers <- parallel::detectCores()
       }
       # inputs <- split(viewpoints,seq(nrow(viewpoints)))
@@ -138,7 +181,9 @@ compute_viewshed <- function(dsm,
         viewsheds <- paral_nix(X = inputs,
                                dsm = dsm,
                                r = r,
+                               refraction_factor = refraction_factor,
                                offset = offset_viewpoint,
+                               method = method,
                                workers = workers)
       )
     } else {
@@ -146,7 +191,9 @@ compute_viewshed <- function(dsm,
         viewsheds <- paral_nix(X = inputs,
                                dsm = dsm,
                                r = r,
+                               refraction_factor = refraction_factor,
                                offset = offset_viewpoint,
+                               method = method,
                                workers = 1)
       )
     }

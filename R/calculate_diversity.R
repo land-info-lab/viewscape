@@ -14,25 +14,27 @@
 #' within the viewshed.
 #' @import terra
 #' @importFrom dplyr count
+#' @importFrom dplyr select
 #' @importFrom dplyr %>%
 #' @importFrom rlang .data
 #'
 #' @export
 #'
 #' @examples
+#' library(viewscape)
 #' # Load a viewpoint
 #' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
 #' # load dsm raster
 #' dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
 #' #Compute viewshed
-#' output <- compute_viewshed(dsm = dsm,
-#'                            viewpoints = test_viewpoint,
-#'                            offset_viewpoint = 6)
+#' output <- viewscape::compute_viewshed(dsm = dsm,
+#'                                       viewpoints = test_viewpoint,
+#'                                       offset_viewpoint = 6, r = 1600)
 #' # load landuse raster
 #' test_landuse <- terra::rast(system.file("test_landuse.tif",
 #'                                         package ="viewscape"))
-#' diversity <- calculate_diversity(output,
-#'                                  test_landuse)
+#' diversity <- viewscape::calculate_diversity(output,
+#'                                             test_landuse)
 #'
 
 calculate_diversity <- function(viewshed,
@@ -48,14 +50,13 @@ calculate_diversity <- function(viewshed,
   land_class <- as.data.frame(land_class)
   colnames(land_class)[1] <- "type"
   land_class <- dplyr::count(land_class, .data$type)
+  # land_class <- dplyr::count(land_class, "type")
   total <- sum(land_class$n)
   land_class$proportion <- land_class$n/total
   # calculate Shannon diversity index
   p <- land_class$proportion
   sdi <- sd_index(p)
   if (proportion) {
-    # sub_land_class <- subset(land_class,
-    #                          select = c(type, proportion))
     sub_land_class <- land_class %>%
       dplyr::select(.data$type, proportion)
     return(list(SDI=sdi,Proportion=t(sub_land_class)))
