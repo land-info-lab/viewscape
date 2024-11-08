@@ -49,7 +49,7 @@ terra::plot(test_viewpoint, add = TRUE, col = "blue", axes=FALSE, box=FALSE, leg
 ### 1.2 Subset viewshed using by specifying the field of view
 
 ```{r eval=FALSE}
-sector <- viewscape::sector_mask(output, c(40,160))
+sector <- viewscape::fov_mask(output, c(40,160))
 terra::plot(test_dsm, axes=FALSE, box=FALSE, legend = FALSE)
 terra::plot(viewscape::visualize_viewshed(sector, outputtype = 'raster'),
             axes=FALSE, box=FALSE, legend = FALSE, add = TRUE, col = "red")

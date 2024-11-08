@@ -88,5 +88,5 @@ Generating viewsheds without using sightlines.
 Photogrammetric engineering and remote sensing, 66(1), 87-90.
 }
 \seealso{
-\code{\link[=visual_magnitude]{visual_magnitude()}} \code{\link[=sector_mask]{sector_mask()}}
+\code{\link[=fov_mask]{fov_mask()}} \code{\link[=visual_magnitude]{visual_magnitude()}}
 }

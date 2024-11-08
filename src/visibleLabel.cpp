@@ -27,6 +27,13 @@ Vector3 vectorSubtract(const Vector3& end, const Vector3& start) {
   return result;
 }
 
+const double REarth = 6371000.0; // Earth's radius in meters
+const double refraction_factor = 6.0 / 7.0; // Refraction adjustment factor
+
+double curvatureRefractionAdjustment(double distance) {
+  return (distance * distance) / (2 * REarth) * refraction_factor;
+}
+
 std::vector<double> computePlane(const Vector3& viewpoint,
                                  const Vector3& p1,
                                  const Vector3& p2) {
@@ -76,7 +83,13 @@ Rcpp::IntegerMatrix wswSector(const Vector3 &viewpt,
         // temp_1 = {double(j+1), double(i), referenceGrid(double(i), double(j+1))};
         // temp_2 = {double(j+1), double(i-1), referenceGrid(double(i-1), double(j+1))};
         if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-          target = {double(j), double(i), dsm(i,j)+h};
+
+          // Calculate horizontal distance for curvature and refraction correction
+          double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
+          // Adjust target height with curvature and refraction
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+
+          // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
           minElevation = zOnPlane(target, referencePlane);
           if (target.z > minElevation) {
@@ -113,7 +126,12 @@ Rcpp::IntegerMatrix wnwSector(const Vector3 &viewpt,
         temp_1 = {double(j+1), double(i), referenceGrid(double(i), double(j+1))};
         temp_2 = {double(j+1), double(i+1), referenceGrid(double(i+1), double(j+1))};
         if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-          target = {double(j), double(i), dsm(i,j)+h};
+          // Calculate horizontal distance for curvature and refraction correction
+          double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
+          // Adjust target height with curvature and refraction
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+
+          // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
           minElevation = zOnPlane(target, referencePlane);
           if (target.z > minElevation) {
@@ -150,7 +168,12 @@ Rcpp::IntegerMatrix nwnSector(const Vector3 &viewpt,
         temp_1 = {double(j), double(i+1), referenceGrid(double(i+1), double(j))};
         temp_2 = {double(j+1), double(i+1), referenceGrid(double(i+1), double(j+1))};
         if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-          target = {double(j), double(i), dsm(i,j)+h};
+          // Calculate horizontal distance for curvature and refraction correction
+          double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
+          // Adjust target height with curvature and refraction
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+
+          // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
           minElevation = zOnPlane(target, referencePlane);
           if (target.z > minElevation) {
@@ -188,7 +211,12 @@ Rcpp::IntegerMatrix nenSector(const Vector3 &viewpt,
         temp_1 = {double(j), double(i+1), referenceGrid(double(i+1), double(j))};
         temp_2 = {double(j-1), double(i+1), referenceGrid(double(i+1), double(j-1))};
         if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-          target = {double(j), double(i), dsm(i,j)+h};
+          // Calculate horizontal distance for curvature and refraction correction
+          double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
+          // Adjust target height with curvature and refraction
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+
+          // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
           minElevation = zOnPlane(target, referencePlane);
           if (target.z > minElevation) {
@@ -226,7 +254,12 @@ Rcpp::IntegerMatrix eneSector(const Vector3 &viewpt,
         temp_1 = {double(j-1), double(i), referenceGrid(double(i), double(j-1))};
         temp_2 = {double(j-1), double(i+1), referenceGrid(double(i+1), double(j-1))};
         if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-          target = {double(j), double(i), dsm(i,j)+h};
+          // Calculate horizontal distance for curvature and refraction correction
+          double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
+          // Adjust target height with curvature and refraction
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+
+          // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
           minElevation = zOnPlane(target, referencePlane);
           if (target.z > minElevation) {
@@ -265,7 +298,12 @@ Rcpp::IntegerMatrix eseSector(const Vector3 &viewpt,
         temp_1 = {double(j-1), double(i), referenceGrid(double(i), double(j-1))};
         temp_2 = {double(j-1), double(i-1), referenceGrid(double(i-1), double(j-1))};
         if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-          target = {double(j), double(i), dsm(i,j)+h};
+          // Calculate horizontal distance for curvature and refraction correction
+          double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
+          // Adjust target height with curvature and refraction
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+
+          // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
           minElevation = zOnPlane(target, referencePlane);
           if (target.z > minElevation) {
@@ -301,7 +339,12 @@ Rcpp::IntegerMatrix sesSector(const Vector3 &viewpt,
       temp_1 = {double(j), double(i-1), referenceGrid(double(i-1), double(j))};
       temp_2 = {double(j-1), double(i-1), referenceGrid(double(i-1), double(j-1))};
       if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-        target = {double(j), double(i), dsm(i,j)+h};
+        // Calculate horizontal distance for curvature and refraction correction
+        double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
+        // Adjust target height with curvature and refraction
+        target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+
+        // target = {double(j), double(i), dsm(i,j)+h};
         referencePlane = computePlane(viewpt, temp_1, temp_2);
         minElevation = zOnPlane(target, referencePlane);
         if (target.z > minElevation) {
@@ -338,7 +381,12 @@ Rcpp::IntegerMatrix swsSector(const Vector3 &viewpt,
         temp_1 = {double(j), double(i-1), referenceGrid(double(i-1), double(j))};
         temp_2 = {double(j+1), double(i-1), referenceGrid(double(i-1), double(j+1))};
         if (sqrt((viewpt.x-j)*(viewpt.x-j) + (viewpt.y-i)*(viewpt.y-i)) <= max_dis) {
-          target = {double(j), double(i), dsm(i,j)+h};
+          // Calculate horizontal distance for curvature and refraction correction
+          double distance = sqrt((viewpt.x - j) * (viewpt.x - j) + (viewpt.y - i) * (viewpt.y - i)) * h;
+          // Adjust target height with curvature and refraction
+          target = {double(j), double(i), dsm(i, j) + h - curvatureRefractionAdjustment(distance)};
+
+          // target = {double(j), double(i), dsm(i,j)+h};
           referencePlane = computePlane(viewpt, temp_1, temp_2);
           minElevation = zOnPlane(target, referencePlane);
           if (target.z > minElevation) {
@@ -392,26 +440,6 @@ Vector3 updateLine(const Vector3 &viewpt,
     // Case where both are above view height, and target has a higher tangent
     temp = target;
   }
-
-  // if (distance_a <= max_dis) {
-  //   double h_a = target.z - viewpt.z;
-  //   double h_b = temp.z - viewpt.z;
-  //   if (h_b < 0) {
-  //     if (h_a >= 0) {
-  //       temp = target;
-  //     } else {
-  //       if (compareTan(distance_a, distance_b, -h_a, -h_b) == 0) {
-  //         temp = target;
-  //       }
-  //     }
-  //   } else {
-  //     if (h_a > 0) {
-  //       if (compareTan(distance_a, distance_b, h_a, h_b) == 1) {
-  //         temp = target;
-  //       }
-  //     }
-  //   }
-  // }
   return temp;
 }
 
@@ -500,40 +528,6 @@ Rcpp::IntegerMatrix reference(
     }
   }
 
-  // // Update visibility for adjacent cells
-  // if (viewpt.x >= 1 && viewpt.y >= 1) {
-  //   sw = {viewpt.x-1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x-1) + h};
-  //   w = {viewpt.x-1, viewpt.y, dsm(viewpt.y, viewpt.x-1) + h};
-  //   nw = {viewpt.x-1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x-1) + h};
-  //   if (is_within_bounds(sw.x, sw.y, rows, cols)) visible(sw.y, sw.x) = 1;
-  //   if (is_within_bounds(w.x, w.y, rows, cols)) visible(w.y, w.x) = 1;
-  //   if (is_within_bounds(nw.x, nw.y, rows, cols)) visible(nw.y, nw.x) = 1;
-  // }
-  // if (cols >= 2 && viewpt.x <= cols-2 && viewpt.y >= 1) {
-  //   se = {viewpt.x+1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x+1) + h};
-  //   e = {viewpt.x+1, viewpt.y, dsm(viewpt.y, viewpt.x+1) + h};
-  //   ne = {viewpt.x+1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x+1) + h};
-  //   if (is_within_bounds(se.x, se.y, rows, cols)) visible(se.y, se.x) = 1;
-  //   if (is_within_bounds(e.x, e.y, rows, cols)) visible(e.y, e.x) = 1;
-  //   if (is_within_bounds(ne.x, ne.y, rows, cols)) visible(ne.y, ne.x) = 1;
-  // }
-  // if (viewpt.y >= 1 && viewpt.x >= 1) {
-  //   nw = {viewpt.x-1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x-1) + h};
-  //   n = {viewpt.x, viewpt.y-1, dsm(viewpt.y-1, viewpt.x) + h};
-  //   ne = {viewpt.x+1, viewpt.y-1, dsm(viewpt.y-1, viewpt.x+1) + h};
-  //   if (is_within_bounds(nw.x, nw.y, rows, cols)) visible(nw.y, nw.x) = 1;
-  //   if (is_within_bounds(n.x, n.y, rows, cols)) visible(n.y, n.x) = 1;
-  //   if (is_within_bounds(ne.x, ne.y, rows, cols)) visible(ne.y, ne.x) = 1;
-  // }
-  // if (rows >= 2 && viewpt.y <= rows-2 && viewpt.x >= 1) {
-  //   sw = {viewpt.x-1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x-1) + h};
-  //   s = {viewpt.x, viewpt.y+1, dsm(viewpt.y+1, viewpt.x) + h};
-  //   se = {viewpt.x+1, viewpt.y+1, dsm(viewpt.y+1, viewpt.x+1) + h};
-  //   if (is_within_bounds(sw.x, sw.y, rows, cols)) visible(sw.y, sw.x) = 1;
-  //   if (is_within_bounds(s.x, s.y, rows, cols)) visible(s.y, s.x) = 1;
-  //   if (is_within_bounds(se.x, se.y, rows, cols)) visible(se.y, se.x) = 1;
-  // }
-
   visible = referenceLineVisible(viewpt, dsm, visible, rows, cols, max_dis, h);
 
   visible = wswSector(viewpt, dsm, visible, rows, max_dis, h);
@@ -564,7 +558,10 @@ Rcpp::IntegerMatrix LOS(
   for (int i = 0; i < rows; i++) {
      for (int j = 0; j < cols; j++) {
        steps = sqrt((viewpoint[0]-j)*(viewpoint[0]-j) + (viewpoint[1]-i)*(viewpoint[1]-i));
-       const double z = dsm(i,j) + h;
+       // Approximate horizontal distance
+       double distance = steps * h;
+       // Add curvature and refraction correction to target height
+       double z = dsm(i,j) + h - curvatureRefractionAdjustment(distance);
        if (steps <= max_dis) {
          std::iota(sequence.begin(), sequence.end(), 1);
          xl = viewpoint[0] + sequence * (j-viewpoint[0])/steps;

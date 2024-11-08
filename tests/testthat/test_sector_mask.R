@@ -13,6 +13,6 @@ testthat::test_that("runs correctly", {
                                         viewpoints = test_viewpoint,
                                         offset_viewpoint = 6,
                                         plot=FALSE)
-  test_sector <- viewscape::sector_mask(output, c(40,160))
+  test_sector <- viewscape::fov_mask(output, c(40,160))
   testthat::expect_type(test_sector, "S4")
 })

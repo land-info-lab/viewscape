@@ -37,7 +37,7 @@
 #' The reference plane algorithm can be more time-efficient than the line of sight
 #' algorithm, whereas the accuracy of the line of sight is better.
 #'
-#' @seealso [visual_magnitude()] [sector_mask()]
+#' @seealso [fov_mask()] [visual_magnitude()]
 #'
 #' @references Franklin, W. R., & Ray, C. (1994, May).
 #' Higher isn’t necessarily better: Visibility algorithms and experiments.

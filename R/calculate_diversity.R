@@ -50,6 +50,7 @@ calculate_diversity <- function(viewshed,
   land_class <- as.data.frame(land_class)
   colnames(land_class)[1] <- "type"
   land_class <- dplyr::count(land_class, .data$type)
+  # land_class <- dplyr::count(land_class, "type")
   total <- sum(land_class$n)
   land_class$proportion <- land_class$n/total
   # calculate Shannon diversity index
