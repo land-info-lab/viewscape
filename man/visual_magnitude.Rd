@@ -22,6 +22,7 @@ angle features, alongside the observer's relative distance from the area
 (Chamberlain & Meitner).
 }
 \examples{
+\donttest{
 # Load a viewpoint
 test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
 # load dsm raster
@@ -32,6 +33,7 @@ viewshed <- viewscape::compute_viewshed(dsm = dsm,
                                         offset_viewpoint = 6)
 # Compute visual magnitude
 vm <- viewscape::visual_magnitude(viewshed, dsm)
+}
 
 }
 \references{

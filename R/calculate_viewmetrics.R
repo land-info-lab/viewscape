@@ -43,6 +43,7 @@
 #' @importFrom ForestTools mcws
 #'
 #' @examples
+#' \donttest{
 #' # Load in DSM
 #' test_dsm <- terra::rast(system.file("test_dsm.tif",
 #'                                     package ="viewscape"))
@@ -72,6 +73,7 @@
 #'                                                  test_dsm,
 #'                                                  test_dtm,
 #'                                                  list(test_canopy, test_building))
+#' }
 #'
 #' @export
 
