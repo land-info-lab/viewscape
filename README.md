@@ -41,7 +41,7 @@ The basic viewshed analysis can be accessed through calling the
 `compute_viewshed`. The two needed objects are a digital surface model
 (DSM) and a viewpoint. It provides flexibility for single or
 multi-viewpoint analyses and allows options for parallel processing,
-raster output, and plotting. In addition, a `sector_mask` function is 
+raster output, and plotting. In addition, a `fov_mask` function is 
 designed to subset a viewshed based on its viewpoint and the field of view. 
 
 Based on the viewshed, visual magnitude, a gradient ofvisibility across the range, 
