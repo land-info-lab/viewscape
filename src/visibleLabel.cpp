@@ -550,7 +550,7 @@ Rcpp::IntegerMatrix LOS(
        // Approximate horizontal distance
        double distance = steps * h;
        // Add curvature and refraction correction to target height
-       double z = dsm(i,j) + h - curvatureRefractionAdjustment(distance);
+       double z = dsm(i,j) + h - curvatureRefractionAdjustment(distance, refraction_factor);
        if (steps <= max_dis) {
          std::iota(sequence.begin(), sequence.end(), 1);
          xl = viewpoint[0] + sequence * (j-viewpoint[0])/steps;
