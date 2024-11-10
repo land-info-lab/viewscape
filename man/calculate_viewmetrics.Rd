@@ -49,6 +49,7 @@ patch edges per unit area
 }
 }
 \examples{
+\donttest{
 # Load in DSM
 test_dsm <- terra::rast(system.file("test_dsm.tif",
                                     package ="viewscape"))
@@ -78,6 +79,7 @@ test_metrics <- viewscape::calculate_viewmetrics(output,
                                                  test_dsm,
                                                  test_dtm,
                                                  list(test_canopy, test_building))
+}
 
 }
 \references{

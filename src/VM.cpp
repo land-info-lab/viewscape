@@ -95,7 +95,7 @@ Rcpp::NumericMatrix VM(const Rcpp::IntegerMatrix &viewshed,
           Vector3 normal = calculateNormal(aspect, slope, i, j, zt);
           double radian = getAngle(viewNormal, normal);
           if (radian < 3.1415926/2) {
-            magnitude(j, i) = abs(cos(radian)) * resolution*resolution/(dis*dis);
+            magnitude(j, i) = std::fabs(cos(radian)) * resolution*resolution/(dis*dis);
           }
         } else {
           magnitude(j, i) = -9;

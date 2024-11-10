@@ -11,6 +11,7 @@
 #' @return SpatRaster
 #'
 #' @examples
+#' \donttest{
 #' # Load a viewpoint
 #' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
 #' # load dsm raster
@@ -21,6 +22,7 @@
 #'                                         offset_viewpoint = 6)
 #' # Compute visual magnitude
 #' vm <- viewscape::visual_magnitude(viewshed, dsm)
+#' }
 #'
 #' @importFrom terra terrain
 #'

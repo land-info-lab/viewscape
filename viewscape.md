@@ -24,18 +24,24 @@ digital surface model (DSM) and a viewpoint.
     #Compute viewshed
     output <- viewscape::compute_viewshed(dsm = test_dsm, 
                                           viewpoints = test_viewpoint, 
-                                          offset_viewpoint = 6)
+                                          offset_viewpoint = 6, 
+                                          r = 1600,
+                                          method = 'plane')
 
     # overlap viewshed on DSM
-    viewpoint <- matrix(0,1,3)
-    viewpoint[1,1] <- test_viewpoint[1]
-    viewpoint[1,2] <- test_viewpoint[2]
-    output[output[] == 0 ] = NA
-    raster::plot(test_dsm, axes=FALSE, box=FALSE, legend = FALSE)
-    raster::plot(output, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALSE)
-    raster::plot(sp::SpatialPoints(viewpoint), add = TRUE, col = "blue", axes=FALSE, box=FALSE, legend = FALSE)
+    output_r <- viewscape::visualize_viewshed(output, outputtype = 'raster')
+    terra::plot(test_dsm, axes=FALSE, box=FALSE, legend = FALSE)
+    terra::plot(output_r, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALSE)
+    terra::plot(test_viewpoint, add = TRUE, col = "blue", axes=FALSE, box=FALSE, legend = FALSE)
+    
+### 1.2 Subset viewshed using by specifying the field of view
+    sector <- viewscape::fov_mask(output, c(40,160))
+    terra::plot(test_dsm, axes=FALSE, box=FALSE, legend = FALSE)
+    terra::plot(viewscape::visualize_viewshed(sector, outputtype = 'raster'),
+            axes=FALSE, box=FALSE, legend = FALSE, add = TRUE, col = "red")
+    terra::plot(test_viewpoint, add = TRUE, col = "blue", axes=FALSE, box=FALSE, legend = FALSE)
 
-### 1.2 Compute the viewshed for multiple viewpoints
+### 1.3 Compute the viewshed for multiple viewpoints
 
     #Load in DSM
     test_dsm <- terra::rast(system.file("test_dsm.tif", 
@@ -92,7 +98,7 @@ of a landscape from a specific viewpoint.
 
 ### 2.2 Calculate land use/cover diversity
 
-calculate\_diversity() calculates the proportion of each type of land
+`calculate_diversity` calculates the proportion of each type of land
 use/ cover within a viewshed to get the Shannon Diversity Index.
 
     # load landuse raster
@@ -121,7 +127,7 @@ use/ cover within a viewshed to get the Shannon Diversity Index.
 
 ### 2.3 calculate a single feature
 
-calculate\_feature is to calculate the proportion of a feature
+`calculate_feature` is to calculate the proportion of a feature
 (including trees, buildings, parking, and roads) within the viewshed.
 This function can be applied to
 
